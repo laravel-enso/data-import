@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateDataImportsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *

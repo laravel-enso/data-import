@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 22.02.2017
- * Time: 16:05
+ * Time: 16:05.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
@@ -21,8 +21,8 @@ abstract class AbstractValidator extends Object
     public function __construct($template, SheetCollection $xlsx, ValidationSummary $summary)
     {
         $this->template = $template;
-        $this->xlsx     = $xlsx;
-        $this->summary  = $summary;
+        $this->xlsx = $xlsx;
+        $this->summary = $summary;
     }
 
     abstract public function run();

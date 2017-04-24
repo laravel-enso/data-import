@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 21.02.2017
- * Time: 17:25
+ * Time: 17:25.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
@@ -21,9 +21,9 @@ class ValidationSummary extends Object
     public function __construct($fileName = null)
     {
         $this->fileName = $fileName ?: $this->fileName;
-        $this->hasErrors       = false;
+        $this->hasErrors = false;
         $this->structureIssues = collect();
-        $this->sheetIssues     = collect();
+        $this->sheetIssues = collect();
         $this->successfulEntries = 0;
     }
 
@@ -47,7 +47,7 @@ class ValidationSummary extends Object
     }
 
     /**
-     * @param String $sheetName
+     * @param string $sheetName
      *
      * @return SheetIssuesContainer|mixed|null
      */
@@ -64,13 +64,13 @@ class ValidationSummary extends Object
     }
 
     /**
-     * @param String $sheetName
+     * @param string $sheetName
      *
      * @return mixed|null
      */
     private function findSheetIssueContainer(string $sheetName)
     {
-        $issueContainer = $this->sheetIssues->filter(function($container) use ($sheetName) {
+        $issueContainer = $this->sheetIssues->filter(function ($container) use ($sheetName) {
             return $container->name === $sheetName;
         })->first();
 
@@ -90,13 +90,13 @@ class ValidationSummary extends Object
     }
 
     /**
-     * @param String $sheetName
+     * @param string $sheetName
      *
      * @return mixed|null
      */
     private function findStructureIssueContainer(string $sheetName)
     {
-        $issueContainer = $this->structureIssues->filter(function($container) use ($sheetName) {
+        $issueContainer = $this->structureIssues->filter(function ($container) use ($sheetName) {
             return $container->name === $sheetName;
         })->first();
 
