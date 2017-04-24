@@ -12,7 +12,7 @@ use LaravelEnso\DataImport\app\Classes\AbstractImporter;
 
 class ExampleImporter extends AbstractImporter
 {
-    protected function run()
+    public function run()
     {
         //import logic
         //use incSuccess() method for registering successful operations
