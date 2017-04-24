@@ -1,4 +1,5 @@
 # DataImport
+[![StyleCI](https://styleci.io/repos/89221336/shield?branch=master)](https://styleci.io/repos/89221336)
 
 Import library for xlsx
 
