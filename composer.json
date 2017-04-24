@@ -1,0 +1,26 @@
+{
+    "name": "laravel-enso/data-import",
+    "description": "importing package",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mihai Ocneanu",
+            "email": "mihai.ocneanu@gmail.com"
+        },
+        {
+            "name": "Mishu",
+            "email": "mishu@xtelecom.ro"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "laravel/framework": "5.4.*",
+        "laravel-enso/core": "^1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelEnso\\DataImport\\": "src/"
+        }
+    }
+}
