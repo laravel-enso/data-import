@@ -2,7 +2,6 @@
 
 namespace LaravelEnso\DataImport\app\DataTable;
 
-
 use LaravelEnso\DataImport\app\Enums\DataImportTypesEnum;
 use LaravelEnso\DataTable\app\Classes\Abstracts\TableStructure;
 
@@ -43,7 +42,7 @@ class DataImportTableStructure extends TableStructure
                     'label' => __('User'),
                     'data'  => 'created_by',
                     'name'  => 'creator.last_name',
-                ]
+                ],
             ],
         ];
     }

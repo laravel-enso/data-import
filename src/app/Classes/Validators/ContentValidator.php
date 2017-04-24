@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 22.02.2017
- * Time: 16:05
+ * Time: 16:05.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
@@ -11,7 +11,6 @@ namespace LaravelEnso\DataImport\app\Classes\Validators;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
-use LaravelEnso\DataImport\app\Classes\Validators\AbstractValidator;
 use LaravelEnso\DataImport\app\Enums\ComplexValidationTypesEnum;
 use LaravelEnso\Helpers\Classes\Object;
 use Maatwebsite\Excel\Collections\SheetCollection;
@@ -67,8 +66,9 @@ class ContentValidator extends AbstractValidator
      * @param $complexValidation
      * @param $cellValue
      *
-     * @return bool - true if valid
      * @throws \Exception
+     *
+     * @return bool - true if valid
      */
     private function doComplexValidations(string $sheetName, Object $rules, Collection $row, int $rowNumber)
     {
@@ -96,20 +96,20 @@ class ContentValidator extends AbstractValidator
                 $this->checkIfIsUniqueInColumn($sheetName, $type, $rule, $column, $value, $rowNumber);
                 break;
             default:
-                $errorMsg = "Unsupported complex validation: " . $rule->type . " for sheet: " . $sheetName . ", column: " . $column;
+                $errorMsg = 'Unsupported complex validation: '.$rule->type.' for sheet: '.$sheetName.', column: '.$column;
                 throw new \EnsoException($errorMsg);
         }
     }
 
     private function checkIfExistsInSheet(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
     {
-        $details = ': ' . $rule->sheet . '(' . $rule->column . ')';
-        $sheet   = $this->getSheet($sheetName);
-        $exists  = $sheet->pluck($rule->column)->contains($value);
+        $details = ': '.$rule->sheet.'('.$rule->column.')';
+        $sheet = $this->getSheet($sheetName);
+        $exists = $sheet->pluck($rule->column)->contains($value);
 
         if (!$exists) {
-            $this->summary->addContentIssue($sheetName, $type . $details, $rowNumber, $column, $value);
-        };
+            $this->summary->addContentIssue($sheetName, $type.$details, $rowNumber, $column, $value);
+        }
     }
 
     private function checkIfIsUniqueInColumn(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
@@ -122,7 +122,7 @@ class ContentValidator extends AbstractValidator
 
         if ($found->count() > 1) {
             $this->summary->addContentIssue($sheetName, $type, $rowNumber, $column, $value);
-        };
+        }
     }
 
     private function getSheet(string $sheetName)

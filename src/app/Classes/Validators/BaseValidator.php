@@ -3,15 +3,12 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 22.02.2017
- * Time: 16:05
+ * Time: 16:05.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
-use LaravelEnso\DataImport\app\Classes\Validators\AbstractValidator;
-use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
-use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 class BaseValidator extends AbstractValidator

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 14.03.2017
- * Time: 15:53
+ * Time: 15:53.
  */
 
 namespace LaravelEnso\DataImport\app\Classes;
@@ -55,10 +55,9 @@ class ImportConfigurationReader
     private function getConfigurationForType(int $type)
     {
         $importTypeConfigs = $this->readConfigurationFile();
-        $configuration     = null;
+        $configuration = null;
 
         foreach ($importTypeConfigs as $config) {
-
             if ($config['type'] === $type) {
                 $configuration = $config;
 
@@ -75,6 +74,6 @@ class ImportConfigurationReader
 
     private function readConfigurationFile()
     {
-        return (config('importing')['importTypeConfigs']);
+        return config('importing')['importTypeConfigs'];
     }
 }

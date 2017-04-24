@@ -17,7 +17,7 @@ class DataImportServiceProvider extends ServiceProvider
             __DIR__.'/config/importing.php' => config_path('importing.php'),
         ], 'data-import-config');
 
-         $this->publishes([
+        $this->publishes([
             __DIR__.'/resources/classes' => app_path(),
         ], 'data-import-classes');
 

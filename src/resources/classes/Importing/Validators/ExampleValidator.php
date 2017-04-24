@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 03.04.2017
- * Time: 15:20
+ * Time: 15:20.
  */
 
 namespace App\Importing\Validators;
@@ -12,7 +12,7 @@ use LaravelEnso\DataImport\app\Classes\Validators\AbstractValidator;
 
 class ExampleValidator extends AbstractValidator
 {
-	protected $template;
+    protected $template;
     protected $xlsx;
     protected $summary;
 

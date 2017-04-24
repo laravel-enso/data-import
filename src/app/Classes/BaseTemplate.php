@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 22.02.2017
- * Time: 13:51
+ * Time: 13:51.
  */
 
 namespace LaravelEnso\DataImport\app\Classes;
@@ -13,7 +13,7 @@ use LaravelEnso\Helpers\Classes\Object;
 abstract class BaseTemplate extends Object
 {
     public $jsonTemplate = '{}';
-    public $template     = null;
+    public $template = null;
 
     public function __construct()
     {
@@ -34,7 +34,7 @@ abstract class BaseTemplate extends Object
     public function getColumnsFromSheet($sheetName)
     {
         $columnNames = collect();
-        $sheet       = $this->getSheet($sheetName);
+        $sheet = $this->getSheet($sheetName);
 
         foreach ($sheet->columns as $column) {
             $columnNames->push($column->name);

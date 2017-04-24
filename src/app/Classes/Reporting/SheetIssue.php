@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 21.02.2017
- * Time: 17:29
+ * Time: 17:29.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
@@ -17,7 +17,7 @@ class SheetIssue
     public function __construct(int $rowNumber, string $column, $value)
     {
         $this->rowNumber = $rowNumber;
-        $this->column    = $column;
-        $this->value     = $value;
+        $this->column = $column;
+        $this->value = $value;
     }
 }

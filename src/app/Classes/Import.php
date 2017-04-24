@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 24.02.2017
- * Time: 16:08
+ * Time: 16:08.
  */
 
 namespace LaravelEnso\DataImport\app\Classes;
@@ -23,10 +23,10 @@ class Import
     {
         ini_set('max_execution_time', 180);
 
-        $this->xslx      = $this->getXlsx($file);
-        $config          = new ImportConfigurationReader($type);
-        $this->summary   = new ValidationSummary($file->getClientOriginalName());
-        $this->template  = new $config->templateClass();
+        $this->xslx = $this->getXlsx($file);
+        $config = new ImportConfigurationReader($type);
+        $this->summary = new ValidationSummary($file->getClientOriginalName());
+        $this->template = new $config->templateClass();
         $this->validator = new BaseValidator($this->template, $this->xlsx, $this->summary, $config->customValidatorClass, $config->sheetEntriesLimit);
         $this->importer = new $config->importerClass($this->xlsx, $this->summary);
     }
@@ -52,7 +52,7 @@ class Import
     private function validateFile($file)
     {
         if (!$file->isValid()) {
-            throw new \EnsoException("The file is not valid");
+            throw new \EnsoException('The file is not valid');
         }
     }
 

@@ -29,8 +29,8 @@ class ImportTemplateController extends Controller
 
         \DB::transaction(function () use (&$template) {
             $this->fileManager->startSingleFileUpload(request('file_0'));
-            $template          = new ImportTemplate($this->fileManager->uploadedFiles->first());
-            $template->type    = request('type');
+            $template = new ImportTemplate($this->fileManager->uploadedFiles->first());
+            $template->type = request('type');
             $template->save();
             $this->fileManager->commitUpload();
         });
@@ -41,26 +41,24 @@ class ImportTemplateController extends Controller
     private function checkIfFileIsValid()
     {
         if (!request('file_0')->isValid()) {
-            throw new \EnsoException("The file is not valid", 'error', 400);
+            throw new \EnsoException('The file is not valid', 'error', 400);
         }
     }
 
     /** Downloads a file corresponding to a successful import
-     *
      * @param $dataImport
      *
      * @return mixed
      */
     public function download(ImportTemplate $template)
     {
-        $fileWrapper               = $this->fileManager->getFile($template->saved_name);
+        $fileWrapper = $this->fileManager->getFile($template->saved_name);
         $fileWrapper->originalName = $template->original_name;
 
         return $fileWrapper->getDownloadResponse();
     }
 
     /** Delete an import line as well as the corresponding file
-     *
      * @param DataImport $dataImport
      *
      * @return \LaravelEnso\FileManager\Classes\FileManagerStatus

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mihai
  * Date: 22.02.2017
- * Time: 12:37
+ * Time: 12:37.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
@@ -15,7 +15,7 @@ class SheetIssuesContainer
 
     public function __construct(string $name)
     {
-        $this->name            = $name;
+        $this->name = $name;
         $this->categories = collect();
     }
 
@@ -50,7 +50,7 @@ class SheetIssuesContainer
      */
     private function findCategory(string $category)
     {
-        $foundCategory = $this->categories->filter(function($existingCategory) use ($category) {
+        $foundCategory = $this->categories->filter(function ($existingCategory) use ($category) {
             return $existingCategory->name === $category;
         })->first();
 
