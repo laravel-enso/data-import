@@ -114,6 +114,10 @@ class ContentValidator extends AbstractValidator
 
     private function checkIfIsUniqueInColumn(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
     {
+        if (!$value) {
+            return;
+        }
+
         $sheet = $this->getSheet($sheetName);
 
         $found = $sheet->pluck($column)->filter(function ($columnValue) use ($value) {
