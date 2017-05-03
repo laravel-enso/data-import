@@ -34,7 +34,10 @@ class ContentValidator extends AbstractValidator
             $laravelRules = $this->template->getLaravelValidationRules($sheet->getTitle());
             $complexRules = $this->template->getComplexValidationRules($sheet->getTitle());
 
+            $this->doDuplicateLinesCheck($sheet);
+
             foreach ($sheet as $index => $row) {
+
                 $this->doLaravelValidations($sheet->getTitle(), $laravelRules, $row, $index + 1);
                 $this->doComplexValidations($sheet->getTitle(), $complexRules, $row, $index + 1);
             }
@@ -95,6 +98,8 @@ class ContentValidator extends AbstractValidator
             case 'unique_in_column':
                 $this->checkIfIsUniqueInColumn($sheetName, $type, $rule, $column, $value, $rowNumber);
                 break;
+            case 'duplicate_rows':
+                throw new \EnsoException('Row duplication check is applied automatically and should not be in the template');
             default:
                 $errorMsg = 'Unsupported complex validation: '.$rule->type.' for sheet: '.$sheetName.', column: '.$column;
                 throw new \EnsoException($errorMsg);
@@ -134,5 +139,23 @@ class ContentValidator extends AbstractValidator
         return $this->xlsx->filter(function ($sheet) use ($sheetName) {
             return $sheet->getTitle() === $sheetName;
         })->first();
+    }
+
+    /** Checks for duplicate lines in a sheet  and adds a content issue for each duplicate line
+     *
+     * @param $sheet
+     */
+    private function doDuplicateLinesCheck($sheet) {
+
+        $uniqueRows = $sheet->unique();
+        $duplicateRows = $sheet->diffKeys($uniqueRows);
+
+        $sheetTitle = $sheet->getTitle();
+        $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_rows');
+
+        foreach ($duplicateRows as $rowNumber =>$row) {
+
+            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber, 'N/A', 'N/A');
+        }
     }
 }
