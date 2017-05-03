@@ -155,7 +155,7 @@ class ContentValidator extends AbstractValidator
 
         foreach ($duplicateRows as $rowNumber =>$row) {
 
-            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber+1, 'N/A', 'N/A');
+            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber+1, __('All'), 'N/A');
         }
     }
 }
