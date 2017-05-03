@@ -19,3 +19,5 @@ Double check the permissions.
 
 Either publish or manually copy the maatwebsite/excel package configuration
 and set `'force_sheets_collection' => true,` where the default was false.
+
+By default, a maatwebsite/excel configuration file is published with this package configuration publish tag but if he configuration file already exists, it is not overwritten.  
