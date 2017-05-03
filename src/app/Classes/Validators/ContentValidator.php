@@ -37,7 +37,6 @@ class ContentValidator extends AbstractValidator
             $this->doDuplicateLinesCheck($sheet);
 
             foreach ($sheet as $index => $row) {
-
                 $this->doLaravelValidations($sheet->getTitle(), $laravelRules, $row, $index + 1);
                 $this->doComplexValidations($sheet->getTitle(), $complexRules, $row, $index + 1);
             }
@@ -142,11 +141,10 @@ class ContentValidator extends AbstractValidator
     }
 
     /** Checks for duplicate lines in a sheet  and adds a content issue for each duplicate line
-     *
      * @param $sheet
      */
-    private function doDuplicateLinesCheck($sheet) {
-
+    private function doDuplicateLinesCheck($sheet)
+    {
         $uniqueRows = $sheet->unique();
         $duplicateRows = $sheet->diffKeys($uniqueRows);
 
@@ -154,8 +152,7 @@ class ContentValidator extends AbstractValidator
         $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_rows');
 
         foreach ($duplicateRows as $rowNumber =>$row) {
-
-            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber+1, __('All'), 'N/A');
+            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
         }
     }
 }
