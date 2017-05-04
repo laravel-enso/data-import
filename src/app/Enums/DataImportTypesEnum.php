@@ -23,7 +23,7 @@ class DataImportTypesEnum extends AbstractEnum
         $list = [];
 
         foreach ($importTypeConfigs as $value) {
-            $list[$value['type']] = $value['uiLabel'];
+            $list[$value['type']] = __($value['uiLabel']);
         }
 
         return $list;
