@@ -34,11 +34,16 @@ class DataImportTableStructure extends TableStructure
                     'name'  => 'original_name',
                 ],
                 2 => [
+                    'label' => __('Comment'),
+                    'data'  => 'comment',
+                    'name'  => 'comment',
+                ],
+                3 => [
                     'label' => __('Date'),
                     'data'  => 'created_at',
                     'name'  => 'data_imports.created_at',
                 ],
-                3 => [
+                4 => [
                     'label' => __('User'),
                     'data'  => 'created_by',
                     'name'  => 'creator.last_name',

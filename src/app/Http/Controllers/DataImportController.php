@@ -29,6 +29,7 @@ class DataImportController extends Controller
                 data_imports.id as DT_RowId,
                 data_imports.type,
                 data_imports.original_name,
+                data_imports.comment,
                 data_imports.created_at,
                 concat(users.first_name, " ", users.last_name) as created_by
             '))->join('users', 'data_imports.created_by', '=', 'users.id');
