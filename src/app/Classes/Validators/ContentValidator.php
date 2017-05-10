@@ -55,7 +55,7 @@ class ContentValidator extends AbstractValidator
         $sheetTitle = $sheet->getTitle();
         $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_lines');
 
-        foreach ($duplicateLines as $rowNumber => $row) {
+        foreach (array_keys($duplicateLines) as $rowNumber) {
             $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
         }
     }
@@ -82,10 +82,10 @@ class ContentValidator extends AbstractValidator
                 continue;
             }
 
-            $complexValidationTypes = new ComplexValidationTypesEnum();
+            $validationTypes = new ComplexValidationTypesEnum();
 
             foreach ($rules->$column as $rule) {
-                $type = $complexValidationTypes->getValueByKey($rule->type);
+                $type = $validationTypes->getValueByKey($rule->type);
                 $this->dispatchComplexValidation($sheetName, $type, $rule, $column, $value, $rowNumber);
             }
         }
@@ -98,7 +98,7 @@ class ContentValidator extends AbstractValidator
                 $this->checkIfExistsInSheet($sheetName, $type, $rule, $column, $value, $rowNumber);
                 break;
             case 'unique_in_column':
-                $this->checkIfIsUniqueInColumn($sheetName, $type, $rule, $column, $value, $rowNumber);
+                $this->checkIfIsUniqueInColumn($sheetName, $type, $column, $value, $rowNumber);
                 break;
             case 'duplicate_rows':
                 throw new \EnsoException('Row duplication check is applied automatically and should not be in the template');
@@ -119,7 +119,7 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function checkIfIsUniqueInColumn(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
+    private function checkIfIsUniqueInColumn(string $sheetName, string $type, string $column, $value, int $rowNumber)
     {
         if (!$value) {
             return;
