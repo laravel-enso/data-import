@@ -20,12 +20,12 @@ class DataImportTypesEnum extends AbstractEnum
     private function getDataFromConfig()
     {
         $importTypeConfigs = config('importing')['importTypeConfigs'];
-        $list = [];
+        $data = [];
 
         foreach ($importTypeConfigs as $value) {
-            $list[$value['type']] = __($value['uiLabel']);
+            $data[$value['type']] = __($value['uiLabel']);
         }
 
-        return $list;
+        return $data;
     }
 }

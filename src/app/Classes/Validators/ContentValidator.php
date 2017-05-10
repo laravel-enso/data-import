@@ -47,6 +47,19 @@ class ContentValidator extends AbstractValidator
         }
     }
 
+    private function doDuplicateLinesCheck($sheet)
+    {
+        $uniqueLines = $sheet->unique();
+        $duplicateLines = $sheet->diffKeys($uniqueLines);
+
+        $sheetTitle = $sheet->getTitle();
+        $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_lines');
+
+        foreach ($duplicateLines as $rowNumber => $row) {
+            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
+        }
+    }
+
     private function doLaravelValidations(string $sheetName, array $rules, Collection $row, int $rowNumber)
     {
         $result = Validator::make($row->toArray(), $rules);
@@ -62,16 +75,6 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    /** Complex validation dispatcher. New complex validations should be added here, with corresponding
-     * specific implementation methods below.
-     *
-     * @param $complexValidation
-     * @param $cellValue
-     *
-     * @throws \Exception
-     *
-     * @return bool - true if valid
-     */
     private function doComplexValidations(string $sheetName, Object $rules, Collection $row, int $rowNumber)
     {
         foreach ($row as $column => $value) {
@@ -138,21 +141,5 @@ class ContentValidator extends AbstractValidator
         return $this->xlsx->filter(function ($sheet) use ($sheetName) {
             return $sheet->getTitle() === $sheetName;
         })->first();
-    }
-
-    /** Checks for duplicate lines in a sheet  and adds a content issue for each duplicate line
-     * @param $sheet
-     */
-    private function doDuplicateLinesCheck($sheet)
-    {
-        $uniqueRows = $sheet->unique();
-        $duplicateRows = $sheet->diffKeys($uniqueRows);
-
-        $sheetTitle = $sheet->getTitle();
-        $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_rows');
-
-        foreach ($duplicateRows as $rowNumber =>$row) {
-            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
-        }
     }
 }
