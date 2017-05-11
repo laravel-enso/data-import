@@ -55,7 +55,7 @@ class ContentValidator extends AbstractValidator
         $sheetTitle = $sheet->getTitle();
         $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_lines');
 
-        foreach (array_keys($duplicateLines) as $rowNumber) {
+        foreach ($duplicateLines->keys() as $rowNumber) {
             $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
         }
     }
