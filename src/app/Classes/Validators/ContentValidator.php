@@ -68,7 +68,7 @@ class ContentValidator extends AbstractValidator
             foreach (array_keys($rules) as $column) {
                 if ($result->errors()->has($column)) {
                     foreach ($result->errors()->get($column) as $category) {
-                        $this->summary->addContentIssue($sheetName, $category, $rowNumber, $column, $row->$column);
+                        $this->summary->addContentIssue($sheetName, $category, $rowNumber + 1, $column, $row->$column);
                     }
                 }
             }
@@ -86,7 +86,7 @@ class ContentValidator extends AbstractValidator
 
             foreach ($rules->$column as $rule) {
                 $type = $validationTypes->getValueByKey($rule->type);
-                $this->dispatchComplexValidation($sheetName, $type, $rule, $column, $value, $rowNumber);
+                $this->dispatchComplexValidation($sheetName, $type, $rule, $column, $value, $rowNumber + 1);
             }
         }
     }
