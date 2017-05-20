@@ -46,7 +46,7 @@ class DataImportTableStructure extends TableStructure
                 4 => [
                     'label' => __('User'),
                     'data'  => 'created_by',
-                    'name'  => 'creator.last_name',
+                    'name'  => 'users.last_name',
                 ],
             ],
         ];
