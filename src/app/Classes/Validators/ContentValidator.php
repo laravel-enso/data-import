@@ -51,12 +51,11 @@ class ContentValidator extends AbstractValidator
     {
         $uniqueLines = $sheet->unique();
         $duplicateLines = $sheet->diffKeys($uniqueLines);
-
         $sheetTitle = $sheet->getTitle();
         $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_lines');
 
         foreach ($duplicateLines->keys() as $rowNumber) {
-            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 1, __('All'), 'N/A');
+            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 2, __('All'), 'N/A');
         }
     }
 
