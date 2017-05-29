@@ -207,7 +207,7 @@
                     summary: null,
                     template: {},
                     showModal: false,
-                    importTypeList: {!! $importTypes  !!}
+                    importTypeList: JSON.parse('{!! $importTypes  !!}')
                 }
             },
             computed: {
