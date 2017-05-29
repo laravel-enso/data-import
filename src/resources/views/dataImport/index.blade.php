@@ -43,7 +43,7 @@
                                     <div class="col-lg-3 col-md-4">
                                         <div class="form-group">
                                             <label>{{ __('Import type') }}</label>
-                                            <vue-select :options="{{ $importTypes }}"
+                                            <vue-select :options="importTypeList"
                                                         v-model="importType"
                                                         @input="getTemplate"
                                                         ref="importTypeSelect">
@@ -206,7 +206,8 @@
                     fileSizeLimit: 8388608,
                     summary: null,
                     template: {},
-                    showModal: false
+                    showModal: false,
+                    importTypeList: {!! $importTypes  !!}
                 }
             },
             computed: {
