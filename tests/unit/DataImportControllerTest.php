@@ -29,11 +29,11 @@ class DataImportControllerTest extends TestCase
         // authenticate as first user
         $this->be($this->user);
         $dataImport = DataImport::create([
-            'type' => 1,
+            'type'          => 1,
             'original_name' => 'Test Original Name.pdf',
-            'saved_name' => 'testSavedName.pdf',
-            'comment' => 'test comment',
-            'summary' => '{}'
+            'saved_name'    => 'testSavedName.pdf',
+            'comment'       => 'test comment',
+            'summary'       => '{}',
         ]);
 
         // Act
@@ -47,19 +47,18 @@ class DataImportControllerTest extends TestCase
     }
 
     /** @test */
-    public function can_get_import_summary() {
-
+    public function can_get_import_summary()
+    {
         $this->be($this->user);
         $testSummary = '{"fileName": "test.xlsx", "hasErrors": false, "sheetIssues": [], "structureIssues": [], "successfulEntries": 1}';
 
         $dataImport = DataImport::create([
-            'type' => 1,
+            'type'          => 1,
             'original_name' => 'Test Original Name.pdf',
-            'saved_name' => 'testSavedName.pdf',
-            'comment' => 'test comment',
-            'summary' => $testSummary
+            'saved_name'    => 'testSavedName.pdf',
+            'comment'       => 'test comment',
+            'summary'       => $testSummary,
         ]);
-
 
         $response = $this->diController->getSummary($dataImport);
         $this->assertContains('summary', array_keys($response));

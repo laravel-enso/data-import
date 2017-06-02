@@ -26,16 +26,15 @@ class ImportTemplateControllerTest extends TestCase
     /** @test */
     public function can_get_existing_template()
     {
-
         $type = 1;
 
         // Arrange
         // authenticate as first user
         $this->be($this->user);
         $importTemplate = ImportTemplate::create([
-            'type' => $type,
+            'type'          => $type,
             'original_name' => 'Test Original Name.xls',
-            'saved_name' => 'testSavedName.xls',
+            'saved_name'    => 'testSavedName.xls',
         ]);
 
         // Act
@@ -62,18 +61,17 @@ class ImportTemplateControllerTest extends TestCase
     }
 
     /** @test */
-    public function get_exception_for_nonexistent_file_download() {
-
+    public function get_exception_for_nonexistent_file_download()
+    {
         $this->be($this->user);
         $importTemplate = ImportTemplate::create([
-            'type' => 1,
+            'type'          => 1,
             'original_name' => 'Test Original Name.xls',
-            'saved_name' => 'testSavedName.xls',
+            'saved_name'    => 'testSavedName.xls',
         ]);
 
         // Act
         try {
-
             $result = $this->itController->download($importTemplate);
         } catch (\Exception $e) {
             // Assert

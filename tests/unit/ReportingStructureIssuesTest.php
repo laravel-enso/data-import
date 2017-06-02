@@ -12,9 +12,8 @@ class ReportingStructureIssuesTest extends TestCase
 
     private $user;
     private $fileName;
-    /** @var ValidationSummary*/
+    /** @var ValidationSummary */
     private $validationSummary;
-
 
     protected function setUp()
     {
@@ -34,12 +33,10 @@ class ReportingStructureIssuesTest extends TestCase
         $this->assertEquals(0, $this->validationSummary->structureIssues->count());
         $this->assertEquals(0, $this->validationSummary->sheetIssues->count());
         $this->assertEquals(0, $this->validationSummary->successfulEntries);
-
     }
 
-    public function test_success_counting() {
-
-
+    public function test_success_counting()
+    {
         $this->validationSummary->incSuccess();
         $this->assertEquals(1, $this->validationSummary->successfulEntries);
     }
@@ -54,7 +51,7 @@ class ReportingStructureIssuesTest extends TestCase
         $sheetName = 'test sheet name';
 
         // Act
-        $this->validationSummary->addStructureIssue($category,$value, $sheetName);
+        $this->validationSummary->addStructureIssue($category, $value, $sheetName);
 
         // Assert
         // the issue should be in the proper structure
@@ -66,25 +63,25 @@ class ReportingStructureIssuesTest extends TestCase
         $this->checkIssue($value);
     }
 
-    private function checkStructureIssuesContainer($sheetName) {
-
+    private function checkStructureIssuesContainer($sheetName)
+    {
         $structureIssuesContainer = $this->validationSummary->structureIssues->first();
 
         $this->assertEquals($sheetName, $structureIssuesContainer->name);
         $this->assertEquals(1, $structureIssuesContainer->categories->count());
     }
 
-    private function checkCategory($category) {
-
-        $validationCategory =  $this->validationSummary->structureIssues->first()
+    private function checkCategory($category)
+    {
+        $validationCategory = $this->validationSummary->structureIssues->first()
             ->categories->first();
         $this->assertEquals($category, $validationCategory->name);
         $this->assertEquals(1, $validationCategory->issues->count());
     }
 
-    private function checkIssue($value) {
-
-        $validationIssue =  $this->validationSummary->structureIssues->first()
+    private function checkIssue($value)
+    {
+        $validationIssue = $this->validationSummary->structureIssues->first()
             ->categories->first()
             ->issues->first();
         $this->assertEquals($value, $validationIssue->value);

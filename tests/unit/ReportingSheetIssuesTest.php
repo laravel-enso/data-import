@@ -12,9 +12,8 @@ class ReportingSheetIssuesTest extends TestCase
 
     private $user;
     private $fileName;
-    /** @var ValidationSummary*/
+    /** @var ValidationSummary */
     private $validationSummary;
-
 
     protected function setUp()
     {
@@ -48,25 +47,25 @@ class ReportingSheetIssuesTest extends TestCase
         $this->checkIssue($rowNumber, $column, $value);
     }
 
-    private function checkSheetIssuesContainer($sheetName) {
-
+    private function checkSheetIssuesContainer($sheetName)
+    {
         $sheetIssuesContainer = $this->validationSummary->sheetIssues->first();
 
         $this->assertEquals($sheetName, $sheetIssuesContainer->name);
         $this->assertEquals(1, $sheetIssuesContainer->categories->count());
     }
 
-    private function checkCategory($category) {
-
-        $validationCategory =  $this->validationSummary->sheetIssues->first()
+    private function checkCategory($category)
+    {
+        $validationCategory = $this->validationSummary->sheetIssues->first()
             ->categories->first();
         $this->assertEquals($category, $validationCategory->name);
         $this->assertEquals(1, $validationCategory->issues->count());
     }
 
-    private function checkIssue($rowNumber, $column, $value) {
-
-        $validationIssue =  $this->validationSummary->sheetIssues->first()
+    private function checkIssue($rowNumber, $column, $value)
+    {
+        $validationIssue = $this->validationSummary->sheetIssues->first()
             ->categories->first()
             ->issues->first();
         $this->assertEquals($rowNumber, $validationIssue->rowNumber);
