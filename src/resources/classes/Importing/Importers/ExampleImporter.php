@@ -18,7 +18,6 @@ class ExampleImporter extends AbstractImporter
         //use incSuccess() method for registering successful operations
 
         $this->xlsx->each(function ($sheet, $index) {
-
             foreach ($sheet as $index => $row) {
 
                 //persist, then

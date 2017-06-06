@@ -2,9 +2,7 @@
 
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\App\Http\Controllers\DataImportController;
-use LaravelEnso\DataImport\app\Models\DataImport;
 use Symfony\Component\HttpFoundation\File\File;
 use Tests\TestCase;
 
@@ -24,15 +22,13 @@ class DataImportControllerRunTest extends TestCase
 
         $this->user = User::first();
         $this->diController = new DataImportController();
-        $this->testFilePath = __DIR__ . '/../testFiles/example_import_file.xlsx';
-        $this->basePath = __DIR__ . '/../testFiles/';
-
+        $this->testFilePath = __DIR__.'/../testFiles/example_import_file.xlsx';
+        $this->basePath = __DIR__.'/../testFiles/';
     }
 
-
     /** @test */
-    public function can_check_file_is_valid() {
-
+    public function can_check_file_is_valid()
+    {
         $temporaryFilePath = $this->createTempFile($this->testFilePath);
 
         //setup
@@ -44,7 +40,7 @@ class DataImportControllerRunTest extends TestCase
 
         //run
         $this->be($this->user);
-        $response = $this->call('POST', 'import/run', ['type' => 0, 'enctype'=>"multipart/form-data", 'error'=>0], [], ['file_0' => $file]);
+        $response = $this->call('POST', 'import/run', ['type' => 0, 'enctype'=>'multipart/form-data', 'error'=>0], [], ['file_0' => $file]);
 
         //evaluate
         $respObject = json_decode($response->getContent());
@@ -52,9 +48,9 @@ class DataImportControllerRunTest extends TestCase
         $this->assertEquals(5, $respObject->summary->successfulEntries);
     }
 
-    public function createTempFile($path) {
-
-        $tempFilePath = $this->basePath . 'temp.xlsx';
+    public function createTempFile($path)
+    {
+        $tempFilePath = $this->basePath.'temp.xlsx';
         copy($path, $tempFilePath);
 
         return $tempFilePath;
