@@ -52,7 +52,7 @@ class DataImportControllerRunTest extends TestCase
         $this->assertEquals(5, $respObject->summary->successfulEntries);
     }
 
-    public function createTempFile($path) {
+    private function createTempFile($path) {
 
         $tempFilePath = $this->basePath . 'temp.xlsx';
         copy($path, $tempFilePath);
