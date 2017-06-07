@@ -99,20 +99,21 @@ class DataImportControllerTest extends TestCase
         return $response;
     }
 
-    private function disableExceptionHandling() {
-
-        $this->app->instance(ExceptionHandler::class, new class extends \App\Exceptions\Handler {
-
-            public function __construct() {  }
-
-            public function report(Exception $exception) { }
-
-            public function render($request, Exception $e) {
-                throw $e;
+    private function disableExceptionHandling()
+    {
+        $this->app->instance(ExceptionHandler::class, new class() extends \App\Exceptions\Handler {
+            public function __construct()
+            {
             }
 
+            public function report(Exception $exception)
+            {
+            }
+
+            public function render($request, Exception $e)
+            {
+                throw $e;
+            }
         });
-        
     }
 }
-
