@@ -22,8 +22,8 @@ class DataImportControllerTest extends TestCase
 
         $this->user = User::first();
         $this->diController = new DataImportController();
-        $this->testFilePath = __DIR__ . '/../testFiles/example_import_file.xlsx';
-        $this->basePath = __DIR__ . '/../testFiles/';
+        $this->testFilePath = __DIR__.'/../testFiles/example_import_file.xlsx';
+        $this->basePath = __DIR__.'/../testFiles/';
     }
 
     /** @test */
@@ -46,8 +46,8 @@ class DataImportControllerTest extends TestCase
     }
 
     /** @test */
-    public function can_import() {
-
+    public function can_import()
+    {
         $response = $this->createImport();
 
         //evaluate
@@ -57,8 +57,8 @@ class DataImportControllerTest extends TestCase
     }
 
     /** @test */
-    public function can_destroy_import() {
-
+    public function can_destroy_import()
+    {
         $this->createImport();
 
         \Log::debug(DataImport::all());
@@ -71,17 +71,17 @@ class DataImportControllerTest extends TestCase
         $this->assertNull(DataImport::find($dataImport->id));
     }
 
-    private function createTempFile($path) {
-
-        $randomPrefix = mt_rand(100,1000);
-        $tempFilePath = $this->basePath . $randomPrefix . 'temp.xlsx';
+    private function createTempFile($path)
+    {
+        $randomPrefix = mt_rand(100, 1000);
+        $tempFilePath = $this->basePath.$randomPrefix.'temp.xlsx';
         copy($path, $tempFilePath);
 
         return $tempFilePath;
     }
 
-    private function createImport() {
-
+    private function createImport()
+    {
         $temporaryFilePath = $this->createTempFile($this->testFilePath);
 
         //setup
@@ -93,7 +93,7 @@ class DataImportControllerTest extends TestCase
 
         //run
         $this->be($this->user);
-        $response = $this->call('POST', 'import/run', ['type' => 0, 'enctype'=>"multipart/form-data", 'error'=>0], [], ['file_0' => $file]);
+        $response = $this->call('POST', 'import/run', ['type' => 0, 'enctype'=>'multipart/form-data', 'error'=>0], [], ['file_0' => $file]);
 
         return $response;
     }
