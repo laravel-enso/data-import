@@ -7,7 +7,6 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\DataImport\App\Http\Controllers\ImportTemplateController;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
-use Tests\TestCase;
 
 class ImportTemplateControllerTest extends TestCase
 {

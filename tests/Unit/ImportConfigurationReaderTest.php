@@ -12,7 +12,6 @@ namespace Tests;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\Core\app\Exceptions\EnsoException;
 use LaravelEnso\DataImport\app\Classes\ImportConfigurationReader;
-use Tests\TestCase;
 
 class ImportConfigurationReaderTest extends TestCase
 {
