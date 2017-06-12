@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\DataImport\app\Classes\Reporting\StructureIssuesContainer;

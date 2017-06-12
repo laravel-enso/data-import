@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use App\User;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
