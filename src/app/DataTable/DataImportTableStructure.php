@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\DataTable;
 
 use LaravelEnso\DataImport\app\Enums\DataImportTypesEnum;
-use LaravelEnso\DataTable\app\Classes\Abstracts\TableStructure;
+use LaravelEnso\DataTable\app\Classes\TableStructure;
 
 class DataImportTableStructure extends TableStructure
 {

@@ -12,7 +12,7 @@ class ImportTemplateController extends Controller
 
     public function __construct()
     {
-        $this->fileManager = new FileManager(config('laravel-enso.paths.imports'));
+        $this->fileManager = new FileManager(config('laravel-enso.paths.imports'), config('laravel-enso.paths.temp'));
     }
 
     public function getTemplate($type)

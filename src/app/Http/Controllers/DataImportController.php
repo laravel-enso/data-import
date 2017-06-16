@@ -9,18 +9,18 @@ use LaravelEnso\DataImport\app\Enums\DataImportTypesEnum;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataTable\app\Traits\DataTable;
 use LaravelEnso\FileManager\Classes\FileManager;
-use LaravelEnso\Select\app\Traits\SelectListBuilderTrait;
+use LaravelEnso\Select\app\Traits\SelectListBuilder;
 
 class DataImportController extends Controller
 {
-    use DataTable, SelectListBuilderTrait;
+    use DataTable, SelectListBuilder;
 
     protected $tableStructureClass = DataImportTableStructure::class;
     private $fileManager;
 
     public function __construct()
     {
-        $this->fileManager = new FileManager(config('laravel-enso.paths.imports'));
+        $this->fileManager = new FileManager(config('laravel-enso.paths.imports'), config('laravel-enso.paths.temp'));
     }
 
     public static function getTableQuery()
