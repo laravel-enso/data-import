@@ -84,7 +84,7 @@ class DataImportController extends Controller
     private function checkIfFileIsValid()
     {
         if (!request('file_0')->isValid()) {
-            throw new \EnsoException('The file is not valid', 'error', 400);
+            throw new \EnsoException('The file is not valid', 'error', []);
         }
     }
 

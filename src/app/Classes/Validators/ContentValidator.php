@@ -110,7 +110,7 @@ class ContentValidator extends AbstractValidator
     private function checkIfExistsInSheet(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
     {
         $details = ': '.$rule->sheet.'('.$rule->column.')';
-        $sheet = $this->getSheet($sheetName);
+        $sheet = $this->getSheet($rule->sheet);
         $exists = $sheet->pluck($rule->column)->contains($value);
 
         if (!$exists) {
