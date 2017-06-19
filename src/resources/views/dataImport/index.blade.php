@@ -30,7 +30,7 @@
 @section('content')
 
     <section class="content-header">
-        @include('laravel-enso/core::partials.breadcrumbs')
+        @include('laravel-enso/menumanager::breadcrumbs')
     </section>
     <section class="content" v-cloak>
         <transition-group name="fadeUp" mode="out-in" tag="div">
