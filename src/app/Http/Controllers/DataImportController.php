@@ -23,7 +23,7 @@ class DataImportController extends Controller
         $this->fileManager = new FileManager(config('laravel-enso.paths.imports'), config('laravel-enso.paths.temp'));
     }
 
-    public static function getTableQuery()
+    public function getTableQuery()
     {
         $query = DataImport::select(\DB::raw('
                 data_imports.id as DT_RowId,

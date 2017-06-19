@@ -8,9 +8,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\Helpers\Classes\Object;
+use LaravelEnso\Helpers\Classes\AbstractObject;
 
-abstract class BaseTemplate extends Object
+abstract class BaseTemplate extends AbstractObject
 {
     public $jsonTemplate = '{}';
     public $template = null;

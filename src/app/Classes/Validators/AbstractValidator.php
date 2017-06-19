@@ -9,10 +9,10 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
-use LaravelEnso\Helpers\Classes\Object;
+use LaravelEnso\Helpers\Classes\AbstractObject;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
-abstract class AbstractValidator extends Object
+abstract class AbstractValidator extends AbstractObject
 {
     protected $template;
     protected $xlsx;

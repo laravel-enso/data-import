@@ -9,9 +9,9 @@ class CreateStructureForDataImportTemplates extends StructureMigration
     ];
 
     protected $permissions = [
-        ['name' => 'import.getTemplate', 'description' => 'Get Import Template', 'type' => 0],
-        ['name' => 'import.uploadTemplate', 'description' => 'Upload Import Template', 'type' => 1],
-        ['name' => 'import.deleteTemplate', 'description' => 'Delete Import Template', 'type' => 1],
-        ['name' => 'import.downloadTemplate', 'description' => 'Download Import Template', 'type' => 0],
+        ['name' => 'import.getTemplate', 'description' => 'Get Import Template', 'type' => 0, 'default' => false],
+        ['name' => 'import.uploadTemplate', 'description' => 'Upload Import Template', 'type' => 1, 'default' => false],
+        ['name' => 'import.deleteTemplate', 'description' => 'Delete Import Template', 'type' => 1, 'default' => false],
+        ['name' => 'import.downloadTemplate', 'description' => 'Download Import Template', 'type' => 0, 'default' => false],
     ];
 }

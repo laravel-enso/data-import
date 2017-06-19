@@ -8,9 +8,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-use LaravelEnso\Helpers\Classes\Object;
+use LaravelEnso\Helpers\Classes\AbstractObject;
 
-class ValidationSummary extends Object
+class ValidationSummary extends AbstractObject
 {
     public $hasErrors;
     public $structureIssues;
