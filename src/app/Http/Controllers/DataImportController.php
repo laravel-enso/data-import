@@ -25,7 +25,7 @@ class DataImportController extends Controller
 
     public function getTableQuery()
     {
-        $query = DataImport::select(\DB::raw('
+        return DataImport::select(\DB::raw('
                 data_imports.id as DT_RowId,
                 data_imports.type,
                 data_imports.original_name,
@@ -33,8 +33,6 @@ class DataImportController extends Controller
                 data_imports.created_at,
                 concat(users.first_name, " ", users.last_name) as created_by
             '))->join('users', 'data_imports.created_by', '=', 'users.id');
-
-        return $query;
     }
 
     public function index()
