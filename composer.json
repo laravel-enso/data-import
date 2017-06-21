@@ -1,6 +1,6 @@
 {
-    "name": "laravel-enso/data-import",
-    "description": "importing package",
+    "name": "laravel-enso/dataimport",
+    "description": "Excel Importer",
     "type": "library",
     "license": "MIT",
     "authors": [

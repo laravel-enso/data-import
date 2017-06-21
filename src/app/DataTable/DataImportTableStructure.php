@@ -22,7 +22,6 @@ class DataImportTableStructure extends TableStructure
                 'type' => DataImportTypesEnum::class,
             ],
             'columns'             => [
-
                 0 => [
                     'label' => __('Import Type'),
                     'data'  => 'type',
