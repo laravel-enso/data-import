@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 14.03.2017
- * Time: 15:53.
- */
 
 namespace LaravelEnso\DataImport\app\Classes;
 

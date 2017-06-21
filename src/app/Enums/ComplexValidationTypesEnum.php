@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 27.07.2016
- * Time: 9:19.
- */
 
 namespace LaravelEnso\DataImport\app\Enums;
 

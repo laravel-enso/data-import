@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 22.02.2017
- * Time: 13:51.
- */
 
 namespace LaravelEnso\DataImport\app\Classes;
 
@@ -99,51 +93,4 @@ abstract class BaseTemplate extends AbstractObject
 
         return $template;
     }
-
-    // public function getColumnOfSheetByNames(String $sheetName, String $columnName)
-    // {
-    //     $sheet = $this->getSheet($sheetName);
-
-    //     foreach ($sheet->columns as $column) {
-    //         if ($column->name === $columnName) {
-    //             return $column;
-    //         }
-    //     }
-    // }
-
-    // public function getColumnsOfSheetByName(String $sheetName)
-    // {
-
-    //     $sheet = $this->getSheet($sheetName);
-
-    //     if ($sheet) {
-    //         return $sheet->columns;
-    //     }
-
-    //     return null;
-    // }
-
-    // public function getSheetEntityByName(String $sheetName)
-    // {
-
-    //     $sheet = $this->getSheet($sheetName);
-
-    //     if ($sheet) {
-    //         return str_replace('|', '\\', $sheet->entity);
-    //     }
-
-    //     return null;
-    // }
-
-    // public function getRowsOffsetBySheetName(String $sheetName)
-    // {
-
-    //     $sheet = $this->getSheet($sheetName);
-
-    //     if ($sheet) {
-    //         return $sheet->dataRowsOffset;
-    //     }
-
-    //     return null;
-    // }
 }

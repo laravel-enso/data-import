@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 21.02.2017
- * Time: 17:25.
- */
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
@@ -46,11 +40,6 @@ class ValidationSummary extends AbstractObject
         $this->successfulEntries++;
     }
 
-    /**
-     * @param string $sheetName
-     *
-     * @return SheetIssuesContainer|mixed|null
-     */
     private function findOrCreateSheetIssueContainer(string $sheetName)
     {
         $issuesContainer = $this->findSheetIssueContainer($sheetName);
@@ -63,11 +52,6 @@ class ValidationSummary extends AbstractObject
         return $issuesContainer;
     }
 
-    /**
-     * @param string $sheetName
-     *
-     * @return mixed|null
-     */
     private function findSheetIssueContainer(string $sheetName)
     {
         $issueContainer = $this->sheetIssues->filter(function ($container) use ($sheetName) {
@@ -89,11 +73,6 @@ class ValidationSummary extends AbstractObject
         return $issuesContainer;
     }
 
-    /**
-     * @param string $sheetName
-     *
-     * @return mixed|null
-     */
     private function findStructureIssueContainer(string $sheetName)
     {
         $issueContainer = $this->structureIssues->filter(function ($container) use ($sheetName) {

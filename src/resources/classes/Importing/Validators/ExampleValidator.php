@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 03.04.2017
- * Time: 15:20.
- */
 
 namespace App\Importing\Validators;
 
@@ -19,7 +13,7 @@ class ExampleValidator extends AbstractValidator
     public function run()
     {
         //do custom validation logic
-        //for registering issues use the method below, with the required parameters
+        //for registering issues use :
         //addContentIssue(string $sheetName, string $category, int $rowNumber, string $column, $value)
     }
 }

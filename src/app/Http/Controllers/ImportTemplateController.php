@@ -45,11 +45,6 @@ class ImportTemplateController extends Controller
         }
     }
 
-    /** Downloads a file corresponding to a successful import
-     * @param $dataImport
-     *
-     * @return mixed
-     */
     public function download(ImportTemplate $template)
     {
         $fileWrapper = $this->fileManager->getFile($template->saved_name);
@@ -58,11 +53,6 @@ class ImportTemplateController extends Controller
         return $fileWrapper->getDownloadResponse();
     }
 
-    /** Delete an import line as well as the corresponding file
-     * @param DataImport $dataImport
-     *
-     * @return \LaravelEnso\FileManager\Classes\FileManagerStatus
-     */
     public function destroy(ImportTemplate $template)
     {
         \DB::transaction(function () use ($template) {

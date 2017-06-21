@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 22.02.2017
- * Time: 16:05.
- */
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
@@ -27,12 +21,12 @@ abstract class AbstractValidator extends AbstractObject
 
     abstract public function run();
 
-    public function isValid(): bool
+    public function isValid()
     {
         return !$this->summary->hasErrors;
     }
 
-    public function getSummary(): ValidationSummary
+    public function getSummary()
     {
         return $this->summary;
     }

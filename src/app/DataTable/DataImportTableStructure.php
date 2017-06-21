@@ -13,7 +13,7 @@ class DataImportTableStructure extends TableStructure
             'crtNo'               => __('#'),
             'actionButtons'       => __('Actions'),
             'customActionButtons' => [
-                ['cssSelectorClass' => 'order-details', 'cssClass' => 'btn-info fa fa-info-circle', 'event' => 'showSummary'],
+                ['cssClass' => 'btn-info fa fa-info-circle', 'event' => 'show-summary'],
             ],
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',

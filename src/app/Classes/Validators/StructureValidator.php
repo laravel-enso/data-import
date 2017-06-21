@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mihai
- * Date: 22.02.2017
- * Time: 16:05.
- */
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
@@ -64,9 +58,6 @@ class StructureValidator extends AbstractValidator
         });
     }
 
-    /** Validates columns, checking that we have no missing columns and we have no extra columns either in each sheet
-     * of the import file.
-     */
     private function validateColumns()
     {
         $this->xlsx->each(function ($sheet) {
@@ -84,12 +75,6 @@ class StructureValidator extends AbstractValidator
         return collect(array_keys($row->first()->toArray()));
     }
 
-    /** Checks for missing columns in one sheet. If an issue is found, a structure issue is inserted in the
-     * validation summary.
-     *
-     * @param $header
-     * @param $sheetName
-     */
     private function getMissingColumnsFromSheet(string $sheetName, Collection $header, Collection $templateColumns)
     {
         $missingColumns = $templateColumns->diff($header);
@@ -99,12 +84,6 @@ class StructureValidator extends AbstractValidator
         });
     }
 
-    /** Checks for extra columns in one sheet. If an issue is found, a structure issue is inserted in the
-     * validation summary.
-     *
-     * @param $header
-     * @param $templateColumns
-     */
     private function getExtraColumnsFromSheet(string $sheetName, Collection $header, Collection $templateColumns)
     {
         $extraColumns = $header->diff($templateColumns);

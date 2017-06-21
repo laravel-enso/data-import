@@ -106,7 +106,8 @@
             <div class="row" v-if="!summary" key="table">
                 <div class="col-md-12">
                     <data-table source="/import" ref="dataImports"
-                                id="dataImportsTableId">
+                                id="dataImportsTableId"
+                                @show-summary="getSummary($event)">
                         <span slot="data-table-title">{{ __('Past Imports') }}</span>
                         @include('laravel-enso/core::partials.modal')
                     </data-table>
@@ -245,15 +246,11 @@
                         this.$refs.importTypeSelect.removeSelection();
                     });
                 },
-                getSummary(dataImportId) {
-                    axios.get('/import/getSummary/' + dataImportId).then((response) => {
+                getSummary($eventdataImportId) {
+                    axios.get('/import/getSummary/$event' + dataImportId).then((response) => {
                         this.summary = JSON.parse(response.data.summary);
                     });
                 }
-            },
-            created() {
-                //events are needed for the custom buttons of DataTables
-                eventHub.$on('showSummary', this.getSummary);
             }
         });
 

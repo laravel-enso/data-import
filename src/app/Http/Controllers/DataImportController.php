@@ -42,11 +42,6 @@ class DataImportController extends Controller
         return view('laravel-enso/data-import::dataImport.index', compact('importTypes'));
     }
 
-    /** Load the summary for a given import
-     * @param DataImport $dataImport
-     *
-     * @return array
-     */
     public function getSummary(DataImport $dataImport)
     {
         return [
@@ -54,9 +49,6 @@ class DataImportController extends Controller
         ];
     }
 
-    /** Processes an import and gives back a summary
-     * @return array
-     */
     public function run()
     {
         $this->checkIfFileIsValid();
@@ -86,11 +78,6 @@ class DataImportController extends Controller
         }
     }
 
-    /** Downloads a file corresponding to a successful import
-     * @param $dataImport
-     *
-     * @return mixed
-     */
     public function download(DataImport $dataImport)
     {
         $fileWrapper = $this->fileManager->getFile($dataImport->saved_name);
@@ -99,11 +86,6 @@ class DataImportController extends Controller
         return $fileWrapper->getDownloadResponse();
     }
 
-    /** Delete an import line as well as the corresponding file
-     * @param DataImport $dataImport
-     *
-     * @return \LaravelEnso\FileManager\Classes\FileManagerStatus
-     */
     public function destroy(DataImport $dataImport)
     {
         \DB::transaction(function () use ($dataImport) {
