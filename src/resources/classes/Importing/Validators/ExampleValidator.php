@@ -13,7 +13,7 @@ class ExampleValidator extends AbstractValidator
     public function run()
     {
         //do custom validation logic
-        //for registering issues use :
+        //for registering issues use the method below
         //addContentIssue(string $sheetName, string $category, int $rowNumber, string $column, $value)
     }
 }
