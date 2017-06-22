@@ -17,7 +17,6 @@ class DataImportTableStructure extends TableStructure
             ],
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',
-            'tableClass'          => 'table display compact',
             'enumMappings'        => [
                 'type' => DataImportTypesEnum::class,
             ],
