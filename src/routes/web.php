@@ -1,9 +1,9 @@
 <?php
 
 Route::group([
-    'namespace' => 'LaravelEnso\DataImport\app\Http\Controllers',
-    'prefix' => 'import', 'as' => 'import.',
-    'middleware' => ['web', 'auth', 'core']
+    'namespace'  => 'LaravelEnso\DataImport\app\Http\Controllers',
+    'prefix'     => 'import', 'as' => 'import.',
+    'middleware' => ['web', 'auth', 'core'],
 ], function () {
     Route::get('', 'DataImportController@index')->name('index');
     Route::get('getImportData', 'DataImportController@getImportData')->name('getImportData');
