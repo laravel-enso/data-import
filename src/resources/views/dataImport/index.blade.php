@@ -2,7 +2,7 @@
 
 @section('pageTitle', __("Data imports"))
 
-@section('includesCss')
+@section('css')
 
     <style>
 
@@ -11,14 +11,17 @@
             padding-top: 5px;
             padding-bottom: 5px;
         }
+
         ul.errors li {
             border-top: 1px solid #eee;
             padding-top: 5px;
             padding-bottom: 5px;
         }
+
         span.error {
             color:red;
         }
+
         .upload-button {
             margin-top: 24px;
         }
@@ -105,9 +108,9 @@
             </div>
             <div class="row" v-if="!summary" key="table">
                 <div class="col-md-12">
-                    <data-table source="/import" ref="dataImports"
-                                id="dataImportsTableId"
-                                @show-summary="getSummary($event)">
+                    <data-table source="/import"
+                        id="imports-table"
+                        @get-summary="getSummary($event)">
                         <span slot="data-table-title">{{ __('Past Imports') }}</span>
                         @include('laravel-enso/core::partials.modal')
                     </data-table>
