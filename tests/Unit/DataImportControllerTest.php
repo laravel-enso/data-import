@@ -63,8 +63,6 @@ class DataImportControllerTest extends TestCase
     {
         $this->createImport();
 
-        \Log::debug(DataImport::all());
-
         $dataImport = DataImport::find(1);
         $result = $this->diController->destroy($dataImport);
 
