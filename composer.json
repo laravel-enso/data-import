@@ -1,6 +1,6 @@
 {
     "name": "laravel-enso/dataimport",
-    "description": "Excel Importer",
+    "description": "Excel Importer dependency for Laravel Enso",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -14,9 +14,10 @@
         }
     ],
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1.0",
         "laravel/framework": "5.4.*",
-        "laravel-enso/core": "1.1.*"
+        "laravel-enso/core": "1.1.*",
+        "maatwebsite/excel": "~2.1.0"
     },
     "autoload": {
         "psr-4": {

@@ -4,17 +4,36 @@
 [![Total Downloads](https://poser.pugx.org/laravel-enso/dataimport/downloads)](https://packagist.org/packages/laravel-enso/dataimport)
 [![Latest Stable Version](https://poser.pugx.org/laravel-enso/dataimport/version)](https://packagist.org/packages/laravel-enso/dataimport)
 
-Excel Importer
+Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
-## Don't forget to
+### Details
 
-Add LaravelEnso\DataImport\DataImportServiceProvider::class to config/app.php.
+- imports `xlsx` files into the application using the minimum required custom logic
+- import types are defined in the package configuration
+- each import type can be validated against required columns, sheets, data types and more
+- the laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary 
+- an example import type is included in the package
+- uses `[Laravel Excel](https://github.com/Maatwebsite/Laravel-Excel)` for reading the `xlsx` file
 
-Publish the config and example classes:
-* php artisan vendor:publish --tag=data-import-config
-* php artisan vendor:publish --tag=data-import-classes
+### Installation steps
 
-Run the migrations.
-Double check the permissions.
+1. Add the `LaravelEnso\DataImport\DataImportServiceProvider::class` provider to `config/app.php`.
 
-In config/excel.php set `'force_sheets_collection' => true,` where the default was false.
+2. Run the migrations. 
+
+3. Publish the configuration and example classes:
+    * `php artisan vendor:publish --tag=data-import-config`
+    * `php artisan vendor:publish --tag=data-import-classes`
+ 
+4. Double check the permissions.
+
+5. In `config/excel.php` set `'force_sheets_collection' => true,` where the default was false.
+
+### Publishes
+
+- `php artisan vendor:publish --tag=data-import-config` - configuration files
+- `php artisan vendor:publish --tag=data-import-classes` - example import
+
+### Contributions
+
+are welcome
