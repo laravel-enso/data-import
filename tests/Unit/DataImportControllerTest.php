@@ -13,7 +13,6 @@ class DataImportControllerTest extends TestCase
     use DatabaseMigrations;
 
     private $user;
-    /** @var DataImportController */
     private $diController;
     private $testFilePath;
     private $basePath;
