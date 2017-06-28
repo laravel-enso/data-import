@@ -3,14 +3,12 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
 use LaravelEnso\FileManager\Classes\FileManager;
 
 class ImportTemplateController extends Controller
 {
-
     /**
      * @var FileManager
      */

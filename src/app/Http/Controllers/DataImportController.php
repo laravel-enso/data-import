@@ -52,7 +52,6 @@ class DataImportController extends Controller
 
     public function run(Request $request, $type)
     {
-
         $uploadedFile = $request->allFiles()['file_0'];
         $this->checkIfFileIsValid($uploadedFile);
         $import = new Import($type, $uploadedFile);
