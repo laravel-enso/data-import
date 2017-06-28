@@ -92,6 +92,6 @@ class DataImportController extends Controller
             $this->fileManager->delete($dataImport->saved_name);
         });
 
-        return $this->fileManager->getStatus();
+        return ['message' => 'Operation was succesful'];
     }
 }
