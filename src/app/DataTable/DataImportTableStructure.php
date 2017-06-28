@@ -13,7 +13,7 @@ class DataImportTableStructure extends TableStructure
             'crtNo'               => __('#'),
             'actionButtons'       => __('Actions'),
             'customActionButtons' => [
-                ['cssClass' => 'btn-info fa fa-info-circle', 'event' => 'get-summary'],
+                ['class' => 'btn-info fa fa-info-circle', 'event' => 'get-summary'],
             ],
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',
@@ -32,16 +32,11 @@ class DataImportTableStructure extends TableStructure
                     'name'  => 'original_name',
                 ],
                 2 => [
-                    'label' => __('Comment'),
-                    'data'  => 'comment',
-                    'name'  => 'comment',
-                ],
-                3 => [
                     'label' => __('Date'),
                     'data'  => 'created_at',
                     'name'  => 'data_imports.created_at',
                 ],
-                4 => [
+                3 => [
                     'label' => __('User'),
                     'data'  => 'created_by',
                     'name'  => 'users.last_name',

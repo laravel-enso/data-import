@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\Helpers\Classes\AbstractObject;
+use LaravelEnso\Helpers\Classes\Object;
 
 abstract class BaseTemplate extends AbstractObject
 {

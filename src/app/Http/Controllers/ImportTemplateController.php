@@ -3,11 +3,17 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
 use LaravelEnso\FileManager\Classes\FileManager;
 
 class ImportTemplateController extends Controller
 {
+
+    /**
+     * @var FileManager
+     */
     private $fileManager;
 
     public function __construct()
@@ -22,15 +28,15 @@ class ImportTemplateController extends Controller
         return $template ?: new ImportTemplate();
     }
 
-    public function upload()
+    public function upload(Request $request, $type)
     {
         $this->checkIfFileIsValid();
         $template = null;
 
-        \DB::transaction(function () use (&$template) {
-            $this->fileManager->startSingleFileUpload(request('file_0'));
-            $template = new ImportTemplate($this->fileManager->uploadedFiles->first());
-            $template->type = request('type');
+        \DB::transaction(function () use (&$template, $request, $type) {
+            $this->fileManager->startUpload($request->all());
+            $template = new ImportTemplate($this->fileManager->getUploadedFiles()->first());
+            $template->type = $type;
             $template->save();
             $this->fileManager->commitUpload();
         });
@@ -47,10 +53,7 @@ class ImportTemplateController extends Controller
 
     public function download(ImportTemplate $template)
     {
-        $fileWrapper = $this->fileManager->getFile($template->saved_name);
-        $fileWrapper->originalName = $template->original_name;
-
-        return $fileWrapper->getDownloadResponse();
+        return $this->fileManager->download($template->original_name, $template->saved_name);
     }
 
     public function destroy(ImportTemplate $template)
@@ -60,6 +63,6 @@ class ImportTemplateController extends Controller
             $template->delete();
         });
 
-        return $this->fileManager->getStatus();
+        return response(__('Deleted'));
     }
 }

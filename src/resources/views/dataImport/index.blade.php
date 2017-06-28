@@ -57,9 +57,8 @@
                                         <label style="margin-bottom: 15px">{{ __('Template') }}</label>
                                         <br>
                                         <file-uploader v-if="!template.id"
-                                            url="/import/uploadTemplate"
-                                            @uploaded="template = $event"
-                                            :params="{ 'type': importType }">
+                                            :url="'/import/uploadTemplate/' + importType"
+                                            @upload-successful="template = $event" >
                                             <span slot="upload-button">
                                                 <i class="btn btn-xs btn-primary fa fa-upload margin-right-xs"
                                                     v-tooltip="'{{ __('Upload a template') }}'"></i>
@@ -77,7 +76,7 @@
                                         </i>
                                     </div>
                                     <div class="col-lg-5 col-md-4" v-if="importTypeSelected">
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="false">
                                             <label>{{ __('Comments') }}</label>
                                             <div class="input-group">
                                                 <input type="text"
@@ -91,8 +90,8 @@
                                     <div class="col-lg-2 col-md-2" v-if="importTypeSelected">
                                         <file-uploader
                                             :params="{ 'comment': comment, 'type': importType }"
-                                            @uploaded="summary = $event.summary"
-                                            url="/import/run">
+                                            @upload-successful="summary = $event.summary"
+                                            :url="'/import/run/' + importType">
                                             <span slot="upload-button">
                                                 <button class="btn btn-primary btn-block upload-button">
                                                     {{ __('Upload') }}
@@ -249,8 +248,8 @@
                         this.$refs.importTypeSelect.removeSelection();
                     });
                 },
-                getSummary($eventdataImportId) {
-                    axios.get('/import/getSummary/$event' + dataImportId).then((response) => {
+                getSummary(dataImportId) {
+                    axios.get('/import/getSummary/' + dataImportId).then((response) => {
                         this.summary = JSON.parse(response.data.summary);
                     });
                 }

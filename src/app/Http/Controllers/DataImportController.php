@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use LaravelEnso\DataImport\app\Classes\Import;
 use LaravelEnso\DataImport\app\DataTable\DataImportTableStructure;
 use LaravelEnso\DataImport\app\Enums\DataImportTypesEnum;
@@ -49,19 +50,21 @@ class DataImportController extends Controller
         ];
     }
 
-    public function run()
+    public function run(Request $request, $type)
     {
-        $this->checkIfFileIsValid();
-        $import = new Import(request('type'), request('file_0'));
 
-        \DB::transaction(function () use ($import) {
+        $uploadedFile = $request->allFiles()['file_0'];
+        $this->checkIfFileIsValid($uploadedFile);
+        $import = new Import($type, $uploadedFile);
+
+        \DB::transaction(function () use ($import, $type, $uploadedFile) {
             $import->run();
 
             if ($import->isValid()) {
-                $this->fileManager->startSingleFileUpload(request('file_0'));
-                $dataImport = new DataImport($this->fileManager->uploadedFiles->first());
-                $dataImport->type = request('type');
-                $dataImport->comment = request('comment');
+                $this->fileManager->startUpload([0 => $uploadedFile]);
+                $dataImport = new DataImport($this->fileManager->getUploadedFiles()->first());
+                $dataImport->type = $type;
+                //$dataImport->comment = $comment;
                 $dataImport->summary = $import->getSummary();
                 $dataImport->save();
                 $this->fileManager->commitUpload();
@@ -71,9 +74,9 @@ class DataImportController extends Controller
         return ['summary' => $import->getSummary()];
     }
 
-    private function checkIfFileIsValid()
+    private function checkIfFileIsValid($file)
     {
-        if (!request('file_0')->isValid()) {
+        if (!$file->isValid()) {
             throw new \EnsoException('The file is not valid', 'error', []);
         }
     }
