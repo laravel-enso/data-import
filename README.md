@@ -6,6 +6,11 @@
 
 Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
+![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_006.png)
+
+![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_007.png)
+
+
 ### Details
 
 - imports `xlsx` files into the application using the minimum required custom logic
