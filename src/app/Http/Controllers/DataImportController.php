@@ -82,10 +82,7 @@ class DataImportController extends Controller
 
     public function download(DataImport $dataImport)
     {
-        $fileWrapper = $this->fileManager->getFile($dataImport->saved_name);
-        $fileWrapper->originalName = $dataImport->original_name;
-
-        return $fileWrapper->getDownloadResponse();
+        return $this->fileManager->download($dataImport->original_name, $dataImport->saved_name);
     }
 
     public function destroy(DataImport $dataImport)
@@ -95,6 +92,6 @@ class DataImportController extends Controller
             $this->fileManager->delete($dataImport->saved_name);
         });
 
-        return $this->fileManager->getStatus();
+        return ['message' => 'Operation was succesful'];
     }
 }
