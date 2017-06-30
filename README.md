@@ -6,7 +6,8 @@
 
 Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
-![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_006.png)
+[![Watch the demo](https://laravel-enso.github.io/dataimport/screenshots/Selection_006.png)](https://laravel-enso.github.io/dataimport/videos/demo_01.webm)
+<sup>click on the photo to view a short demo in compatible browsers</sup>
 
 ![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_007.png)
 
