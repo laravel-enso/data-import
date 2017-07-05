@@ -4,9 +4,8 @@ namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use LaravelEnso\DataImport\App\Http\Services\DataImportService;
-use LaravelEnso\DataImport\app\Classes\Import;
 use LaravelEnso\DataImport\app\DataTable\ImportTableStructure;
+use LaravelEnso\DataImport\App\Http\Services\DataImportService;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataTable\app\Traits\DataTable;
 

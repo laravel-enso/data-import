@@ -9,8 +9,8 @@ class ExampleImporter extends AbstractImporter
     public function run()
     {
         $this->sheets->each(function ($sheet) {
-            $sheet->each(function($row) {
-            	//do custom import logic
+            $sheet->each(function ($row) {
+                //do custom import logic
                 $this->incSuccess();
             });
         });

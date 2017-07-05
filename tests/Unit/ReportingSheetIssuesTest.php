@@ -4,8 +4,8 @@ namespace Tests;
 
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use LaravelEnso\DataImport\app\Classes\Reporting\SheetIssuesContainer;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\SheetIssuesContainer;
 
 class ReportingSheetIssuesTest extends TestCase
 {

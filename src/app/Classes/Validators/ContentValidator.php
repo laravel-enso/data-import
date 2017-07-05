@@ -102,7 +102,7 @@ class ContentValidator extends AbstractValidator
         }
 
         throw new \EnsoException(
-            __("Unsupported complex validation").': '.$rule->type.' '.__("for sheet").': '.$sheetName.', '.__("column").': '.$column);
+            __('Unsupported complex validation').': '.$rule->type.' '.__('for sheet').': '.$sheetName.', '.__('column').': '.$column);
     }
 
     private function checkIfExistsInSheet(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
@@ -160,10 +160,10 @@ class ContentValidator extends AbstractValidator
     private function createIssue(string $category, int $rowNumber = null, string $column = null, $value = null)
     {
         return new Issue([
-            'category' => $category,
+            'category'  => $category,
             'rowNumber' => $rowNumber,
-            'column' => $column,
-            'value' => $value,
+            'column'    => $column,
+            'value'     => $value,
         ]);
     }
 }

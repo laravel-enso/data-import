@@ -101,7 +101,7 @@ class StructureValidator extends AbstractValidator
     {
         return new Issue([
             'category' => $category,
-            'value' => $value,
+            'value'    => $value,
         ]);
     }
 }

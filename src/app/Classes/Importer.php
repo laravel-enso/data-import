@@ -2,7 +2,6 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use Illuminate\Http\UploadedFile;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Validators\BaseValidator;
 

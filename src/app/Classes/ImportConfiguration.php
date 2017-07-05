@@ -3,7 +3,6 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
-use LaravelEnso\DataImport\app\Classes\Template;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 class ImportConfiguration
@@ -34,7 +33,7 @@ class ImportConfiguration
     public function getCustomValidator()
     {
         return isset($this->config['customValidator'])
-            ? new $this->config['customValidator']
+            ? new $this->config['customValidator']()
             : null;
     }
 
@@ -48,7 +47,7 @@ class ImportConfiguration
     private function getConfiguration(string $type)
     {
         return collect(config('importing.configs'))->first(
-            function($config, $key) use ($type) {
+            function ($config, $key) use ($type) {
                 return $key === $type;
             }
         );
@@ -62,7 +61,7 @@ class ImportConfiguration
     private function throwMissingParamException($param)
     {
         throw new \EnsoException(
-            __("The following parameter is missing from the config file").": ".$param
+            __('The following parameter is missing from the config file').': '.$param
         );
     }
 }

@@ -3,7 +3,6 @@
 namespace Tests;
 
 use App\User;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\DataImport\App\Http\Controllers\DataImportController;
 use LaravelEnso\DataImport\app\Models\DataImport;

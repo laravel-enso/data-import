@@ -7,7 +7,7 @@ use LaravelEnso\Helpers\Traits\FormattedTimestamps;
 
 class ImportTemplate extends Model
 {
-	use FormattedTimestamps;
+    use FormattedTimestamps;
 
     protected $fillable = ['type', 'original_name', 'saved_name'];
 }

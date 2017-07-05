@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\Core\app\Exceptions\EnsoException;
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 
-class ImportConfigurationTest extends TestCase
+class ImportConfigurationReaderTest extends TestCase
 {
     use DatabaseMigrations;
 
