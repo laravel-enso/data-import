@@ -74,10 +74,10 @@ class ReportingStructureIssuesTest extends TestCase
 
     private function checkCategory($category)
     {
-        $CategoryContainer = $this->ImportSummary->structureIssues->first()
+        $categoryContainer = $this->ImportSummary->structureIssues->first()
             ->categories->first();
-        $this->assertEquals($category, $CategoryContainer->name);
-        $this->assertEquals(1, $CategoryContainer->issues->count());
+        $this->assertEquals($category, $categoryContainer->name);
+        $this->assertEquals(1, $categoryContainer->issues->count());
     }
 
     private function checkIssue($value)
