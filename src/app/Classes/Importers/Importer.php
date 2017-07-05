@@ -1,7 +1,8 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Classes;
+namespace LaravelEnso\DataImport\app\Classes\Importers;
 
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Validators\BaseValidator;
 

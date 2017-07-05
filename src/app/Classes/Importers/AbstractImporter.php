@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Classes;
+namespace LaravelEnso\DataImport\app\Classes\Importers;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use Maatwebsite\Excel\Collections\SheetCollection;

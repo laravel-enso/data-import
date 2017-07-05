@@ -73,7 +73,7 @@ class ImportTemplateControllerTest extends TestCase
 
         // Act
         try {
-            $result = $this->itController->download($importTemplate);
+            $this->itController->download($importTemplate);
         } catch (\Exception $e) {
             // Assert
             // should file not found exception

@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\App\Http\Services;
 
 use Illuminate\Http\Request;
-use LaravelEnso\DataImport\app\Classes\Importer;
+use LaravelEnso\DataImport\app\Classes\Importers\Importer;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\FileManager\Classes\FileManager;

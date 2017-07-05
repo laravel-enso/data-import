@@ -2,7 +2,7 @@
 
 namespace App\Importing\Importers;
 
-use LaravelEnso\DataImport\app\Classes\AbstractImporter;
+use LaravelEnso\DataImport\app\Classes\Importers\AbstractImporter;
 
 class ExampleImporter extends AbstractImporter
 {

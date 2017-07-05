@@ -139,13 +139,6 @@ class ContentValidator extends AbstractValidator
         $this->summary->addIssue($issue, $sheetName);
     }
 
-    private function getSheet(string $sheetName)
-    {
-        return $this->sheets->filter(function ($sheet) use ($sheetName) {
-            return $sheet->getTitle() === $sheetName;
-        })->first();
-    }
-
     private function validateSheetEntriesLimit()
     {
         $this->sheets->each(function ($sheet) {

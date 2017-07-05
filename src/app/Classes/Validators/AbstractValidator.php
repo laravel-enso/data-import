@@ -35,4 +35,11 @@ abstract class AbstractValidator
     {
         return $this->summary;
     }
+
+    public function getSheet(string $sheetName)
+    {
+        return $this->sheets->filter(function ($sheet) use ($sheetName) {
+            return $sheet->getTitle() === $sheetName;
+        })->first();
+    }
 }
