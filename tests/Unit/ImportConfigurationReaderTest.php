@@ -11,13 +11,13 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\Core\app\Exceptions\EnsoException;
-use LaravelEnso\DataImport\app\Classes\ImportConfigurationReader;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 
-class ImportConfigurationReaderTest extends TestCase
+class ImportConfigurationTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @var ImportConfigurationReader */
+    /** @var ImportConfiguration */
     private $importCfgReader;
     private $invalidImportCfgReader;
     private $DEFAULT_EXAMPLE_PACKAGE_TYPE = 0;
@@ -26,7 +26,7 @@ class ImportConfigurationReaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->importCfgReader = new ImportConfigurationReader($this->DEFAULT_EXAMPLE_PACKAGE_TYPE);
+        $this->importCfgReader = new ImportConfiguration($this->DEFAULT_EXAMPLE_PACKAGE_TYPE);
     }
 
     /** @test*/
@@ -61,7 +61,7 @@ class ImportConfigurationReaderTest extends TestCase
     public function cant_create_reader_of_invalid_type()
     {
         try {
-            $this->invalidImportCfgReader = new ImportConfigurationReader(-1); //invalid type
+            $this->invalidImportCfgReader = new ImportConfiguration(-1); //invalid type
         } catch (\Exception $e) {
             $this->assertInstanceOf(EnsoException::class, $e);
         }

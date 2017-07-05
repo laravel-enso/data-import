@@ -5,7 +5,7 @@ namespace Tests;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use LaravelEnso\DataImport\app\Classes\Reporting\SheetIssuesContainer;
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 
 class ReportingSheetIssuesTest extends TestCase
 {
@@ -13,8 +13,8 @@ class ReportingSheetIssuesTest extends TestCase
 
     private $user;
     private $fileName;
-    /** @var ValidationSummary */
-    private $validationSummary;
+    /** @var ImportSummary */
+    private $ImportSummary;
 
     protected function setUp()
     {
@@ -22,7 +22,7 @@ class ReportingSheetIssuesTest extends TestCase
 
         $this->user = User::first();
         $this->fileName = 'Test Filename.xlsx';
-        $this->validationSummary = new ValidationSummary($this->fileName);
+        $this->ImportSummary = new ImportSummary($this->fileName);
     }
 
     /** @test */
@@ -36,12 +36,12 @@ class ReportingSheetIssuesTest extends TestCase
         $column = 'test column';
 
         // Act
-        $this->validationSummary->addContentIssue($sheetName, $category, $rowNumber, $column, $value);
+        $this->ImportSummary->addContentIssue($sheetName, $category, $rowNumber, $column, $value);
 
         // Assert
         // the issue should be in the proper structure
-        $this->assertEquals(1, $this->validationSummary->sheetIssues->count());
-        $this->assertInstanceOf(SheetIssuesContainer::class, $this->validationSummary->sheetIssues->first());
+        $this->assertEquals(1, $this->ImportSummary->sheetIssues->count());
+        $this->assertInstanceOf(SheetIssuesContainer::class, $this->ImportSummary->sheetIssues->first());
 
         $this->checkSheetIssuesContainer($sheetName);
         $this->checkCategory($category);
@@ -50,7 +50,7 @@ class ReportingSheetIssuesTest extends TestCase
 
     private function checkSheetIssuesContainer($sheetName)
     {
-        $sheetIssuesContainer = $this->validationSummary->sheetIssues->first();
+        $sheetIssuesContainer = $this->ImportSummary->sheetIssues->first();
 
         $this->assertEquals($sheetName, $sheetIssuesContainer->name);
         $this->assertEquals(1, $sheetIssuesContainer->categories->count());
@@ -58,15 +58,15 @@ class ReportingSheetIssuesTest extends TestCase
 
     private function checkCategory($category)
     {
-        $validationCategory = $this->validationSummary->sheetIssues->first()
+        $CategoryContainer = $this->ImportSummary->sheetIssues->first()
             ->categories->first();
-        $this->assertEquals($category, $validationCategory->name);
-        $this->assertEquals(1, $validationCategory->issues->count());
+        $this->assertEquals($category, $CategoryContainer->name);
+        $this->assertEquals(1, $CategoryContainer->issues->count());
     }
 
     private function checkIssue($rowNumber, $column, $value)
     {
-        $validationIssue = $this->validationSummary->sheetIssues->first()
+        $validationIssue = $this->ImportSummary->sheetIssues->first()
             ->categories->first()
             ->issues->first();
         $this->assertEquals($rowNumber, $validationIssue->rowNumber);

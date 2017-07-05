@@ -2,33 +2,29 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 class BaseValidator extends AbstractValidator
 {
-    protected $template;
-    protected $xlsx;
-    protected $summary;
     protected $structureValidator;
     protected $contentValidator;
-    protected $customValidatorClass;
 
-    public function __construct($template, SheetCollection $xlsx, ValidationSummary $summary, $customValidatorClass, int $sheetEntriesLimit)
+    public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
     {
-        parent::__construct($template, $xlsx, $summary);
-        $this->structureValidator = new StructureValidator($this->template, $this->xlsx, $this->summary, $sheetEntriesLimit);
-        $this->contentValidator = new ContentValidator($this->template, $this->xlsx, $this->summary, $customValidatorClass);
+        parent::__construct($config->getTemplate(), $sheets, $summary);
+
+        $this->structureValidator = new StructureValidator($config, $sheets, $this->summary);
+        $this->contentValidator = new ContentValidator($config, $sheets, $this->summary);
     }
 
     public function run()
     {
         $this->structureValidator->run();
 
-        if ($this->summary->hasErrors) {
-            return;
+        if (!$this->summary->hasErrors()) {
+            $this->contentValidator->run();
         }
-
-        $this->contentValidator->run();
     }
 }

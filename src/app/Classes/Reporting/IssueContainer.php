@@ -2,7 +2,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-class StructureIssuesContainer
+use LaravelEnso\Helpers\Classes\AbstractObject;
+
+class IssueContainer extends AbstractObject
 {
     public $name;
     public $categories;
@@ -13,10 +15,9 @@ class StructureIssuesContainer
         $this->categories = collect();
     }
 
-    public function addIssue(string $category, string $value)
+    public function addIssue(Issue $issue)
     {
-        $category = $this->findOrCreateCategory($category);
-        $issue = new StructureIssue($value);
+        $category = $this->findOrCreateCategory($issue->category);
         $category->addIssue($issue);
     }
 
@@ -25,7 +26,7 @@ class StructureIssuesContainer
         $issueCategory = $this->findCategory($category);
 
         if (!$issueCategory) {
-            $issueCategory = new ValidationCategory($category);
+            $issueCategory = new CategoryContainer($category);
             $this->categories->push($issueCategory);
         }
 
@@ -34,10 +35,8 @@ class StructureIssuesContainer
 
     private function findCategory(String $category)
     {
-        $foundCategory = $this->categories->filter(function ($existingCategory) use ($category) {
+        return $this->categories->filter(function ($existingCategory) use ($category) {
             return $existingCategory->name === $category;
         })->first();
-
-        return $foundCategory ?: null;
     }
 }

@@ -2,17 +2,15 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\Helpers\Classes\AbstractObject;
 use LaravelEnso\Helpers\Classes\Object;
 
-abstract class BaseTemplate extends AbstractObject
+class Template
 {
-    public $jsonTemplate = '{}';
-    public $template = null;
+    private $template;
 
-    public function __construct()
+    public function __construct(string $jsonTemplate)
     {
-        $this->template = $this->parseTemplate();
+        $this->template = $this->parseTemplate($jsonTemplate);
     }
 
     public function getSheetNames()
@@ -29,31 +27,21 @@ abstract class BaseTemplate extends AbstractObject
     public function getColumnsFromSheet($sheetName)
     {
         $columnNames = collect();
-        $sheet = $this->getSheet($sheetName);
 
-        foreach ($sheet->columns as $column) {
+        foreach ($this->getSheet($sheetName)->columns as $column) {
             $columnNames->push($column->name);
         }
 
         return $columnNames;
     }
 
-    public function getSheet($sheetName)
-    {
-        foreach ($this->template->sheets as $sheet) {
-            if ($sheet->name === $sheetName) {
-                return $sheet;
-            }
-        }
-    }
-
     public function getLaravelValidationRules($sheetName)
     {
-        $rules = [];
+        $rules = new Object();
 
         foreach ($this->getSheet($sheetName)->columns as $column) {
             if (property_exists($column, 'laravelValidations')) {
-                $rules[$column->name] = $column->laravelValidations;
+                $rules->{$column->name} = $column->laravelValidations;
             }
         }
 
@@ -84,9 +72,18 @@ abstract class BaseTemplate extends AbstractObject
         return $rules;
     }
 
-    private function parseTemplate()
+    private function getSheet($sheetName)
     {
-        $template = json_decode($this->jsonTemplate);
+        foreach ($this->template->sheets as $sheet) {
+            if ($sheet->name === $sheetName) {
+                return $sheet;
+            }
+        }
+    }
+
+    private function parseTemplate(string $jsonTemplate)
+    {
+        $template = json_decode($jsonTemplate);
 
         if (!$template) {
             throw new \EnsoException('Invalid template');

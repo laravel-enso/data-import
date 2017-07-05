@@ -2,20 +2,21 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\Helpers\Classes\AbstractObject;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
-abstract class AbstractValidator extends AbstractObject
+abstract class AbstractValidator
 {
     protected $template;
-    protected $xlsx;
+    protected $sheets;
     protected $summary;
 
-    public function __construct($template, SheetCollection $xlsx, ValidationSummary $summary)
+    public function __construct(Template $template, SheetCollection $sheets, ImportSummary $summary)
     {
         $this->template = $template;
-        $this->xlsx = $xlsx;
+        $this->sheets = $sheets;
         $this->summary = $summary;
     }
 
@@ -23,7 +24,12 @@ abstract class AbstractValidator extends AbstractObject
 
     public function isValid()
     {
-        return !$this->summary->hasErrors;
+        return !$this->summary->hasErrors();
+    }
+
+    public function fails()
+    {
+        return $this->summary->hasErrors();
     }
 
     public function getSummary()

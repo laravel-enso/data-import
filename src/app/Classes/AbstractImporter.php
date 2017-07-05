@@ -2,30 +2,30 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 abstract class AbstractImporter
 {
-    protected $xlsx;
+    protected $sheets;
     protected $summary;
 
-    public function __construct(SheetCollection $xlsx, ValidationSummary $summary)
+    public function __construct(SheetCollection $sheets, ImportSummary $summary)
     {
-        $this->xlsx = $xlsx;
+        $this->sheets = $sheets;
         $this->summary = $summary;
     }
 
     abstract public function run();
 
-    protected function getSheet(string $sheetName)
+    public function getSheet(string $sheetName)
     {
-        return $this->xlsx->filter(function ($sheet) use ($sheetName) {
+        return $this->sheets->filter(function ($sheet) use ($sheetName) {
             return $sheet->getTitle() === $sheetName;
         })->first();
     }
 
-    protected function incSuccess()
+    public function incSuccess()
     {
         $this->summary->incSuccess();
     }

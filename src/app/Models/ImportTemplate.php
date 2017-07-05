@@ -2,15 +2,12 @@
 
 namespace LaravelEnso\DataImport\app\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\Helpers\Traits\FormattedTimestamps;
 
 class ImportTemplate extends Model
 {
-    protected $fillable = ['type', 'original_name', 'saved_name'];
+	use FormattedTimestamps;
 
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('d-m-Y');
-    }
+    protected $fillable = ['type', 'original_name', 'saved_name'];
 }

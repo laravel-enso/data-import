@@ -2,10 +2,10 @@
 
 namespace LaravelEnso\DataImport\app\DataTable;
 
-use LaravelEnso\DataImport\app\Enums\DataImportTypesEnum;
+use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataTable\app\Classes\TableStructure;
 
-class DataImportTableStructure extends TableStructure
+class ImportTableStructure extends TableStructure
 {
     public function __construct()
     {
@@ -18,7 +18,7 @@ class DataImportTableStructure extends TableStructure
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',
             'enumMappings'        => [
-                'type' => DataImportTypesEnum::class,
+                'type' => ImportTypes::class,
             ],
             'columns'             => [
                 0 => [

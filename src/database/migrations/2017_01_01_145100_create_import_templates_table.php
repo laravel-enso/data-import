@@ -10,7 +10,7 @@ class CreateImportTemplatesTable extends Migration
     {
         Schema::create('import_templates', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('type')->unsigned();
+            $table->string('type');
             $table->string('original_name');
             $table->string('saved_name');
             $table->timestamps();

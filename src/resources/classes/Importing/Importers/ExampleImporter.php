@@ -8,10 +8,11 @@ class ExampleImporter extends AbstractImporter
 {
     public function run()
     {
-        $this->xlsx->each(function ($sheet, $index) {
-            foreach ($sheet as $index => $row) {
+        $this->sheets->each(function ($sheet) {
+            $sheet->each(function($row) {
+            	//do custom import logic
                 $this->incSuccess();
-            }
+            });
         });
     }
 }

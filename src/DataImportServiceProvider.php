@@ -24,7 +24,7 @@ class DataImportServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/resources/classes' => app_path(),
-        ], 'data-import-classes');
+        ], 'dataimport-classes');
     }
 
     private function loadDependencies()

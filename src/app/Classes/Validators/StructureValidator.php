@@ -3,31 +3,25 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 class StructureValidator extends AbstractValidator
 {
-    protected $template;
-    protected $xlsx;
-    protected $summary;
-    protected $sheetEntriesLimit;
-
-    public function __construct($template, SheetCollection $xlsx, ValidationSummary $summary, int $sheetEntriesLimit)
+    public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
     {
-        parent::__construct($template, $xlsx, $summary);
-        $this->sheetEntriesLimit = $sheetEntriesLimit;
+        parent::__construct($config->getTemplate(), $sheets, $summary);
     }
 
     public function run()
     {
         $this->validateSheets();
 
-        if ($this->summary->hasErrors) {
-            return;
+        if ($this->summary->hasErrors()) {
+            return false;
         }
-
-        $this->validateSheetLimit();
 
         $this->validateColumns();
     }
@@ -45,7 +39,8 @@ class StructureValidator extends AbstractValidator
         $extraSheets = $xlsxSheets->diff($templateSheets);
 
         $extraSheets->each(function ($sheet) {
-            $this->summary->addStructureIssue(__('Extra Sheets'), $sheet);
+            $issue = $this->createIssue(__(config('importing.validationLabels.extra_sheets')), $sheet);
+            $this->summary->addIssue($issue);
         });
     }
 
@@ -54,53 +49,40 @@ class StructureValidator extends AbstractValidator
         $missingSheets = $templateSheets->diff($xlsxSheets);
 
         $missingSheets->each(function ($sheet) {
-            $this->summary->addStructureIssue(__('Missing Sheets'), $sheet);
+            $issue = $this->createIssue(__(config('importing.validationLabels.missing_sheets')), $sheet);
+            $this->summary->addIssue($issue);
         });
     }
 
     private function validateColumns()
     {
-        $this->xlsx->each(function ($sheet) {
-            if (($sheet)->count()) {
-                $header = $this->getHeaderFromRow($sheet);
-                $templateColumns = $this->template->getColumnsFromSheet($sheet->getTitle());
-                $this->getMissingColumnsFromSheet($sheet->getTitle(), $header, $templateColumns);
-                $this->getExtraColumnsFromSheet($sheet->getTitle(), $header, $templateColumns);
+        $this->sheets->each(function ($sheet) {
+            if ($sheet->count()) {
+                $xlsxSheetColumns = $sheet->first()->keys();
+                $templateSheetColumns = $this->template->getColumnsFromSheet($sheet->getTitle());
+                $this->getMissingColumns($sheet->getTitle(), $xlsxSheetColumns, $templateSheetColumns);
+                $this->getExtraColumns($sheet->getTitle(), $xlsxSheetColumns, $templateSheetColumns);
             }
         });
     }
 
-    private function getHeaderFromRow(Collection $row)
+    private function getMissingColumns(string $sheetName, Collection $xlsxSheetColumns, Collection $templateSheetColumns)
     {
-        return collect(array_keys($row->first()->toArray()));
-    }
-
-    private function getMissingColumnsFromSheet(string $sheetName, Collection $header, Collection $templateColumns)
-    {
-        $missingColumns = $templateColumns->diff($header);
+        $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $this->summary->addStructureIssue(__('Missing Columns'), $column, $sheetName);
+            $issue = $this->createIssue(__(config('importing.validationLabels.missing_columns')), $column);
+            $this->summary->addIssue($issue, $sheetName);
         });
     }
 
-    private function getExtraColumnsFromSheet(string $sheetName, Collection $header, Collection $templateColumns)
+    private function getExtraColumns(string $sheetName, Collection $xlsxSheetColumns, Collection $templateSheetColumns)
     {
-        $extraColumns = $header->diff($templateColumns);
+        $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $this->summary->addStructureIssue(__('Extra Columns'), $column, $sheetName);
-        });
-    }
-
-    private function validateSheetLimit()
-    {
-        $this->xlsx->each(function ($sheet) {
-            if ($sheet->count() > $this->sheetEntriesLimit) {
-                $message = __('Exceded the entries limit of: ').$this->sheetEntriesLimit.'. ';
-                $message .= __('Current count: ').$sheet->count();
-                $this->summary->addStructureIssue($message, $sheet->getTitle());
-            }
+            $issue = $this->createIssue(__(config('importing.validationLabels.extra_columns')), $column);
+            $this->summary->addIssue($issue, $sheetName);
         });
     }
 
@@ -108,10 +90,18 @@ class StructureValidator extends AbstractValidator
     {
         $xlsxSheets = collect();
 
-        $this->xlsx->each(function ($sheet) use (&$xlsxSheets) {
+        $this->sheets->each(function ($sheet) use (&$xlsxSheets) {
             $xlsxSheets->push($sheet->getTitle());
         });
 
         return $xlsxSheets;
+    }
+
+    private function createIssue(string $category, string $value)
+    {
+        return new Issue([
+            'category' => $category,
+            'value' => $value,
+        ]);
     }
 }

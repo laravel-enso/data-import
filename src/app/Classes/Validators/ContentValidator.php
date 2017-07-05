@@ -4,36 +4,32 @@ namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use LaravelEnso\DataImport\app\Classes\Reporting\ValidationSummary;
-use LaravelEnso\DataImport\app\Enums\ComplexValidationTypesEnum;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
 use LaravelEnso\Helpers\Classes\Object;
+use Maatwebsite\Excel\Collections\RowCollection;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 class ContentValidator extends AbstractValidator
 {
-    protected $template;
-    protected $xlsx;
-    protected $summary;
     protected $customValidator;
+    protected $sheetEntriesLimit;
 
-    public function __construct($template, SheetCollection $xlsx, ValidationSummary $summary, $customValidatorClass)
+    public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
     {
-        parent::__construct($template, $xlsx, $summary);
-        $this->customValidator = $customValidatorClass ? new $customValidatorClass($this->template, $this->xlsx, $this->summary) : null;
+        parent::__construct($config->getTemplate(), $sheets, $summary);
+
+        $this->customValidator = $config->getCustomValidator();
+        $this->sheetEntriesLimit = $config->getSheetEntriesLimit();
     }
 
     public function run()
     {
-        $this->xlsx->each(function ($sheet, $index) {
-            $laravelRules = $this->template->getLaravelValidationRules($sheet->getTitle());
-            $complexRules = $this->template->getComplexValidationRules($sheet->getTitle());
+        $this->validateSheetEntriesLimit();
 
-            $this->doDuplicateLinesCheck($sheet);
-
-            foreach ($sheet as $index => $row) {
-                $this->doLaravelValidations($sheet->getTitle(), $laravelRules, $row, $index + 1);
-                $this->doComplexValidations($sheet->getTitle(), $complexRules, $row, $index + 1);
-            }
+        $this->sheets->each(function ($sheet) {
+            $this->doValidations($sheet);
         });
 
         if ($this->customValidator) {
@@ -41,27 +37,41 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function doDuplicateLinesCheck($sheet)
+    private function doValidations(RowCollection $sheet)
     {
-        $uniqueLines = $sheet->unique();
-        $duplicateLines = $sheet->diffKeys($uniqueLines);
-        $sheetTitle = $sheet->getTitle();
-        $issueType = (new ComplexValidationTypesEnum())->getValueByKey('duplicate_lines');
+        $this->doDuplicateLinesCheck($sheet);
 
-        foreach ($duplicateLines->keys() as $rowNumber) {
-            $this->summary->addContentIssue($sheetTitle, $issueType, $rowNumber + 2, __('All'), 'N/A');
+        $laravelRules = $this->template->getLaravelValidationRules($sheet->getTitle());
+        $complexRules = $this->template->getComplexValidationRules($sheet->getTitle());
+
+        foreach ($sheet as $index => $row) {
+            $this->doLaravelValidations($sheet->getTitle(), $laravelRules, $row, $index + 1);
+            $this->doComplexValidations($sheet->getTitle(), $complexRules, $row, $index + 1);
         }
     }
 
-    private function doLaravelValidations(string $sheetName, array $rules, Collection $row, int $rowNumber)
+    private function doDuplicateLinesCheck($sheet)
     {
-        $result = Validator::make($row->toArray(), $rules);
+        $uniqueRows = $sheet->unique();
+        $duplicateLines = $sheet->diffKeys($uniqueRows);
+        $category = __(config('importing.validationLabels.duplicate_lines'));
+
+        foreach ($duplicateLines->keys() as $rowNumber) {
+            $issue = $this->createIssue($category, $rowNumber + 2);
+            $this->summary->addIssue($issue, $sheet->getTitle());
+        }
+    }
+
+    private function doLaravelValidations(string $sheetName, Object $rules, Collection $row, int $rowNumber)
+    {
+        $result = Validator::make($row->toArray(), $rules->toArray());
 
         if ($result->fails()) {
-            foreach (array_keys($rules) as $column) {
+            foreach ($rules->getProperties() as $column) {
                 if ($result->errors()->has($column)) {
                     foreach ($result->errors()->get($column) as $category) {
-                        $this->summary->addContentIssue($sheetName, $category, $rowNumber + 1, $column, $row->$column);
+                        $issue = $this->createIssue($category, $rowNumber + 1, $column, $row->$column);
+                        $this->summary->addIssue($issue, $sheetName);
                     }
                 }
             }
@@ -75,64 +85,85 @@ class ContentValidator extends AbstractValidator
                 continue;
             }
 
-            $validationTypes = new ComplexValidationTypesEnum();
-
             foreach ($rules->$column as $rule) {
-                $type = $validationTypes->getValueByKey($rule->type);
-                $this->dispatchComplexValidation($sheetName, $type, $rule, $column, $value, $rowNumber + 1);
+                $this->dispatchComplexValidation($sheetName, $rule, $column, $value, $rowNumber + 1);
             }
         }
     }
 
-    private function dispatchComplexValidation(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
+    private function dispatchComplexValidation(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
     {
-        switch ($rule->type) {
-            case 'exists_in_sheet':
-                $this->checkIfExistsInSheet($sheetName, $type, $rule, $column, $value, $rowNumber);
-                break;
-            case 'unique_in_column':
-                $this->checkIfIsUniqueInColumn($sheetName, $type, $column, $value, $rowNumber);
-                break;
-            case 'duplicate_rows':
-                throw new \EnsoException('Row duplication check is applied automatically and should not be in the template');
-            default:
-                $errorMsg = 'Unsupported complex validation: '.$rule->type.' for sheet: '.$sheetName.', column: '.$column;
-                throw new \EnsoException($errorMsg);
+        if ($rule->type === 'exists_in_sheet') {
+            return $this->checkIfExistsInSheet($sheetName, $rule, $column, $value, $rowNumber);
         }
+
+        if ($rule->type === 'unique_in_column') {
+            return $this->checkIfIsUniqueInColumn($sheetName, $column, $value, $rowNumber);
+        }
+
+        throw new \EnsoException(
+            __("Unsupported complex validation").': '.$rule->type.' '.__("for sheet").': '.$sheetName.', '.__("column").': '.$column);
     }
 
-    private function checkIfExistsInSheet(string $sheetName, string $type, $rule, string $column, $value, int $rowNumber)
+    private function checkIfExistsInSheet(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
     {
-        $details = ': '.$rule->sheet.'('.$rule->column.')';
+        $category = config('importing.validationLabels.exists_in_sheet').': '.$rule->sheet.'('.$rule->column.')';
         $sheet = $this->getSheet($rule->sheet);
-        $exists = $sheet->pluck($rule->column)->contains($value);
 
-        if (!$exists) {
-            $this->summary->addContentIssue($sheetName, $type.$details, $rowNumber, $column, $value);
+        if ($sheet->pluck($rule->column)->contains($value)) {
+            return true;
         }
+
+        $issue = $this->createIssue($category, $rowNumber, $column, $value);
+        $this->summary->addIssue($issue, $sheetName);
     }
 
-    private function checkIfIsUniqueInColumn(string $sheetName, string $type, string $column, $value, int $rowNumber)
+    private function checkIfIsUniqueInColumn(string $sheetName, string $column, string $value, int $rowNumber)
     {
         if (!$value) {
-            return;
+            return true;
         }
 
+        $category = config('importing.validationLabels.is_unique_in_column').': '.$column;
         $sheet = $this->getSheet($sheetName);
 
-        $found = $sheet->pluck($column)->filter(function ($columnValue) use ($value) {
+        $found = $sheet->pluck($column)->search(function ($columnValue) use ($value) {
             return $value === $columnValue;
         });
 
-        if ($found->count() > 1) {
-            $this->summary->addContentIssue($sheetName, $type, $rowNumber, $column, $value);
+        if (!$found) {
+            return true;
         }
+
+        $issue = $this->createIssue($category, $rowNumber, $column, $value);
+        $this->summary->addIssue($issue, $sheetName);
     }
 
     private function getSheet(string $sheetName)
     {
-        return $this->xlsx->filter(function ($sheet) use ($sheetName) {
+        return $this->sheets->filter(function ($sheet) use ($sheetName) {
             return $sheet->getTitle() === $sheetName;
         })->first();
+    }
+
+    private function validateSheetEntriesLimit()
+    {
+        $this->sheets->each(function ($sheet) {
+            if ($sheet->count() > $this->sheetEntriesLimit) {
+                $category = config('importing.validationLabels.sheet_entries_limit_exceded').': '.$this->sheetEntriesLimit;
+                $issue = $this->createIssue($category, null, null, $sheet->count());
+                $this->summary->addIssue($issue, $sheet->getTitle());
+            }
+        });
+    }
+
+    private function createIssue(string $category, int $rowNumber = null, string $column = null, $value = null)
+    {
+        return new Issue([
+            'category' => $category,
+            'rowNumber' => $rowNumber,
+            'column' => $column,
+            'value' => $value,
+        ]);
     }
 }

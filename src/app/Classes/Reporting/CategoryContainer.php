@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-class ValidationCategory
+class CategoryContainer
 {
     public $name;
     public $issues;
@@ -13,7 +13,7 @@ class ValidationCategory
         $this->issues = collect();
     }
 
-    public function addIssue($issue)
+    public function addIssue(Issue $issue)
     {
         $this->issues->push($issue);
     }
