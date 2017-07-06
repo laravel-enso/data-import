@@ -20,7 +20,7 @@ class ContentValidator extends AbstractValidator
     {
         parent::__construct($config->getTemplate(), $sheets, $summary);
 
-        $this->customValidator = $config->getCustomValidator();
+        $this->customValidator = $config->getCustomValidator($sheets, $summary);
         $this->sheetEntriesLimit = $config->getSheetEntriesLimit();
     }
 
@@ -32,7 +32,7 @@ class ContentValidator extends AbstractValidator
             $this->doValidations($sheet);
         });
 
-        if ($this->customValidator) {
+        if (!is_null($this->customValidator)) {
             $this->customValidator->run();
         }
     }

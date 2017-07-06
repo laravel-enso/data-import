@@ -30,10 +30,10 @@ class ImportConfiguration
             : $this->throwMissingParamException('importerClass');
     }
 
-    public function getCustomValidator()
+    public function getCustomValidator(SheetCollection $sheets, ImportSummary $summary)
     {
         return isset($this->config['customValidator'])
-            ? new $this->config['customValidator']()
+            ? new $this->config['customValidator']($this->getTemplate(), $sheets, $summary)
             : null;
     }
 
@@ -61,7 +61,7 @@ class ImportConfiguration
     private function throwMissingParamException($param)
     {
         throw new \EnsoException(
-            __('The following parameter is missing from the config file').': '.$param
+            __(config('importing.validationLabels.missing_param_from_config')).': '.$param
         );
     }
 }

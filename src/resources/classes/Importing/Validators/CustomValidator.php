@@ -13,9 +13,11 @@ class CustomValidator extends AbstractValidator
     public function run()
     {
         //do custom validation logic
-        //for registering issues use the method below
-        //addIssue($issue) where $issue is an array of the form
+        //for registering issues in the summary use the method below
+        //$this->summary->addIssue($issue) where $issue is an object of the
+        //'LaravelEnso\DataImport\app\Classes\Reporting\Issue' class that can be instantiated with
+        //an array with the following parameters
         //['category' => 'category', 'rowNumber' => 'rowNumber', 'column' => 'column', 'value' => 'value']
-        //only 'category' is mandatory
+        //Note: only 'category' parameter is mandatory
     }
 }

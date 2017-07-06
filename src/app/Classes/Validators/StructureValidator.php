@@ -19,11 +19,9 @@ class StructureValidator extends AbstractValidator
     {
         $this->validateSheets();
 
-        if ($this->summary->hasErrors()) {
-            return false;
+        if (!$this->summary->hasErrors()) {
+            $this->validateColumns();
         }
-
-        $this->validateColumns();
     }
 
     private function validateSheets()
