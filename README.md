@@ -1,8 +1,12 @@
+<!--h--> 
 # DataImport
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b169a2f09f864cd5b274ce63008f04b9)](https://www.codacy.com/app/laravel-enso/DataImport?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=laravel-enso/DataImport&amp;utm_campaign=Badge_Grade)
 [![StyleCI](https://styleci.io/repos/89221336/shield?branch=master)](https://styleci.io/repos/89221336)
+[![License](https://poser.pugx.org/laravel-enso/dataimport/license)](https://https://packagist.org/packages/laravel-enso/dataimport)
 [![Total Downloads](https://poser.pugx.org/laravel-enso/dataimport/downloads)](https://packagist.org/packages/laravel-enso/dataimport)
 [![Latest Stable Version](https://poser.pugx.org/laravel-enso/dataimport/version)](https://packagist.org/packages/laravel-enso/dataimport)
+<!--/h-->
 
 Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
@@ -12,7 +16,7 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 ![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_007.png)
 
 
-### Details
+### Features
 
 - imports `xlsx` files into the application using the minimum required custom logic
 - import types are defined in the package configuration
@@ -40,6 +44,12 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 - `php artisan vendor:publish --tag=data-import-config` - configuration files
 - `php artisan vendor:publish --tag=data-import-classes` - example import
 
+<!--h-->
 ### Contributions
 
-are welcome
+are welcome. Pull requests are great, but issues are good too.
+
+### License
+
+This package is released under the MIT license.
+<!--/h-->
