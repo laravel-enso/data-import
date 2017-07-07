@@ -1,4 +1,4 @@
-<!--h--> 
+<!--h-->
 # DataImport
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b169a2f09f864cd5b274ce63008f04b9)](https://www.codacy.com/app/laravel-enso/DataImport?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=laravel-enso/DataImport&amp;utm_campaign=Badge_Grade)
@@ -10,10 +10,10 @@
 
 Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Enso).
 
-[![Watch the demo](https://laravel-enso.github.io/dataimport/screenshots/Selection_006.png)](https://laravel-enso.github.io/dataimport/videos/demo_01.webm)
+[![Watch the demo](https://laravel-enso.github.io/dataimport/screenshots/Selection_006_thumb.png)](https://laravel-enso.github.io/dataimport/videos/demo_01.webm)
 <sup>click on the photo to view a short demo in compatible browsers</sup>
 
-![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_007.png)
+[![Screenshot](https://laravel-enso.github.io/dataimport/screenshots/Selection_007_thumb.png)](https://laravel-enso.github.io/dataimport/screenshots/Selection_007.png)
 
 
 ### Features
@@ -21,7 +21,7 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 - imports `xlsx` files into the application using the minimum required custom logic
 - import types are defined in the package configuration
 - each import type can be validated against required columns, sheets, data types and more
-- the laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary 
+- the laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary
 - an example import type is included in the package
 - uses `[Laravel Excel](https://github.com/Maatwebsite/Laravel-Excel)` for reading the `xlsx` file
 
@@ -29,12 +29,12 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 
 1. Add the `LaravelEnso\DataImport\DataImportServiceProvider::class` provider to `config/app.php`.
 
-2. Run the migrations. 
+2. Run the migrations.
 
 3. Publish the configuration and example classes:
     * `php artisan vendor:publish --tag=data-import-config`
     * `php artisan vendor:publish --tag=data-import-classes`
- 
+
 4. Double check the permissions.
 
 5. In `config/excel.php` set `'force_sheets_collection' => true,` where the default was false.
