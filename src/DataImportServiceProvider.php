@@ -37,8 +37,7 @@ class DataImportServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->singleton('Template', function($app, $params)
-        {
+        $this->app->singleton('Template', function ($app, $params) {
             return new Template($params['template']);
         });
     }
