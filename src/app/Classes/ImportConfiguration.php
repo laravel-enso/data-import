@@ -19,7 +19,7 @@ class ImportConfiguration
     public function getTemplate()
     {
         return isset($this->config['template'])
-            ? new Template($this->readTemplate())
+            ? $this->resolveTemplateInstance()
             : $this->throwMissingParamException('template');
     }
 
@@ -53,7 +53,7 @@ class ImportConfiguration
         );
     }
 
-    private function readTemplate()
+    private function readJsonTemplate()
     {
         return \File::get(app_path('Importing/Templates').DIRECTORY_SEPARATOR.$this->config['template']);
     }
@@ -63,5 +63,10 @@ class ImportConfiguration
         throw new \EnsoException(
             __(config('importing.validationLabels.missing_param_from_config')).': '.$param
         );
+    }
+
+    private function resolveTemplateInstance()
+    {
+        return app()->makeWith('Template', ['template' => $this->readJsonTemplate()]);
     }
 }

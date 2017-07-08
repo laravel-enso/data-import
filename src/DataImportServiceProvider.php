@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\DataImport\app\Classes\Template;
 
 class DataImportServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,9 @@ class DataImportServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        $this->app->singleton('Template', function($app, $params)
+        {
+            return new Template($params['template']);
+        });
     }
 }
