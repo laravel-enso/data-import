@@ -51,6 +51,6 @@ class ImportTemplateService
             $this->fileManager->delete($template->saved_name);
         });
 
-        return ['message' => __('Operation was successfull')];
+        return ['message' => __('Operation was successful')];
     }
 }

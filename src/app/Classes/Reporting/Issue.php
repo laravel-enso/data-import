@@ -11,9 +11,9 @@ class Issue extends AbstractObject
     public $rowNumber;
     public $column;
 
-    public function __construct(array $issue)
+    public function __construct(array $properties)
     {
-        foreach ($issue as $property => $value) {
+        foreach ($properties as $property => $value) {
             if (!property_exists($this, $property)) {
                 throw new \EnsoException(__('Property').': '.$property.' '.__('not defined in').': '.get_class($this));
             }
