@@ -12,6 +12,7 @@ Route::group([
     Route::get('download/{dataImport}', 'DataImportController@download')->name('download');
     Route::get('initTable', 'DataImportController@initTable')->name('initTable');
     Route::get('getTableData', 'DataImportController@getTableData')->name('getTableData');
+    Route::get('exportExcel', 'DataImportController@exportExcel')->name('exportExcel');
     Route::get('getSummary/{dataImport}', 'DataImportController@getSummary')->name('getSummary');
     Route::get('getTemplate/{type}', 'ImportTemplateController@getTemplate')->name('getTemplate');
     Route::post('uploadTemplate/{type}', 'ImportTemplateController@upload')->name('uploadTemplate');
