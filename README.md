@@ -32,8 +32,8 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 2. Run the migrations.
 
 3. Publish the configuration and example classes:
-    * `php artisan vendor:publish --tag=data-import-config`
-    * `php artisan vendor:publish --tag=data-import-classes`
+    * `php artisan vendor:publish --tag=dataimport-config`
+    * `php artisan vendor:publish --tag=dataimport-classes`
 
 4. Double check the permissions.
 
@@ -41,8 +41,8 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 
 ### Publishes
 
-- `php artisan vendor:publish --tag=data-import-config` - configuration files
-- `php artisan vendor:publish --tag=data-import-classes` - example import
+- `php artisan vendor:publish --tag=dataimport-config` - configuration files
+- `php artisan vendor:publish --tag=dataimport-classes` - example import
 
 <!--h-->
 ### Contributions
