@@ -32,8 +32,8 @@ class ImportConfiguration
 
     public function getCustomValidator(SheetCollection $sheets, ImportSummary $summary)
     {
-        return isset($this->config['customValidator'])
-            ? new $this->config['customValidator']($this->getTemplate(), $sheets, $summary)
+        return isset($this->config['customValidatorClass'])
+            ? new $this->config['customValidatorClass']($this->getTemplate(), $sheets, $summary)
             : null;
     }
 
