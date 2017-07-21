@@ -224,7 +224,7 @@
                 },
                 getSummary(dataImportId) {
                     axios.get('/import/getSummary/' + dataImportId).then(response => {
-                        this.summary = JSON.parse(response.data);
+                        this.summary = response.data;
                     }).catch(error => {
                         this.reportEnsoException(error);
                     });
