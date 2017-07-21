@@ -128,7 +128,7 @@ class ContentValidator extends AbstractValidator
         $sheet = $this->getSheet($sheetName);
 
         $found = $sheet->pluck($column)->search(function ($columnValue, $index) use ($value, $rowNumber) {
-            return $value === $columnValue && $index + 2 !== $rowNumber;
+            return trim($value) === trim($columnValue) && $index + 2 !== $rowNumber;
         });
 
         if ($found === false) {
