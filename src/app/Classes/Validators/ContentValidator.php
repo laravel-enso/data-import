@@ -124,14 +124,14 @@ class ContentValidator extends AbstractValidator
             return true;
         }
 
-        $category = config('importing.validationLabels.is_unique_in_column').': '.$column;
+        $category = config('importing.validationLabels.unique_in_column').': '.$column;
         $sheet = $this->getSheet($sheetName);
 
-        $found = $sheet->pluck($column)->search(function ($columnValue) use ($value) {
-            return $value === $columnValue;
+        $found = $sheet->pluck($column)->search(function ($columnValue, $index) use ($value, $rowNumber) {
+            return $value === $columnValue && $index + 2 !== $rowNumber;
         });
 
-        if (!$found) {
+        if ($found === false) {
             return true;
         }
 
