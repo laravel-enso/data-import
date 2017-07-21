@@ -31,6 +31,7 @@ class DataImportServiceProvider extends ServiceProvider
 
     private function loadDependencies()
     {
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
         $this->mergeConfigFrom(__DIR__.'/config/importing.php', 'importing');
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/data-import');
