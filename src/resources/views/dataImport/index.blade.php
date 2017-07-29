@@ -96,8 +96,6 @@
                     <data-table source="/import"
                         id="imports-table"
                         @get-summary="getSummary($event)">
-                        <span slot="data-table-title">{{ __('Past Imports') }}</span>
-                        @include('laravel-enso/core::partials.modal')
                     </data-table>
                 </div>
             </div>
@@ -161,7 +159,6 @@
         <modal :show="showModal"
             @cancel-action="showModal = false"
             @commit-action="deleteTemplate(template.id)">
-            @include('laravel-enso/core::partials.modal')
         </modal>
     </section>
 
