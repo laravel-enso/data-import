@@ -11,7 +11,7 @@ class ImportTableStructure extends TableStructure
     {
         $this->data = [
             'crtNo'               => __('#'),
-            'tableName' => __('Past Imports'),
+            'tableName'           => __('Past Imports'),
             'actionButtons'       => __('Actions'),
             'customActionButtons' => [
                 ['class' => 'btn-info fa fa-info-circle', 'event' => 'get-summary'],
