@@ -24,7 +24,7 @@ class ImportTemplateService
         return $template ?: new ImportTemplate();
     }
 
-    public function upload(string $type)
+    public function store(string $type)
     {
         $template = null;
 
@@ -39,7 +39,7 @@ class ImportTemplateService
         return $template;
     }
 
-    public function download(ImportTemplate $template)
+    public function show(ImportTemplate $template)
     {
         return $this->fileManager->download($template->original_name, $template->saved_name);
     }
@@ -51,6 +51,6 @@ class ImportTemplateService
             $this->fileManager->delete($template->saved_name);
         });
 
-        return ['message' => __('Operation was successful')];
+        return ['message' => __(config('labels.successfulOperation'))];
     }
 }

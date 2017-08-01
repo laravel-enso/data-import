@@ -28,8 +28,8 @@
     "require": {
         "php": ">=7.1.0",
         "laravel/framework": "5.4.*",
-        "laravel-enso/core": "1.1.*",
-        "laravel-enso/helpers": "1.1.*",
+        "laravel-enso/core": "1.2.*",
+        "laravel-enso/helpers": "1.2.*",
         "maatwebsite/excel": "^2.1"
     },
     "autoload": {

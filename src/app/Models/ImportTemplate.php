@@ -9,5 +9,7 @@ class ImportTemplate extends Model
 {
     use FormattedTimestamps;
 
-    protected $fillable = ['type', 'original_name', 'saved_name'];
+    protected $fillable = [
+    	'type', 'original_name', 'saved_name'
+    ];
 }

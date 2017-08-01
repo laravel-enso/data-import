@@ -24,7 +24,7 @@ class Template
         return $sheetNames;
     }
 
-    public function getColumnsFromSheet($sheetName)
+    public function getColumnsFromSheet(string $sheetName)
     {
         $columnNames = collect();
 
@@ -35,7 +35,7 @@ class Template
         return $columnNames;
     }
 
-    public function getLaravelValidationRules($sheetName)
+    public function getLaravelValidationRules(string $sheetName)
     {
         $rules = new Object();
 
@@ -48,7 +48,7 @@ class Template
         return $rules;
     }
 
-    public function getComplexValidationRules($sheetName)
+    public function getComplexValidationRules(string $sheetName)
     {
         $rules = new Object();
 
@@ -72,7 +72,7 @@ class Template
         return $rules;
     }
 
-    private function getSheet($sheetName)
+    private function getSheet(string $sheetName)
     {
         foreach ($this->template->sheets as $sheet) {
             if ($sheet->name === $sheetName) {

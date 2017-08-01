@@ -4,51 +4,40 @@ namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use LaravelEnso\DataImport\app\DataTable\ImportTableStructure;
 use LaravelEnso\DataImport\App\Http\Services\DataImportService;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataTable\app\Traits\DataTable;
 
 class DataImportController extends Controller
 {
-    use DataTable;
-
-    protected $tableStructureClass = ImportTableStructure::class;
-
-    private $import;
+    private $imports;
 
     public function __construct(Request $request)
     {
-        $this->import = new DataImportService($request);
-    }
-
-    public function getTableQuery()
-    {
-        return $this->import->getTableQuery();
+        $this->imports = new DataImportService($request);
     }
 
     public function index()
     {
-        return $this->import->index();
+        return $this->imports->index();
     }
 
     public function getSummary(DataImport $dataImport)
     {
-        return $this->import->getSummary($dataImport);
+        return $this->imports->getSummary($dataImport);
     }
 
-    public function run(string $type)
+    public function store(string $type)
     {
-        return $this->import->run($type);
+        return $this->imports->store($type);
     }
 
-    public function download(DataImport $dataImport)
+    public function show(DataImport $dataImport)
     {
-        return $this->import->download($dataImport);
+        return $this->imports->show($dataImport);
     }
 
     public function destroy(DataImport $dataImport)
     {
-        return $this->import->destroy($dataImport);
+        return $this->imports->destroy($dataImport);
     }
 }

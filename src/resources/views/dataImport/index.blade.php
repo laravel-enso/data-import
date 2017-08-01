@@ -142,7 +142,7 @@
                                                     <span v-if="issue.rowNumber">
                                                         <b>{{ __("Line") }}:</b> <span class="label label-danger">@{{ issue.rowNumber }}</span>
                                                     </span>
-                                                    <span>
+                                                    <span v-if="issue.value">
                                                         <b>{{ __("Value") }}:</b> <span class="label label-danger">@{{ issue.value }}</span>
                                                     </span>
                                                 </li>
@@ -168,7 +168,7 @@
 
     <script type="text/javascript">
 
-        let vm = new Vue({
+        const vm = new Vue({
             el: "#app",
             data() {
                 return {

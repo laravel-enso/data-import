@@ -55,7 +55,7 @@ class ImportConfiguration
 
     private function readJsonTemplate()
     {
-        return \File::get(app_path('Importing/Templates').DIRECTORY_SEPARATOR.$this->config['template']);
+        return \File::get(base_path($this->config['template']));
     }
 
     private function throwMissingParamException($param)

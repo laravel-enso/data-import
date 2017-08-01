@@ -143,7 +143,7 @@ class ContentValidator extends AbstractValidator
     {
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
-                $category = config('importing.validationLabels.sheet_entries_limit_exceded').': '.$this->sheetEntriesLimit;
+                $category = config('importing.validationLabels.sheet_entries_limit_excedeed').': '.$this->sheetEntriesLimit;
                 $issue = $this->createIssue($category, null, null, $sheet->count());
                 $this->summary->addIssue($issue, $sheet->getTitle());
             }

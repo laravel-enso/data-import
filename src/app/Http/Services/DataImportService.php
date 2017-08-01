@@ -23,14 +23,6 @@ class DataImportService
         $this->fileManager->setValidExtensions(['xls', 'xlsx']);
     }
 
-    public function getTableQuery()
-    {
-        return DataImport::select(\DB::raw('data_imports.id as DT_RowId, data_imports.type,
-                data_imports.original_name, data_imports.comment, data_imports.created_at,
-                concat(users.first_name, " ", users.last_name) as created_by'))
-            ->join('users', 'data_imports.created_by', '=', 'users.id');
-    }
-
     public function index()
     {
         $importTypes = $this->buildSelectList((new ImportTypes())->getData());
@@ -43,7 +35,7 @@ class DataImportService
         return $dataImport->summary;
     }
 
-    public function run(string $type)
+    public function store(string $type) //fixme. We need a class to handle the upload / import process.
     {
         $importer = null;
 
@@ -61,7 +53,6 @@ class DataImportService
 
             $dataImport = new DataImport($uploadedFile);
             $dataImport->type = $type;
-            //$dataImport->comment = $comment;
             $dataImport->summary = $importer->getSummary();
             $dataImport->save();
             $this->fileManager->commitUpload();
@@ -70,7 +61,7 @@ class DataImportService
         return $importer->getSummary();
     }
 
-    public function download(DataImport $dataImport)
+    public function show(DataImport $dataImport)
     {
         return $this->fileManager->download($dataImport->original_name, $dataImport->saved_name);
     }
@@ -82,6 +73,8 @@ class DataImportService
             $this->fileManager->delete($dataImport->saved_name);
         });
 
-        return ['message' => 'Operation was succesful'];
+        return ['message' => __(config('labels.successfulOperation'))];
     }
+
+
 }

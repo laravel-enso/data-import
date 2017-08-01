@@ -17,11 +17,11 @@ class DataImportServiceProvider extends ServiceProvider
     private function publishesAll()
     {
         $this->publishes([
-            __DIR__.'/config/importing.php' => config_path('importing.php'),
+            __DIR__.'/config' => config_path(),
         ], 'dataimport-config');
 
         $this->publishes([
-            __DIR__.'/config/importing.php' => config_path('importing.php'),
+            __DIR__.'/config' => config_path(),
         ], 'enso-config');
 
         $this->publishes([
