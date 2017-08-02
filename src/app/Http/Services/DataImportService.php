@@ -16,7 +16,7 @@ class DataImportService
 
     public function __construct(Request $request)
     {
-        $this->request     = $request;
+        $this->request = $request;
         $this->fileManager = new FileManager(config('laravel-enso.paths.imports'), config('laravel-enso.paths.temp'));
         $this->fileManager->setValidExtensions(['xls', 'xlsx']);
     }
@@ -34,14 +34,13 @@ class DataImportService
     }
 
     public function store(string $type) //fixme. We need a class to handle the upload / import process.
-
     {
         $importer = null;
 
         \DB::transaction(function () use (&$importer, $type) {
             $this->fileManager->startUpload($this->request->allFiles());
             $uploadedFile = $this->fileManager->getUploadedFiles()->first();
-            $importer     = new Importer($type, $uploadedFile);
+            $importer = new Importer($type, $uploadedFile);
             $importer->run();
 
             if ($importer->fails()) {
@@ -50,8 +49,8 @@ class DataImportService
                 return $importer->getSummary();
             }
 
-            $dataImport          = new DataImport($uploadedFile);
-            $dataImport->type    = $type;
+            $dataImport = new DataImport($uploadedFile);
+            $dataImport->type = $type;
             $dataImport->summary = $importer->getSummary();
             $dataImport->save();
             $this->fileManager->commitUpload();
