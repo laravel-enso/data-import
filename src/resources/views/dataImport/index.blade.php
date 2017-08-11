@@ -32,10 +32,7 @@
 
 @section('content')
 
-    <section class="content-header">
-        @include('laravel-enso/menumanager::breadcrumbs')
-    </section>
-    <section class="content" v-cloak>
+    <page v-cloak>
         <transition-group name="fadeUp" mode="out-in" tag="div">
             <div class="row" v-if="!summary" key="controls">
                 <div class="col-xs-12 col-md-6 col-md-offset-3">
@@ -160,7 +157,7 @@
             @cancel-action="showModal = false"
             @commit-action="deleteTemplate(template.id)">
         </modal>
-    </section>
+    </page>
 
 @endsection
 
