@@ -118,7 +118,7 @@ class ContentValidator extends AbstractValidator
         $this->summary->addIssue($issue, $sheetName);
     }
 
-    private function checkIfIsUniqueInColumn(string $sheetName, string $column, string $value, int $rowNumber)
+    private function checkIfIsUniqueInColumn(string $sheetName, string $column, $value, int $rowNumber)
     {
         if (!$value) {
             return true;
