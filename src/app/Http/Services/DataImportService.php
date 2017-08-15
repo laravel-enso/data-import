@@ -23,7 +23,7 @@ class DataImportService
 
     public function index()
     {
-        $importTypes = SelectListBuilder::buildSelectList((new ImportTypes())->getData());
+        $importTypes = json_encode((new ImportTypes())->getData());
 
         return view('laravel-enso/data-import::dataImport.index', compact('importTypes'));
     }
