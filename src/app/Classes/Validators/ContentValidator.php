@@ -91,7 +91,7 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function dispatchComplexValidation(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
+    private function dispatchComplexValidation(string $sheetName, \stdClass $rule, string $column, $value, int $rowNumber)
     {
         if ($rule->type === 'exists_in_sheet') {
             return $this->checkIfExistsInSheet($sheetName, $rule, $column, $value, $rowNumber);
