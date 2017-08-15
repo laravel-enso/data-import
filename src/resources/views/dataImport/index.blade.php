@@ -51,7 +51,7 @@
                                 <label style="margin-bottom: 15px">{{ __('Template') }}</label>
                                 <br>
                                 <file-uploader v-if="!template.id"
-                                    :url="'/import/uploadTemplate/' + importType.key"
+                                    :url="'/import/uploadTemplate/' + importType"
                                     @upload-successful="template = $event" >
                                     <span slot="upload-button">
                                         <i class="btn btn-xs btn-primary fa fa-upload margin-right-xs"
@@ -71,9 +71,9 @@
                             </div>
                             <div class="col-xs-4" v-if="importTypeSelected">
                                 <file-uploader
-                                    :params="{ 'comment': comment, 'type': importType.key }"
+                                    :params="{ 'comment': comment, 'type': importType }"
                                     @upload-successful="summary = $event"
-                                    :url="'/import/run/' + importType.key">
+                                    :url="'/import/run/' + importType">
                                     <span slot="upload-button">
                                         <button class="btn btn-primary btn-block upload-button">
                                             {{ __('Upload') }}
@@ -187,7 +187,7 @@
                         return;
                     }
 
-                    axios.get('/import/getTemplate/' + this.importType.key).then(response => {
+                    axios.get('/import/getTemplate/' + this.importType).then(response => {
                         this.template = response.data;
                     }).catch(error => {
                         this.reportEnsoException(error);
