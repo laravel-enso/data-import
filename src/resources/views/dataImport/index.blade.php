@@ -41,7 +41,6 @@
                             <div class="col-xs-4">
                                 <label>{{ __('Import type') }}</label>
                                 <vue-select :options="importTypes"
-                                    key-map="string"
                                     v-model="importType"
                                     @input="getTemplate"
                                     ref="importTypeSelect">
