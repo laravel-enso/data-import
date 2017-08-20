@@ -31,9 +31,9 @@ class DataImportController extends Controller
         return $this->imports->store($type);
     }
 
-    public function show(DataImport $dataImport)
+    public function download(DataImport $dataImport)
     {
-        return $this->imports->show($dataImport);
+        return $this->imports->download($dataImport);
     }
 
     public function destroy(DataImport $dataImport)

@@ -58,7 +58,7 @@ class DataImportService
         return $importer->getSummary();
     }
 
-    public function show(DataImport $dataImport)
+    public function download(DataImport $dataImport)
     {
         return $this->fileManager->download($dataImport->original_name, $dataImport->saved_name);
     }
