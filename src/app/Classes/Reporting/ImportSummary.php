@@ -30,7 +30,7 @@ class ImportSummary extends AbstractObject
 
     public function getRowsWithIssues(string $sheetName)
     {
-        $sheetIssues = $this->issues->filter(function($sheet) use ($sheetName) {
+        $sheetIssues = $this->issues->filter(function ($sheet) use ($sheetName) {
             return $sheet->name === $sheetName;
         })->first();
 

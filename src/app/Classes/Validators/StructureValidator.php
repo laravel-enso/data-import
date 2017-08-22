@@ -109,7 +109,6 @@ class StructureValidator extends AbstractValidator
         return $xlsxSheets;
     }
 
-
     private function addIssue(string $category, string $value, string $sheetName = '')
     {
         $issue = new Issue([

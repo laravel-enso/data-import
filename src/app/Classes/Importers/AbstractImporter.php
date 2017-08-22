@@ -28,7 +28,7 @@ abstract class AbstractImporter
         if ($this->summary->hasContentErrors()) {
             $rows = $this->summary->getRowsWithIssues($sheetName);
 
-            return $sheet->filter(function($row, $index) use($rows) {
+            return $sheet->filter(function ($row, $index) use ($rows) {
                 return !$rows->contains($index + 2);
             });
         }

@@ -3,7 +3,6 @@
 namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Core\app\Models\Preference;
 use LaravelEnso\Helpers\Traits\FormattedTimestamps;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 
@@ -19,15 +18,15 @@ class DataImport extends Model
 
     public function getSuccessfulAttribute()
     {
-    	$import = DataImport::find($this->id);
+        $import = self::find($this->id);
 
-    	return $import->summary->successful;
+        return $import->summary->successful;
     }
 
     public function getErrorsAttribute()
     {
-    	$import = DataImport::find($this->id);
+        $import = self::find($this->id);
 
-    	return $import->summary->errors;
+        return $import->summary->errors;
     }
 }

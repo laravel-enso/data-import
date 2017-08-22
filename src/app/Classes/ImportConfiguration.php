@@ -65,9 +65,10 @@ class ImportConfiguration
     {
         if (!\File::exists(base_path($this->config['template']))) {
             throw new \EnsoException(
-                __("Template file is missing").': '.base_path($this->config['template'])
+                __('Template file is missing').': '.base_path($this->config['template'])
             );
         }
+
         return \File::get(base_path($this->config['template']));
     }
 
