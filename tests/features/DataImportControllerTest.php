@@ -30,7 +30,7 @@ class DataImportControllerTest extends TestCase
     public function can_get_import_summary()
     {
         $this->be($this->user);
-        $testSummary = '{"fileName": "test.xlsx", "hasErrors": false, "sheetIssues": [], "structureIssues": [], "successfulEntries": 1}';
+        $testSummary = '{"fileName": "test.xlsx", "hasErrors": false, "sheetIssues": [], "structureIssues": [], "successful": 1}';
 
         $dataImport = DataImport::create([
             'type'          => 1,
@@ -53,7 +53,7 @@ class DataImportControllerTest extends TestCase
         //evaluate
         $respObject = json_decode($response->getContent());
         $this->assertFalse($respObject->summary->hasErrors);
-        $this->assertEquals(5, $respObject->summary->successfulEntries);
+        $this->assertEquals(5, $respObject->summary->successful);
     }
 
     /** @test */

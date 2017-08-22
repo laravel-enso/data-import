@@ -14,7 +14,8 @@ class CustomValidator extends AbstractValidator
     {
         //do custom validation logic
         //for registering issues in the summary use the method below
-        //$this->summary->addIssue($issue) where $issue is an object of the
+        //$this->summary->addStructureIssue($issue, $sheetName = '') where $issue is an object of the
+        //$this->summary->addContentIssue($issue, $sheetName = '') where $issue is an object of the
         //'LaravelEnso\DataImport\app\Classes\Reporting\Issue' class that can be instantiated with
         //an array with the following parameters
         //['category' => 'category', 'rowNumber' => 'rowNumber', 'column' => 'column', 'value' => 'value']

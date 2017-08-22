@@ -12,13 +12,14 @@ return [
         'sheet_entries_limit_excedeed' => 'Excedeed the entries limit of',
         'missing_param_from_config'    => 'The following parameter is missing from the config file',
     ],
-    'configs' => [
+    'configs'          => [
         'example' => [
             'label'                => 'Example import',
             'template'             => 'app/Importing/Templates/exampleTemplate.json',
             'importerClass'        => 'App\\Importing\\Importers\\ExampleImporter',
             'customValidatorClass' => 'App\\Importing\\Validators\\CustomValidator', // optional
             'sheetEntriesLimit'    => 5000, // optional, the default value is 5000
+            'stopOnErrors'         => false, // optional, the default value is false
         ],
     ],
 ];

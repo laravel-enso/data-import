@@ -14,20 +14,16 @@ use Maatwebsite\Excel\Collections\SheetCollection;
 class ContentValidator extends AbstractValidator
 {
     protected $customValidator;
-    protected $sheetEntriesLimit;
 
     public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
     {
         parent::__construct($config->getTemplate(), $sheets, $summary);
 
         $this->customValidator = $config->getCustomValidator($sheets, $summary);
-        $this->sheetEntriesLimit = $config->getSheetEntriesLimit();
     }
 
     public function run()
     {
-        $this->validateSheetEntriesLimit();
-
         $this->sheets->each(function ($sheet) {
             $this->doValidations($sheet);
         });
@@ -57,8 +53,7 @@ class ContentValidator extends AbstractValidator
         $category = __(config('importing.validationLabels.duplicate_lines'));
 
         foreach ($duplicateLines->keys() as $rowNumber) {
-            $issue = $this->createIssue($category, $rowNumber + 2);
-            $this->summary->addIssue($issue, $sheet->getTitle());
+            $this->addIssue($sheet->getTitle(), $category, $rowNumber + 2);
         }
     }
 
@@ -70,8 +65,7 @@ class ContentValidator extends AbstractValidator
             foreach ($rules->getProperties() as $column) {
                 if ($result->errors()->has($column)) {
                     foreach ($result->errors()->get($column) as $category) {
-                        $issue = $this->createIssue($category, $rowNumber + 1, $column, $row->$column);
-                        $this->summary->addIssue($issue, $sheetName);
+                        $this->addIssue($sheetName, $category, $rowNumber + 1, $column, $row->$column);
                     }
                 }
             }
@@ -107,15 +101,16 @@ class ContentValidator extends AbstractValidator
 
     private function checkIfExistsInSheet(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
     {
-        $category = config('importing.validationLabels.exists_in_sheet').': '.$rule->sheet.'('.$rule->column.')';
+        $category = config('importing.validationLabels.exists_in_sheet').': '
+            .$rule->sheet.', '.__('on column').': '.$rule->column;
+
         $sheet = $this->getSheet($rule->sheet);
 
         if ($sheet->pluck($rule->column)->contains($value)) {
             return true;
         }
 
-        $issue = $this->createIssue($category, $rowNumber, $column, $value);
-        $this->summary->addIssue($issue, $sheetName);
+        $this->addIssue($sheetName, $category, $rowNumber, $column, $value);
     }
 
     private function checkIfIsUniqueInColumn(string $sheetName, string $column, $value, int $rowNumber)
@@ -135,28 +130,18 @@ class ContentValidator extends AbstractValidator
             return true;
         }
 
-        $issue = $this->createIssue($category, $rowNumber, $column, $value);
-        $this->summary->addIssue($issue, $sheetName);
+        $this->addIssue($sheetName, $category, $rowNumber, $column, $value);
     }
 
-    private function validateSheetEntriesLimit()
+    private function addIssue(string $sheetName, string $category, int $rowNumber = null, string $column = null, $value = null)
     {
-        $this->sheets->each(function ($sheet) {
-            if ($sheet->count() > $this->sheetEntriesLimit) {
-                $category = config('importing.validationLabels.sheet_entries_limit_excedeed').': '.$this->sheetEntriesLimit;
-                $issue = $this->createIssue($category, null, null, $sheet->count());
-                $this->summary->addIssue($issue, $sheet->getTitle());
-            }
-        });
-    }
-
-    private function createIssue(string $category, int $rowNumber = null, string $column = null, $value = null)
-    {
-        return new Issue([
+        $issue = new Issue([
             'category'  => $category,
             'rowNumber' => $rowNumber,
             'column'    => $column,
             'value'     => $value,
         ]);
+
+        $this->summary->addContentIssue($issue, $sheetName);
     }
 }

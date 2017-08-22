@@ -11,6 +11,7 @@ class Importer
     protected $summary;
     protected $validator;
     protected $importer;
+    protected $skipsContentErrors;
 
     public function __construct(string $type, $file)
     {
@@ -19,6 +20,7 @@ class Importer
         $config = new ImportConfiguration($type);
         $sheets = $this->loadXlsx($file['full_path']);
 
+        $this->skipsContentErrors = !$config->getStopOnErrors();
         $this->summary = new ImportSummary($file['original_name']);
         $this->validator = new BaseValidator($config, $sheets, $this->summary);
         $this->importer = $config->getImporter($sheets, $this->summary);
@@ -28,14 +30,21 @@ class Importer
     {
         $this->validator->run();
 
-        if ($this->validator->isValid()) {
+        if ($this->validator->isValid() || $this->canRunWithErrors()) {
             $this->importer->run();
         }
     }
 
     public function fails()
     {
-        return $this->validator->fails();
+        return $this->validator->hasStructureErrors()
+            || ($this->validator->hasContentErrors() && !$this->skipsContentErrors);
+    }
+
+    public function canRunWithErrors()
+    {
+        return !$this->validator->hasStructureErrors()
+            && $this->skipsContentErrors;
     }
 
     public function getSummary()

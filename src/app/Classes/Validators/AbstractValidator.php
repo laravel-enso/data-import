@@ -26,9 +26,14 @@ abstract class AbstractValidator
         return !$this->summary->hasErrors();
     }
 
-    public function fails()
+    public function hasStructureErrors()
     {
-        return $this->summary->hasErrors();
+        return $this->summary->hasStructureErrors();
+    }
+
+    public function hasContentErrors()
+    {
+        return $this->summary->hasContentErrors();
     }
 
     public function getSummary()

@@ -33,13 +33,13 @@ class ReportingStructureIssuesTest extends TestCase
         $this->assertFalse($this->ImportSummary->hasErrors);
         $this->assertEquals(0, $this->ImportSummary->structureIssues->count());
         $this->assertEquals(0, $this->ImportSummary->sheetIssues->count());
-        $this->assertEquals(0, $this->ImportSummary->successfulEntries);
+        $this->assertEquals(0, $this->ImportSummary->successful);
     }
 
     public function test_success_counting()
     {
         $this->ImportSummary->incSuccess();
-        $this->assertEquals(1, $this->ImportSummary->successfulEntries);
+        $this->assertEquals(1, $this->ImportSummary->successful);
     }
 
     /** @test */

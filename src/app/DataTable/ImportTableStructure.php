@@ -18,6 +18,10 @@ class ImportTableStructure extends TableStructure
             ],
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',
+            'appends'             => ['successful', 'errors'],
+            'render'              => [2, 3],
+            'notSearchable'       => [2, 3],
+            'notSortable'         => [2, 3],
             'enumMappings'        => [
                 'type' => ImportTypes::class,
             ],
@@ -33,14 +37,24 @@ class ImportTableStructure extends TableStructure
                     'name'  => 'original_name',
                 ],
                 2 => [
+                    'label' => __('Successful'),
+                    'data'  => 'successful',
+                    'name'  => 'successful',
+                ],
+                3 => [
+                    'label' => __('Errors'),
+                    'data'  => 'errors',
+                    'name'  => 'errors',
+                ],
+                4 => [
+                    'label' => __('Imported By'),
+                    'data'  => 'created_by',
+                    'name'  => 'users.last_name',
+                ],
+                5 => [
                     'label' => __('Date'),
                     'data'  => 'created_at',
                     'name'  => 'data_imports.created_at',
-                ],
-                3 => [
-                    'label' => __('User'),
-                    'data'  => 'created_by',
-                    'name'  => 'users.last_name',
                 ],
             ],
         ];

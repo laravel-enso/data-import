@@ -27,6 +27,10 @@ class DataImportServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/classes' => app_path(),
         ], 'dataimport-classes');
+
+        $this->publishes([
+            __DIR__.'/resources/assets/images' => resource_path('assets/images'),
+        ], 'dataimport-logo');
     }
 
     private function loadDependencies()

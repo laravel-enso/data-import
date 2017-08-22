@@ -10,6 +10,7 @@ class ImportConfiguration
     private $config;
 
     private const SheetEntriesLimit = 5000;
+    private const StopOnErrors = false;
 
     public function __construct(string $type)
     {
@@ -44,6 +45,13 @@ class ImportConfiguration
             : self::SheetEntriesLimit;
     }
 
+    public function getStopOnErrors()
+    {
+        return isset($this->config['stopOnErrors'])
+            ? $this->config['stopOnErrors']
+            : self::StopOnErrors;
+    }
+
     private function getConfiguration(string $type)
     {
         return collect(config('importing.configs'))->first(
@@ -55,6 +63,11 @@ class ImportConfiguration
 
     private function readJsonTemplate()
     {
+        if (!\File::exists(base_path($this->config['template']))) {
+            throw new \EnsoException(
+                __("Template file is missing").': '.base_path($this->config['template'])
+            );
+        }
         return \File::get(base_path($this->config['template']));
     }
 

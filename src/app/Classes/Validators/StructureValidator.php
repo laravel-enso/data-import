@@ -10,9 +10,13 @@ use Maatwebsite\Excel\Collections\SheetCollection;
 
 class StructureValidator extends AbstractValidator
 {
+    protected $sheetEntriesLimit;
+
     public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
     {
         parent::__construct($config->getTemplate(), $sheets, $summary);
+
+        $this->sheetEntriesLimit = $config->getSheetEntriesLimit();
     }
 
     public function run()
@@ -21,6 +25,10 @@ class StructureValidator extends AbstractValidator
 
         if (!$this->summary->hasErrors()) {
             $this->validateColumns();
+        }
+
+        if (!$this->summary->hasErrors()) {
+            $this->validateSheetEntriesLimit();
         }
     }
 
@@ -37,8 +45,7 @@ class StructureValidator extends AbstractValidator
         $extraSheets = $xlsxSheets->diff($templateSheets);
 
         $extraSheets->each(function ($sheet) {
-            $issue = $this->createIssue(__(config('importing.validationLabels.extra_sheets')), $sheet);
-            $this->summary->addIssue($issue);
+            $this->addIssue(__(config('importing.validationLabels.extra_sheets')), $sheet);
         });
     }
 
@@ -47,8 +54,7 @@ class StructureValidator extends AbstractValidator
         $missingSheets = $templateSheets->diff($xlsxSheets);
 
         $missingSheets->each(function ($sheet) {
-            $issue = $this->createIssue(__(config('importing.validationLabels.missing_sheets')), $sheet);
-            $this->summary->addIssue($issue);
+            $this->addIssue(__(config('importing.validationLabels.missing_sheets')), $sheet);
         });
     }
 
@@ -69,8 +75,7 @@ class StructureValidator extends AbstractValidator
         $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $issue = $this->createIssue(__(config('importing.validationLabels.missing_columns')), $column);
-            $this->summary->addIssue($issue, $sheetName);
+            $issue = $this->addIssue(__(config('importing.validationLabels.missing_columns')), $column, $sheetName);
         });
     }
 
@@ -79,8 +84,17 @@ class StructureValidator extends AbstractValidator
         $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $issue = $this->createIssue(__(config('importing.validationLabels.extra_columns')), $column);
-            $this->summary->addIssue($issue, $sheetName);
+            $issue = $this->addIssue(__(config('importing.validationLabels.extra_columns')), $column, $sheetName);
+        });
+    }
+
+    private function validateSheetEntriesLimit()
+    {
+        $this->sheets->each(function ($sheet) {
+            if ($sheet->count() > $this->sheetEntriesLimit) {
+                $category = config('importing.validationLabels.sheet_entries_limit_excedeed').': '.$this->sheetEntriesLimit;
+                $this->addIssue($category, $sheet->count(), $sheet->getTitle());
+            }
         });
     }
 
@@ -95,11 +109,14 @@ class StructureValidator extends AbstractValidator
         return $xlsxSheets;
     }
 
-    private function createIssue(string $category, string $value)
+
+    private function addIssue(string $category, string $value, string $sheetName = '')
     {
-        return new Issue([
+        $issue = new Issue([
             'category' => $category,
             'value'    => $value,
         ]);
+
+        $this->summary->addStructureIssue($issue, $sheetName);
     }
 }

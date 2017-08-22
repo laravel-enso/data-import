@@ -33,115 +33,119 @@
 @section('content')
 
     <page v-cloak>
-        <transition-group name="fadeUp" mode="out-in" tag="div" v-if=>
+        <transition-group name="slideUp" tag="div">
             <div class="col-xs-12 col-md-6 col-md-offset-3"
-                    v-if="!summary" key="controls">
-                    <div class="box box-primary" v-cloak>
-                        <div class="box-body">
-                            <div class="col-xs-4">
-                                <label>{{ __('Import type') }}</label>
-                                <vue-select :options="importTypes"
-                                    v-model="importType"
-                                    @input="getTemplate"
-                                    ref="importTypeSelect">
-                                </vue-select>
-                            </div>
-                            <div class="col-xs-4 margin-bottom-xs text-center" v-if="importTypeSelected">
-                                <label style="margin-bottom: 15px">{{ __('Template') }}</label>
-                                <br>
+                v-if="!summary" key="controls">
+                <box theme="primary"
+                    icon="fa fa-upload"
+                    title="{{ __('Import type') }}"
+                    open collapsible removable border
+                    :overlay="loadingTemplate">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <vue-select :options="importTypes"
+                                v-model="importType"
+                                @input="getTemplate"
+                                key-map="string"
+                                ref="importTypeSelect">
+                            </vue-select>
+                        </div>
+                        <transition name="fade">
+                            <div class="col-xs-3 text-center" v-if="importType">
+                                <label class="margin-right-xs margin-top-xs">{{ __('Template') }}: </label>
                                 <file-uploader v-if="!template.id"
                                     :url="'/import/uploadTemplate/' + importType"
-                                    @upload-successful="template = $event" >
+                                    @upload-start="loadingTemplate=true"
+                                    @upload-successful="template=$event;loadingTemplate=false"
+                                    @upload-error="loadingTemplate=false">
                                     <span slot="upload-button">
                                         <i class="btn btn-xs btn-primary fa fa-upload margin-right-xs"
-                                            v-tooltip="'{{ __('Upload a template') }}'"></i>
+                                            v-tooltip="'{{ __('Upload a template') }}'">
+                                        </i>
                                     </span>
                                 </file-uploader>
-                                <a class="btn btn-xs btn-info margin-right-xs"
+                                <a class="btn btn-xs btn-info margin-right-xs fa fa-download"
                                     :href="'/import/downloadTemplate/' + template.id"
                                     v-if="template.id"
                                     v-tooltip="templateTooltip">
-                                    <i class="fa fa-table"></i>
                                 </a>
                                 <i class="btn btn-xs btn-danger fa fa-trash margin-right-xs"
                                     v-if="template.id"
                                     @click="showModal = true">
                                 </i>
                             </div>
-                            <div class="col-xs-4" v-if="importTypeSelected">
-                                <file-uploader
-                                    :params="{ 'comment': comment, 'type': importType }"
-                                    @upload-successful="summary = $event"
+                        </transition>
+                        <transition name="fade">
+                            <div class="col-xs-3 text-center" v-if="importType">
+                                <label class="margin-right-xs margin-top-xs">{{ __('Import') }}: </label>
+                                <file-uploader @upload-start="importing=true"
+                                    @upload-successful="summary=$event;importing=false"
+                                    @upload-error="importing=false;importType=null"
                                     :url="'/import/run/' + importType">
                                     <span slot="upload-button">
-                                        <button class="btn btn-primary btn-block upload-button">
-                                            {{ __('Upload') }}
-                                        </button>
+                                         <i class="btn btn-xs btn-primary fa fa-upload margin-right-xs"
+                                            v-tooltip="'{{ __('Upload a file') }}'">
+                                        </i>
                                     </span>
                                 </file-uploader>
                             </div>
-                        </div>
+                        </transition>
                     </div>
+                </box>
             </div>
-            <div class="col-md-12"
+            <div class="col-xs-12"
                 v-if="!summary" key="table">
                 <data-table source="/import"
                     id="imports-table"
+                    :custom-render="customRender"
                     @get-summary="getSummary($event)">
                 </data-table>
             </div>
-            <div class="col-md-12"
+            <div class="col-xs-12"
                 v-if="summary" key="report">
-                <div class="box box-body"
-                    :class="{'box-success' : !summary.hasErrors, 'box-danger' : summary.hasErrors}">
-                    <button type="button" class="close float-right margin-right-md"
-                        data-dismiss="alert" aria-hidden="true"
-                        @click="resetInputs()">×
-                    </button>
-                    <div class="col-xs-12">
-                        <center>
-                            <h5>
-                                <span class="label label-danger" v-if="summary.hasErrors">
-                                    {{ __("Errors") }}
-                                </span>
-                                <span class="label label-success" v-else>
-                                    {{ __("Success") }}
-                                </span>
-                            </h5>
-                        </center>
+                <div class="row">
+                    <div class="col-xs-12 col-md-4">
+                         <box-widget theme="bg-orange"
+                            image="/images/excel_logo.svg"
+                            name="{{ __(('Excel Import')) }}"
+                            position="{{ __('Summary') }}"
+                            :items="[{'label': 'File', 'value': summary.fileName, 'badge': 'bg-blue'}, {'label': 'Created At', 'value': summary.date + ', ' + summary.time, 'badge': 'bg-blue'}, {'label': 'Imported Entries', 'value': summary.successful, 'badge': 'bg-green'}, {'label': 'Errors', 'value': summary.errors, 'badge': 'bg-red'}]">
+                        </box-widget>
                     </div>
-                    <div class="col-xs-12">
-                        <p><b>{{ __("File") }}:</b> @{{ summary.fileName }} </p>
-                        <p><b>{{ __('Imported entries') }}: </b> <span class="label label-success">@{{ summary.successfulEntries }}</span></p>
-                        <p><b>{{ __('Errors List') }}: </b></p>
-                        <ul class="errors" v-if="summary.hasErrors">
-                            <li v-for="issue in summary.issues">
-                                <span v-if="issue.name">
-                                    <b>{{ __('Sheet') }}</b> <span class="label label-info">@{{ issue.name }}</span>
+                    <div class="col-xs-12 col-md-8">
+                        <box :theme="summary.errors ? 'danger' : 'primary'"
+                            icon="fa fa-file-excel-o"
+                            title="{{ __('Errors') }}"
+                            open collapsible removable solid
+                            @remove="summary=null">
+                            <tabs title="{{ __('Sheets') }}"
+                                reverse
+                                icon="fa fa-gears"
+                                :tabs="summary.issues.pluck('name')">
+                                <span v-for="sheet in summary.issues"
+                                    :slot="sheet.name">
+                                    <tabs :tabs="sheet.categories.pluck('name')">
+                                        <span v-for="category in sheet.categories"
+                                            :slot="category.name">
+                                            <h5>{{ __('Error List') }}</h5>
+                                            <ul class="errors">
+                                                <li v-for="issue in category.issues">
+                                                    <span v-if="issue.column">
+                                                        <b>{{ __("Column") }}:</b> <span class="label label-info">@{{ issue.column }}</span>
+                                                    </span>
+                                                    <span v-if="issue.rowNumber">
+                                                        <b>{{ __("Line") }}:</b> <span class="label label-info">@{{ issue.rowNumber }}</span>
+                                                    </span>
+                                                    <span v-if="issue.value">
+                                                        <b>{{ __("Value") }}:</b> <span class="label label-danger">@{{ issue.value }}</span>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </tabs>
                                 </span>
-                                <span v-else>
-                                    <b>{{ __('Details') }}:</b>
-                                </span>
-                                <ul class="errors">
-                                    <li v-for="category in issue.categories">
-                                        <b>{{ __('Error') }}:</b> <span class="label label-warning">@{{ category.name }}</span>
-                                        <ul class="errors">
-                                            <li v-for="issue in category.issues">
-                                                <span v-if="issue.column">
-                                                    <b>{{ __("Column") }}:</b> <span class="label label-danger">@{{ issue.column }}</span>
-                                                </span>
-                                                <span v-if="issue.rowNumber">
-                                                    <b>{{ __("Line") }}:</b> <span class="label label-danger">@{{ issue.rowNumber }}</span>
-                                                </span>
-                                                <span v-if="issue.value">
-                                                    <b>{{ __("Value") }}:</b> <span class="label label-danger">@{{ issue.value }}</span>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                            </tabs>
+                        </box>
                     </div>
                 </div>
             </div>
@@ -160,64 +164,85 @@
 
         const vm = new Vue({
             el: "#app",
+
             data() {
                 return {
                     importType: null,
-                    comment: '',
-                    fileSizeLimit: 8388608,
                     summary: null,
                     template: {},
                     showModal: false,
+                    loadingTemplate: false,
+                    importing: false,
                     importTypes: {!! $importTypes  !!}
                 }
             },
+
             computed: {
-                importTypeSelected() {
-                    return this.importType !== null;
-                },
                 templateTooltip() {
                     return "{{ __('File') }}" + ': ' + this.template.original_name
                         + '<br>' + "{{ __('Created at') }}" + ': ' + this.template.created_at;
                 }
             },
+
             methods: {
                 getTemplate() {
-                    if (!this.importTypeSelected) {
+                    if (!this.importType) {
                         return;
                     }
 
+                    this.loadingTemplate = true;
+
                     axios.get('/import/getTemplate/' + this.importType).then(response => {
                         this.template = response.data;
+                        this.loadingTemplate = false;
                     }).catch(error => {
+                        this.loadingTemplate = false;
                         this.reportEnsoException(error);
                     });
                 },
                 deleteTemplate(id) {
+                    this.loadingTemplate = true;
                     axios.delete('/import/deleteTemplate/' + id).then(response => {
                         this.template = {};
                         this.showModal = false;
                         toastr.success(response.data.message);
+                        this.loadingTemplate = false;
                     }).catch(error => {
                         this.showModal = false;
+                        this.loadingTemplate = false;
                         this.reportEnsoException(error);
                     });
                 },
-                resetInputs() {
-                    this.summary = null;
-                    this.comment = null;
-                    this.$nextTick(function() {
-                        this.$refs.importTypeSelect.removeSelection();
-                    });
-                },
-                getSummary(dataImportId) {
-                    axios.get('/import/getSummary/' + dataImportId).then(response => {
+                getSummary(id) {
+                    this.loading = true;
+
+                    axios.get('/import/getSummary/' + id).then(response => {
+                        this.loading = false;
+
+                        if (response.data.errors === 0) {
+                            return toastr.info('The import has no errors');
+                        }
+
                         this.summary = response.data;
                     }).catch(error => {
+                        this.loading = false;
                         this.reportEnsoException(error);
                     });
+                },
+                customRender(column, data, type, row, meta) {
+                    switch(column) {
+                        case 'successful':
+                            return '<span class="label bg-green">' + data + '</span>';
+                        case 'errors':
+                            return '<span class="label bg-red">' + data + '</span>';
+                        default:
+                            toastr.warning('render for column ' + column + ' is not defined.' );
+                            return data;
+                    }
                 }
             }
         });
 
     </script>
+
 @endpush

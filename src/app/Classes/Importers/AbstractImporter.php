@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes\Importers;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
 abstract class AbstractImporter
@@ -20,9 +21,24 @@ abstract class AbstractImporter
 
     public function getSheet(string $sheetName)
     {
-        return $this->sheets->filter(function ($sheet) use ($sheetName) {
+        $sheet = $this->sheets->filter(function ($sheet) use ($sheetName) {
             return $sheet->getTitle() === $sheetName;
         })->first();
+
+        if ($this->summary->hasContentErrors()) {
+            $rows = $this->summary->getRowsWithIssues($sheetName);
+
+            return $sheet->filter(function($row, $index) use($rows) {
+                return !$rows->contains($index + 2);
+            });
+        }
+
+        return $sheet;
+    }
+
+    public function addIssue(Issue $issue, string $sheetName = '')
+    {
+        $this->summary->addContentIssue($issue, $sheetName);
     }
 
     public function incSuccess()
