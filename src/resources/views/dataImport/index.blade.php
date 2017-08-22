@@ -113,11 +113,12 @@
                         </box-widget>
                     </div>
                     <div class="col-xs-12 col-md-8">
-                        <box :theme="summary.errors ? 'danger' : 'primary'"
+                        <box theme="danger"
                             icon="fa fa-file-book"
                             title="{{ __('Errors') }}"
                             open collapsible removable solid
-                            @remove="summary=null">
+                            @remove="summary=null"
+                            v-if="summary.errors > 0">
                             <tabs title="{{ __('Summary') }}"
                                 reverse
                                 icon="fa fa-file-excel-o"
