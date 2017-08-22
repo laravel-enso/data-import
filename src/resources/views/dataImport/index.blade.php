@@ -105,7 +105,11 @@
                 v-if="summary" key="report">
                 <div class="row">
                     <div class="col-xs-12 col-md-4">
-                         <box-widget theme="bg-orange"
+                        <button v-if="summary.errors === 0"
+                            class="btn btn-primary margin-bottom-md"
+                            @click="summary=null">{{ __("Back") }}
+                        </button>
+                        <box-widget theme="bg-orange"
                             image="/images/excel_logo.svg"
                             name="{{ __(('Excel Import')) }}"
                             position="{{ __('Summary') }}"
