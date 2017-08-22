@@ -132,20 +132,25 @@
                                     <tabs :tabs="getCategoryTabs(sheet)">
                                         <span v-for="category in sheet.categories"
                                             :slot="category.name">
-                                            <h5>{{ __('Error List') }}</h5>
-                                            <ul class="errors">
-                                                <li v-for="issue in category.issues">
-                                                    <span v-if="issue.column">
-                                                        {{ __("Column") }}: <b class="text-info">@{{ issue.column }}</b>
-                                                    </span>
-                                                    <span v-if="issue.rowNumber">
-                                                        {{ __("Line") }}: <b class="text-info">@{{ issue.rowNumber }}</b>
-                                                    </span>
-                                                    <span v-if="issue.value">
-                                                        {{ __("Value") }}: <b class="text-danger">@{{ issue.value }}</b>
-                                                    </span>
-                                                </li>
-                                            </ul>
+                                             <paginate :list="category.issues"
+                                                border>
+                                                <template scope="props">
+                                                    <h5>{{ __('Error List') }}</h5>
+                                                    <ul class="errors">
+                                                        <li v-for="issue in props.list">
+                                                            <span v-if="issue.column">
+                                                                {{ __("Column") }}: <b class="text-info">@{{ issue.column }}</b>
+                                                            </span>
+                                                            <span v-if="issue.rowNumber">
+                                                                {{ __("Line") }}: <b class="text-info">@{{ issue.rowNumber }}</b>
+                                                            </span>
+                                                            <span v-if="issue.value">
+                                                                {{ __("Value") }}: <b class="text-danger">@{{ issue.value }}</b>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </template>
+                                            </paginate>
                                         </span>
                                     </tabs>
                                 </span>
