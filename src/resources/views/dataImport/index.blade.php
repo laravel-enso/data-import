@@ -34,7 +34,7 @@
 
     <page v-cloak>
         <transition-group name="slideUp" tag="div">
-            <div class="col-xs-12 col-md-6 col-md-offset-3"
+            <div class="col-xs-12"
                 v-if="!summary" key="controls">
                 <box theme="primary"
                     icon="fa fa-upload"
@@ -114,13 +114,13 @@
                     </div>
                     <div class="col-xs-12 col-md-8">
                         <box :theme="summary.errors ? 'danger' : 'primary'"
-                            icon="fa fa-file-excel-o"
+                            icon="fa fa-file-book"
                             title="{{ __('Errors') }}"
                             open collapsible removable solid
                             @remove="summary=null">
-                            <tabs title="{{ __('Sheets') }}"
+                            <tabs title="{{ __('Summary') }}"
                                 reverse
-                                icon="fa fa-gears"
+                                icon="fa fa-file-excel-o"
                                 :tabs="summary.issues.pluck('name')">
                                 <span v-for="sheet in summary.issues"
                                     :slot="sheet.name">
@@ -131,13 +131,13 @@
                                             <ul class="errors">
                                                 <li v-for="issue in category.issues">
                                                     <span v-if="issue.column">
-                                                        <b>{{ __("Column") }}:</b> <span class="label label-info">@{{ issue.column }}</span>
+                                                        {{ __("Column") }}: <b class="text-warning">@{{ issue.column }}</b>
                                                     </span>
                                                     <span v-if="issue.rowNumber">
-                                                        <b>{{ __("Line") }}:</b> <span class="label label-info">@{{ issue.rowNumber }}</span>
+                                                        {{ __("Line") }}: <b class="text-warning">@{{ issue.rowNumber }}</b>
                                                     </span>
                                                     <span v-if="issue.value">
-                                                        <b>{{ __("Value") }}:</b> <span class="label label-danger">@{{ issue.value }}</span>
+                                                        {{ __("Value") }}: <b class="text-danger">@{{ issue.value }}</b>
                                                     </span>
                                                 </li>
                                             </ul>
@@ -232,9 +232,9 @@
                 customRender(column, data, type, row, meta) {
                     switch(column) {
                         case 'successful':
-                            return '<span class="label bg-green">' + data + '</span>';
+                            return '<b class="text-green">' + data + '</b>';
                         case 'errors':
-                            return '<span class="label bg-red">' + data + '</span>';
+                            return '<b class="text-red">' + data + '</b>';
                         default:
                             toastr.warning('render for column ' + column + ' is not defined.' );
                             return data;
