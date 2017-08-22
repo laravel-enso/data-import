@@ -15,9 +15,9 @@ class IssueContainer extends AbstractObject
         $this->categories = collect();
     }
 
-    public function addIssue(Issue $issue)
+    public function addIssue(Issue $issue, string $category)
     {
-        $category = $this->findOrCreateCategory($issue->category);
+        $category = $this->findOrCreateCategory($category);
         $category->addIssue($issue);
     }
 

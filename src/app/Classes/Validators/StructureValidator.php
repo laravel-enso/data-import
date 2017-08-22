@@ -112,10 +112,9 @@ class StructureValidator extends AbstractValidator
     private function addIssue(string $category, string $value, string $sheetName = '')
     {
         $issue = new Issue([
-            'category' => $category,
             'value'    => $value,
         ]);
 
-        $this->summary->addStructureIssue($issue, __(config('importing.validationLabels.structure_issues')));
+        $this->summary->addStructureIssue($issue, $category);
     }
 }

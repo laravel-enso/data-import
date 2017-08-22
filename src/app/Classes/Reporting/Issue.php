@@ -6,7 +6,6 @@ use LaravelEnso\Helpers\Classes\AbstractObject;
 
 class Issue extends AbstractObject
 {
-    public $category;
     public $value;
     public $rowNumber;
     public $column;
@@ -15,7 +14,7 @@ class Issue extends AbstractObject
     {
         foreach ($properties as $property => $value) {
             if (!property_exists($this, $property)) {
-                throw new \EnsoException(
+                throw new \Exception(
                     __('Property').': '.$property.' '.__('not defined in').': '.get_class($this)
                 );
             }

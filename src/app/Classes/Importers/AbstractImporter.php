@@ -36,9 +36,9 @@ abstract class AbstractImporter
         return $sheet;
     }
 
-    public function addIssue(Issue $issue, string $sheetName = '')
+    public function addIssue(Issue $issue, string $category, string $sheetName = '')
     {
-        $this->summary->addContentIssue($issue, $sheetName);
+        $this->summary->addContentIssue($issue, $category, $sheetName);
     }
 
     public function incSuccess()

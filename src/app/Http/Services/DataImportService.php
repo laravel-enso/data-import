@@ -47,7 +47,7 @@ class DataImportService
             $importer = new Importer($type, $uploadedFile);
             $importer->run();
 
-            if ($importer->fails()) {
+            if ($importer->fails() || $importer->getSummary()->successful === 0) {
                 $this->fileManager->deleteTempFiles();
 
                 return $importer->getSummary();

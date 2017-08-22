@@ -15,7 +15,7 @@ class Importer
 
     public function __construct(string $type, $file)
     {
-        ini_set('max_execution_time', 180);
+        ini_set('max_execution_time', 300);
 
         $config = new ImportConfiguration($type);
         $sheets = $this->loadXlsx($file['full_path']);

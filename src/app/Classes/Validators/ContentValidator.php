@@ -136,12 +136,11 @@ class ContentValidator extends AbstractValidator
     private function addIssue(string $sheetName, string $category, int $rowNumber = null, string $column = null, $value = null)
     {
         $issue = new Issue([
-            'category'  => $category,
             'rowNumber' => $rowNumber,
             'column'    => $column,
             'value'     => $value,
         ]);
 
-        $this->summary->addContentIssue($issue, $sheetName);
+        $this->summary->addContentIssue($issue, $category, $sheetName);
     }
 }

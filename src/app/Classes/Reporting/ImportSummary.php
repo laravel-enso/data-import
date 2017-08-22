@@ -45,22 +45,22 @@ class ImportSummary extends AbstractObject
         return $rows;
     }
 
-    public function addStructureIssue(Issue $issue, string $sheetName = '')
+    public function addStructureIssue(Issue $issue, string $category)
     {
         $this->hasStructureErrors = true;
-        $this->addIssue($issue, $sheetName);
+        $this->addIssue($issue, $category, __(config('importing.validationLabels.structure_issues')));
     }
 
-    public function addContentIssue(Issue $issue, string $sheetName = '')
+    public function addContentIssue(Issue $issue, string $category, string $sheetName)
     {
         $this->hasContentErrors = true;
-        $this->addIssue($issue, $sheetName);
+        $this->addIssue($issue, $category, $sheetName);
     }
 
-    private function addIssue(Issue $issue, string $sheetName = '')
+    private function addIssue(Issue $issue, string $category, string $sheetName = '')
     {
         $issuesContainer = $this->findOrCreateIssueContainer($sheetName);
-        $issuesContainer->addIssue($issue);
+        $issuesContainer->addIssue($issue, $category);
         $this->errors++;
     }
 

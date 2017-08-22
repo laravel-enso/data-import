@@ -2,6 +2,7 @@
 
 return [
     'validationLabels' => [
+        'structure_issues'             => 'Structure Issues',
         'extra_sheets'                 => 'Extra Sheets',
         'missing_sheets'               => 'Missing Sheets',
         'extra_columns'                => 'Extra Columns',

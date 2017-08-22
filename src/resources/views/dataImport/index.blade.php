@@ -121,20 +121,20 @@
                             <tabs title="{{ __('Summary') }}"
                                 reverse
                                 icon="fa fa-file-excel-o"
-                                :tabs="summary.issues.pluck('name')">
+                                :tabs="getSheetTabs()">
                                 <span v-for="sheet in summary.issues"
                                     :slot="sheet.name">
-                                    <tabs :tabs="sheet.categories.pluck('name')">
+                                    <tabs :tabs="getCategoryTabs(sheet)">
                                         <span v-for="category in sheet.categories"
                                             :slot="category.name">
                                             <h5>{{ __('Error List') }}</h5>
                                             <ul class="errors">
                                                 <li v-for="issue in category.issues">
                                                     <span v-if="issue.column">
-                                                        {{ __("Column") }}: <b class="text-warning">@{{ issue.column }}</b>
+                                                        {{ __("Column") }}: <b class="text-info">@{{ issue.column }}</b>
                                                     </span>
                                                     <span v-if="issue.rowNumber">
-                                                        {{ __("Line") }}: <b class="text-warning">@{{ issue.rowNumber }}</b>
+                                                        {{ __("Line") }}: <b class="text-info">@{{ issue.rowNumber }}</b>
                                                     </span>
                                                     <span v-if="issue.value">
                                                         {{ __("Value") }}: <b class="text-danger">@{{ issue.value }}</b>
@@ -228,6 +228,20 @@
                         this.loading = false;
                         this.reportEnsoException(error);
                     });
+                },
+                getSheetTabs() {
+                    return this.summary.issues.reduce((tabs,sheet) => {
+                        tabs.push({'label': sheet.name, 'badge': sheet.categories.length});
+
+                        return tabs;
+                    }, []);
+                },
+                getCategoryTabs(sheet) {
+                    return sheet.categories.reduce((tabs,sheet) => {
+                        tabs.push({'label': sheet.name, 'badge': sheet.issues.length});
+
+                        return tabs;
+                    }, []);
                 },
                 customRender(column, data, type, row, meta) {
                     switch(column) {
