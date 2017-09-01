@@ -6,7 +6,6 @@ use LaravelEnso\DataImport\app\Classes\Importers\AbstractImporter;
 
 class ExampleImporter extends AbstractImporter
 {
-
     public function run()
     {
         //this gives you just the rows without errors of that sheet
@@ -22,6 +21,5 @@ class ExampleImporter extends AbstractImporter
             //do custom import logic
             $this->incSuccess();
         });
-
     }
 }
