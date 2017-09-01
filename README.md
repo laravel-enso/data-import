@@ -21,9 +21,13 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 - imports `xlsx` files into the application using the minimum required custom logic
 - import types are defined in the package configuration
 - each import type can be validated against required columns, sheets, data types and more
-- the laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary
+- the Laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary
 - an example import type is included in the package
-- uses `[Laravel Excel](https://github.com/Maatwebsite/Laravel-Excel)` for reading the `xlsx` file
+- uses [Laravel Excel](https://github.com/Maatwebsite/Laravel-Excel) for reading the `xlsx` file
+- permits limiting of the number of rows to be imported, in order to avoid timeouts and imports taking too long for the end user experience
+- import issues are grouped by sheet and type of error and are paginated for a better experience
+- each import type can be configured to halt the import when encountering cell value validation errors, or  
+- if choosing to continue the import w/ errors, you can opt to process just valid rows 
 
 ### Installation steps
 
