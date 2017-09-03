@@ -75,7 +75,7 @@ class StructureValidator extends AbstractValidator
         $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $issue = $this->addIssue(__(config('importing.validationLabels.missing_columns')), $column, $sheetName);
+            $this->addIssue(__(config('importing.validationLabels.missing_columns')), $column, $sheetName);
         });
     }
 
@@ -84,7 +84,7 @@ class StructureValidator extends AbstractValidator
         $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $issue = $this->addIssue(__(config('importing.validationLabels.extra_columns')), $column, $sheetName);
+            $this->addIssue(__(config('importing.validationLabels.extra_columns')), $column, $sheetName);
         });
     }
 
@@ -109,7 +109,7 @@ class StructureValidator extends AbstractValidator
         return $xlsxSheets;
     }
 
-    private function addIssue(string $category, string $value, string $sheetName = '')
+    private function addIssue(string $category, string $value)
     {
         $issue = new Issue([
             'value'    => $value,
