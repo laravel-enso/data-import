@@ -71,7 +71,6 @@ class ImportConfiguration
                 ? $this->config['max_execution_time']
                 : self::MaxExecutionTime
         );
-
     }
 
     private function readJsonTemplate()
