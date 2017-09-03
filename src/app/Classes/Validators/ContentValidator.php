@@ -49,9 +49,9 @@ class ContentValidator extends AbstractValidator
 
     private function doDuplicateLinesCheck($sheet)
     {
-        $uniqueRows     = $sheet->unique();
+        $uniqueRows = $sheet->unique();
         $duplicateLines = $sheet->diffKeys($uniqueRows);
-        $category       = __(config('importing.validationLabels.duplicate_lines'));
+        $category = __(config('importing.validationLabels.duplicate_lines'));
 
         foreach ($duplicateLines->keys() as $rowNumber) {
             $this->addIssue($sheet->getTitle(), $category, $rowNumber + 2);
@@ -78,13 +78,13 @@ class ContentValidator extends AbstractValidator
         $columns = $this->template->getUniqueValueColumns($sheet);
 
         $columns->each(function ($column) use ($sheet) {
-            $category = config('importing.validationLabels.unique_in_column') . ': ' . $column;
-            $values   = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
+            $category = config('importing.validationLabels.unique_in_column').': '.$column;
+            $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
                 return trim($value);
             });
 
             $uniqueValues = $values->unique();
-            $doubles      = $values->diffKeys($uniqueValues);
+            $doubles = $values->diffKeys($uniqueValues);
 
             $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
                 $this->addIssue($sheet, $category, $rowNumber + 1, $column, $value);
