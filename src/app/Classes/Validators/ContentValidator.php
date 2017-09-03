@@ -38,19 +38,20 @@ class ContentValidator extends AbstractValidator
         $this->doDuplicateLinesCheck($sheet);
 
         $laravelRules = $this->template->getLaravelValidationRules($sheet->getTitle());
-        $complexRules = $this->template->getComplexValidationRules($sheet->getTitle());
 
         foreach ($sheet as $index => $row) {
             $this->doLaravelValidations($sheet->getTitle(), $laravelRules, $row, $index + 1);
-            $this->doComplexValidations($sheet->getTitle(), $complexRules, $row, $index + 1);
         }
+
+        $this->doUniqueInColumnValidation($sheet->getTitle());
+        // $this->doExistsInSheetValidation($sheet->getTitle());
     }
 
     private function doDuplicateLinesCheck($sheet)
     {
-        $uniqueRows = $sheet->unique();
+        $uniqueRows     = $sheet->unique();
         $duplicateLines = $sheet->diffKeys($uniqueRows);
-        $category = __(config('importing.validationLabels.duplicate_lines'));
+        $category       = __(config('importing.validationLabels.duplicate_lines'));
 
         foreach ($duplicateLines->keys() as $rowNumber) {
             $this->addIssue($sheet->getTitle(), $category, $rowNumber + 2);
@@ -72,66 +73,38 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function doComplexValidations(string $sheetName, Object $rules, Collection $row, int $rowNumber)
+    private function doUniqueInColumnValidation(string $sheet)
     {
-        foreach ($row as $column => $value) {
-            if (!property_exists($rules, $column)) {
-                continue;
-            }
+        $columns = $this->template->getUniqueValueColumns($sheet);
 
-            foreach ($rules->$column as $rule) {
-                $this->dispatchComplexValidation($sheetName, $rule, $column, $value, $rowNumber + 1);
-            }
-        }
-    }
+        $columns->each(function ($column) use ($sheet) {
+            $category = config('importing.validationLabels.unique_in_column') . ': ' . $column;
+            $values   = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
+                return trim($value);
+            });
 
-    private function dispatchComplexValidation(string $sheetName, \stdClass $rule, string $column, $value, int $rowNumber)
-    {
-        if ($rule->type === 'exists_in_sheet') {
-            return $this->checkIfExistsInSheet($sheetName, $rule, $column, $value, $rowNumber);
-        }
+            $uniqueValues = $values->unique();
+            $doubles      = $values->diffKeys($uniqueValues);
 
-        if ($rule->type === 'unique_in_column') {
-            return $this->checkIfIsUniqueInColumn($sheetName, $column, $value, $rowNumber);
-        }
-
-        throw new \EnsoException(
-            __('Unsupported complex validation').': '.$rule->type.' '.__('for sheet').': '.$sheetName.', '.__('column').': '.$column);
-    }
-
-    private function checkIfExistsInSheet(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
-    {
-        $category = config('importing.validationLabels.exists_in_sheet').': '
-            .$rule->sheet.', '.__('on column').': '.$rule->column;
-
-        $sheet = $this->getSheet($rule->sheet);
-
-        if ($sheet->pluck($rule->column)->contains($value)) {
-            return true;
-        }
-
-        $this->addIssue($sheetName, $category, $rowNumber, $column, $value);
-    }
-
-    private function checkIfIsUniqueInColumn(string $sheetName, string $column, $value, int $rowNumber)
-    {
-        if (!$value) {
-            return true;
-        }
-
-        $category = config('importing.validationLabels.unique_in_column').': '.$column;
-        $sheet = $this->getSheet($sheetName);
-
-        $found = $sheet->pluck($column)->search(function ($columnValue, $index) use ($value, $rowNumber) {
-            return trim($value) === trim($columnValue) && $index + 2 !== $rowNumber;
+            $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
+                $this->addIssue($sheet, $category, $rowNumber + 1, $column, $value);
+            });
         });
-
-        if ($found === false) {
-            return true;
-        }
-
-        $this->addIssue($sheetName, $category, $rowNumber, $column, $value);
     }
+
+    // private function doExistsInSheetValidation(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
+    // {
+    //     $category = config('importing.validationLabels.exists_in_sheet').': '
+    //         .$rule->sheet.', '.__('on column').': '.$rule->column;
+
+    //     $sheet = $this->getSheet($rule->sheet);
+
+    //     if ($sheet->pluck($rule->column)->contains($value)) {
+    //         return true;
+    //     }
+
+    //     $this->addIssue($sheetName, $category, $rowNumber, $column, $value);
+    // }
 
     private function addIssue(string $sheetName, string $category, int $rowNumber = null, string $column = null, $value = null)
     {

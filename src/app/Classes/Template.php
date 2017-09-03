@@ -48,28 +48,21 @@ class Template
         return $rules;
     }
 
-    public function getComplexValidationRules(string $sheetName)
+    public function getUniqueValueColumns(string $sheetName)
     {
-        $rules = new Object();
+        $columns = collect();
 
         foreach ($this->getSheet($sheetName)->columns as $column) {
             if (property_exists($column, 'complexValidations')) {
-                $rules->{$column->name} = $this->getComplexValidationsForColumn($column);
+                foreach ($column->complexValidations as $validation) {
+                    if ($validation->type === 'unique_in_column') {
+                        $columns->push($column->name);
+                    }
+                }
             }
         }
 
-        return $rules;
-    }
-
-    private function getComplexValidationsForColumn($column)
-    {
-        $rules = collect();
-
-        foreach ($column->complexValidations as $validation) {
-            $rules->push($validation);
-        }
-
-        return $rules;
+        return $columns;
     }
 
     private function getSheet(string $sheetName)
