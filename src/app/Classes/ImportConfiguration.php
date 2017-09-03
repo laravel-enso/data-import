@@ -9,12 +9,14 @@ class ImportConfiguration
 {
     private $config;
 
+    private const MaxExecutionTime = 60;
     private const SheetEntriesLimit = 5000;
     private const StopOnErrors = false;
 
     public function __construct(string $type)
     {
         $this->config = $this->getConfiguration($type);
+        $this->setMaxExecutionTime();
     }
 
     public function getTemplate()
@@ -59,6 +61,17 @@ class ImportConfiguration
                 return $key === $type;
             }
         );
+    }
+
+    private function setMaxExecutionTime()
+    {
+        ini_set(
+            'max_execution_time',
+            isset($this->config['max_execution_time'])
+                ? $this->config['max_execution_time']
+                : self::MaxExecutionTime
+        );
+
     }
 
     private function readJsonTemplate()

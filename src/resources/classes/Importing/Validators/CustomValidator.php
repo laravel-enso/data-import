@@ -6,10 +6,6 @@ use LaravelEnso\DataImport\app\Classes\Validators\AbstractValidator;
 
 class CustomValidator extends AbstractValidator
 {
-    protected $template;
-    protected $xlsx;
-    protected $summary;
-
     public function run()
     {
         //do custom validation logic
@@ -20,5 +16,6 @@ class CustomValidator extends AbstractValidator
         //an array with the following parameters
         //['category' => 'category', 'rowNumber' => 'rowNumber', 'column' => 'column', 'value' => 'value']
         //Note: only 'category' parameter is mandatory
+        //Note: be sure to pass $index + 2 as a parameter for 'rowNumber' ;)
     }
 }

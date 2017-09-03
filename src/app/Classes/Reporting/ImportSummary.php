@@ -42,7 +42,7 @@ class ImportSummary extends AbstractObject
             }
         }
 
-        return $rows;
+        return $rows->unique();
     }
 
     public function addStructureIssue(Issue $issue, string $category)
