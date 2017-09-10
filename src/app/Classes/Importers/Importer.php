@@ -18,14 +18,14 @@ class Importer
 
     public function __construct(string $type, $file)
     {
-        $config       = new ImportConfiguration($type);
+        $config = new ImportConfiguration($type);
         $this->sheets = $this->loadXlsx($file['full_path']);
 
         $this->skipsContentErrors = !$config->getStopOnErrors();
-        $this->summary            = new ImportSummary($file['original_name']);
+        $this->summary = new ImportSummary($file['original_name']);
         $this->structureValidator = new StructureValidator($config, $this->sheets, $this->summary);
-        $this->contentValidator   = new ContentValidator($config, $this->sheets, $this->summary);
-        $this->importer           = $config->getImporter($this->sheets, $this->summary);
+        $this->contentValidator = new ContentValidator($config, $this->sheets, $this->summary);
+        $this->importer = $config->getImporter($this->sheets, $this->summary);
     }
 
     public function run()
