@@ -63,7 +63,7 @@ class ContentValidator extends AbstractValidator
         $result = Validator::make($row->toArray(), $rules->toArray());
 
         if ($result->fails()) {
-            foreach ($rules->getProperties() as $column) {
+            foreach ($rules->keys() as $column) {
                 if ($result->errors()->has($column)) {
                     foreach ($result->errors()->get($column) as $category) {
                         $this->addIssue($sheetName, $category, $rowNumber + 1, $column, $row->$column);
