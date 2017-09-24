@@ -9,7 +9,6 @@ class CreateStructureForDataImport extends StructureMigration
     ];
 
     protected $permissions = [
-        ['name' => 'import.index', 'description' => 'Imports index', 'type' => 0, 'default' => false],
         ['name' => 'import.run', 'description' => 'Run import', 'type' => 1, 'default' => false],
         ['name' => 'import.destroy', 'description' => 'Delete import', 'type' => 1, 'default' => false],
         ['name' => 'import.download', 'description' => 'Download import', 'type' => 0, 'default' => false],

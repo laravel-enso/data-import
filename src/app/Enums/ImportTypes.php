@@ -14,8 +14,8 @@ class ImportTypes extends AbstractEnum
     private function setData()
     {
         $this->data = array_combine(
-            array_keys(config('importing.configs')),
-            array_column(config('importing.configs'), 'label')
+            array_keys(config('enso.importing.configs')),
+            array_column(config('enso.importing.configs'), 'label')
         );
     }
 }

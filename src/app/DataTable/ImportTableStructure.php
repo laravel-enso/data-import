@@ -10,11 +10,12 @@ class ImportTableStructure extends TableStructure
     public function __construct()
     {
         $this->data = [
-            'tableName'           => __('Past Imports'),
+            'name'                => __('Past Imports'),
             'crtNo'               => __('#'),
-            'actionButtons'       => __('Actions'),
+            'actions'             => __('Actions'),
+            'actionButtons'       => ['download', 'destroy'],
             'customActionButtons' => [
-                ['class' => 'btn-info fa fa-info-circle', 'event' => 'get-summary'],
+                ['icon' => 'fa fa-info-circle', 'class' => 'is-info', 'event' => 'get-summary'],
             ],
             'headerAlign'         => 'center',
             'bodyAlign'           => 'center',

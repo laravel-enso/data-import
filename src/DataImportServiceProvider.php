@@ -10,18 +10,18 @@ class DataImportServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->publishesAll();
         $this->loadDependencies();
+        $this->publishesAll();
     }
 
     private function publishesAll()
     {
         $this->publishes([
-            __DIR__.'/config' => config_path(),
+            __DIR__.'/config' => config_path('enso'),
         ], 'dataimport-config');
 
         $this->publishes([
-            __DIR__.'/config' => config_path(),
+            __DIR__.'/config' => config_path('enso'),
         ], 'enso-config');
 
         $this->publishes([
@@ -29,8 +29,12 @@ class DataImportServiceProvider extends ServiceProvider
         ], 'dataimport-classes');
 
         $this->publishes([
-            __DIR__.'/resources/assets/images' => resource_path('assets/images'),
-        ], 'dataimport-logo');
+            __DIR__.'/resources/assets/js' => resource_path('assets/js'),
+        ], 'import-assets');
+
+        $this->publishes([
+            __DIR__.'/resources/assets/js' => resource_path('assets/js'),
+        ], 'enso-assets');
     }
 
     private function loadDependencies()

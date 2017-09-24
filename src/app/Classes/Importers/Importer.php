@@ -6,6 +6,7 @@ use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
 use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
+use Maatwebsite\Excel\Collections\SheetCollection;
 
 class Importer
 {
@@ -16,16 +17,14 @@ class Importer
     protected $importer;
     protected $skipsContentErrors;
 
-    public function __construct(string $type, $file)
+    public function __construct(string $fileName, ImportConfiguration $config, SheetCollection $sheets)
     {
-        $config = new ImportConfiguration($type);
-        $this->sheets = $this->loadXlsx($file['full_path']);
-
+        $this->sheets             = $sheets;
         $this->skipsContentErrors = !$config->getStopOnErrors();
-        $this->summary = new ImportSummary($file['original_name']);
+        $this->summary            = new ImportSummary($fileName);
         $this->structureValidator = new StructureValidator($config, $this->sheets, $this->summary);
-        $this->contentValidator = new ContentValidator($config, $this->sheets, $this->summary);
-        $this->importer = $config->getImporter($this->sheets, $this->summary);
+        $this->contentValidator   = new ContentValidator($config, $this->sheets, $this->summary);
+        $this->importer           = $config->getImporter($this->sheets, $this->summary);
     }
 
     public function run()
@@ -62,17 +61,12 @@ class Importer
         return $this->summary;
     }
 
-    private function loadXlsx($file)
-    {
-        return \Excel::load($file)->get();
-    }
-
     private function trimContents()
     {
         $this->sheets->each(function ($sheet) {
             $sheet->each(function ($row) {
                 foreach ($row as $key => $value) {
-                    $row[$key] = trim($value);
+                    $row[$key] = is_string($value) ? trim($value) : $value;
                 }
             });
         });

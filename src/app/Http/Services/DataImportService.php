@@ -3,60 +3,40 @@
 namespace LaravelEnso\DataImport\App\Http\Services;
 
 use Illuminate\Http\Request;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Importers\Importer;
-use LaravelEnso\DataImport\app\Enums\ImportTypes;
+use LaravelEnso\DataImport\app\Classes\XlsReader;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\FileManager\Classes\FileManager;
 
 class DataImportService
 {
-    private $request;
     private $fileManager;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
-        $this->request = $request;
-
         $this->fileManager = new FileManager(
-            config('laravel-enso.paths.imports'),
-            config('laravel-enso.paths.temp')
+            config('enso.config.paths.imports'),
+            config('enso.config.paths.temp')
         );
 
         $this->fileManager->setValidExtensions(['xls', 'xlsx']);
     }
 
-    public function index()
+    public function store(Request $request, string $type) //fixme. We need a class to handle the file reading process
     {
-        $importTypes = json_encode((new ImportTypes())->getData());
+        $this->fileManager->startUpload($request->allFiles());
+        $importer = $this->getImporter($type);
 
-        return view('laravel-enso/data-import::dataImport.index', compact('importTypes'));
-    }
-
-    public function getSummary(DataImport $dataImport)
-    {
-        return json_encode($dataImport->summary);
-    }
-
-    public function store(string $type) //fixme. We need a class to handle the upload / import process.
-    {
-        $importer = null;
-
-        \DB::transaction(function () use (&$importer, $type) {
-            $this->fileManager->startUpload($this->request->allFiles());
-            $uploadedFile = $this->fileManager->getUploadedFiles()->first();
-            $importer = new Importer($type, $uploadedFile);
+        \DB::transaction(function () use ($importer, $type) {
             $importer->run();
 
-            if ($importer->fails() || $importer->getSummary()->successful === 0) {
+            if ($importer->fails() || $importer->getSummary()->getSuccessfulCount() === 0) {
                 $this->fileManager->deleteTempFiles();
-
                 return $importer->getSummary();
             }
 
-            $dataImport = new DataImport($uploadedFile);
-            $dataImport->type = $type;
-            $dataImport->summary = $importer->getSummary();
-            $dataImport->save();
+            $this->createDataImportRecord($type, $importer->getSummary());
             $this->fileManager->commitUpload();
         });
 
@@ -75,6 +55,23 @@ class DataImportService
             $this->fileManager->delete($dataImport->saved_name);
         });
 
-        return ['message' => __(config('labels.successfulOperation'))];
+        return ['message' => __(config('enso.labels.successfulOperation'))];
+    }
+
+    private function getImporter(string $type)
+    {
+        $file     = $this->fileManager->getUploadedFiles()->first();
+        $sheets = (new XlsReader($file['full_path']))->get();
+        $config = new ImportConfiguration($type);
+
+        return new Importer($file['original_name'], $config, $sheets);
+    }
+
+    private function createDataImportRecord($type, $summary)
+    {
+        $dataImport          = new DataImport($this->fileManager->getUploadedFiles()->first());
+        $dataImport->type    = $type;
+        $dataImport->summary = $summary;
+        $dataImport->save();
     }
 }

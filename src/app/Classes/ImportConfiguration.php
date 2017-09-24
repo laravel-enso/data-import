@@ -56,7 +56,7 @@ class ImportConfiguration
 
     private function getConfiguration(string $type)
     {
-        return collect(config('importing.configs'))->first(
+        return collect(config('enso.importing.configs'))->first(
             function ($config, $key) use ($type) {
                 return $key === $type;
             }
@@ -87,7 +87,7 @@ class ImportConfiguration
     private function throwMissingParamException($param)
     {
         throw new \EnsoException(
-            __(config('importing.validationLabels.missing_param_from_config')).': '.$param
+            __(config('enso.importing.validationLabels.missing_param_from_config')).': '.$param
         );
     }
 

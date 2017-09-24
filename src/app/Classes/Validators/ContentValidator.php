@@ -51,7 +51,7 @@ class ContentValidator extends AbstractValidator
     {
         $uniqueRows = $sheet->unique();
         $duplicateLines = $sheet->diffKeys($uniqueRows);
-        $category = __(config('importing.validationLabels.duplicate_lines'));
+        $category = __(config('enso.importing.validationLabels.duplicate_lines'));
 
         foreach ($duplicateLines->keys() as $rowNumber) {
             $this->addIssue($sheet->getTitle(), $category, $rowNumber + 2);
@@ -63,7 +63,7 @@ class ContentValidator extends AbstractValidator
         $result = Validator::make($row->toArray(), $rules->toArray());
 
         if ($result->fails()) {
-            foreach ($rules->getProperties() as $column) {
+            foreach ($rules->keys() as $column) {
                 if ($result->errors()->has($column)) {
                     foreach ($result->errors()->get($column) as $category) {
                         $this->addIssue($sheetName, $category, $rowNumber + 1, $column, $row->$column);
@@ -78,7 +78,7 @@ class ContentValidator extends AbstractValidator
         $columns = $this->template->getUniqueValueColumns($sheet);
 
         $columns->each(function ($column) use ($sheet) {
-            $category = config('importing.validationLabels.unique_in_column').': '.$column;
+            $category = config('enso.importing.validationLabels.unique_in_column').': '.$column;
             $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
                 return trim($value);
             });
@@ -94,7 +94,7 @@ class ContentValidator extends AbstractValidator
 
     // private function doExistsInSheetValidation(string $sheetName, \stdClass $rule, string $column, string $value, int $rowNumber)
     // {
-    //     $category = config('importing.validationLabels.exists_in_sheet').': '
+    //     $category = config('enso.importing.validationLabels.exists_in_sheet').': '
     //         .$rule->sheet.', '.__('on column').': '.$rule->column;
 
     //     $sheet = $this->getSheet($rule->sheet);

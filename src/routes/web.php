@@ -11,8 +11,6 @@ Route::middleware(['web', 'auth', 'core'])
         Route::get('exportExcel', 'DataImportTableController@exportExcel')
             ->name('exportExcel');
 
-        Route::get('', 'DataImportController@index')
-            ->name('index');
         Route::delete('{dataImport}', 'DataImportController@destroy')
             ->name('destroy');
         Route::post('run/{type}', 'DataImportController@store')

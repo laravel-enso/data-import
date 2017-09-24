@@ -14,7 +14,7 @@ class ImportTemplateService
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->fileManager = new FileManager(config('laravel-enso.paths.imports'), config('laravel-enso.paths.temp'));
+        $this->fileManager = new FileManager(config('enso.config.paths.imports'), config('enso.config.paths.temp'));
     }
 
     public function getTemplate(string $type)
@@ -51,6 +51,6 @@ class ImportTemplateService
             $this->fileManager->delete($template->saved_name);
         });
 
-        return ['message' => __(config('labels.successfulOperation'))];
+        return ['message' => __(config('enso.labels.successfulOperation'))];
     }
 }
