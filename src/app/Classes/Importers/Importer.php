@@ -72,9 +72,7 @@ class Importer
         $this->sheets->each(function ($sheet) {
             $sheet->each(function ($row) {
                 foreach ($row as $key => $value) {
-                    if (!is_null($value)) {
-                        $row[$key] = trim($value);
-                    }
+                    $row[$key] = is_string($value) ? trim($value) : $value;
                 }
             });
         });
