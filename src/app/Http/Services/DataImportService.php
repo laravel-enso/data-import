@@ -33,6 +33,7 @@ class DataImportService
 
             if ($importer->fails() || $importer->getSummary()->getSuccessfulCount() === 0) {
                 $this->fileManager->deleteTempFiles();
+
                 return $importer->getSummary();
             }
 
@@ -60,7 +61,7 @@ class DataImportService
 
     private function getImporter(string $type)
     {
-        $file     = $this->fileManager->getUploadedFiles()->first();
+        $file = $this->fileManager->getUploadedFiles()->first();
         $sheets = (new XlsReader($file['full_path']))->get();
         $config = new ImportConfiguration($type);
 
@@ -69,8 +70,8 @@ class DataImportService
 
     private function createDataImportRecord($type, $summary)
     {
-        $dataImport          = new DataImport($this->fileManager->getUploadedFiles()->first());
-        $dataImport->type    = $type;
+        $dataImport = new DataImport($this->fileManager->getUploadedFiles()->first());
+        $dataImport->type = $type;
         $dataImport->summary = $summary;
         $dataImport->save();
     }
