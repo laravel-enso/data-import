@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
 use LaravelEnso\DataImport\app\Classes\Template;
-use Maatwebsite\Excel\ExcelServiceProvider;
 
 class DataImportServiceProvider extends ServiceProvider
 {
