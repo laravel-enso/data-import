@@ -42,7 +42,6 @@ class DataImportServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
         $this->mergeConfigFrom(__DIR__.'/config/importing.php', 'importing');
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/data-import');
     }
 
     public function register()
@@ -50,7 +49,5 @@ class DataImportServiceProvider extends ServiceProvider
         $this->app->singleton('Template', function ($app, $params) {
             return new Template($params['template']);
         });
-
-        $this->app->register(ExcelServiceProvider::class);
     }
 }

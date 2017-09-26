@@ -161,14 +161,14 @@
 
 <script>
 
-    import VueSelect from '../../components/bulma/select/VueSelect.vue';
-    import DataTable from '../../components/bulma/datatable/Datatable.vue';
-    import FileUploader from '../../components/bulma/fileuploader/FileUploader.vue';
-    import Modal from '../../components/bulma/components/Modal.vue';
-    import Card from '../../components/bulma/components/Card.vue';
-    import Overlay from '../../components/bulma/components/Overlay.vue';
-    import Paginate from '../../components/bulma/components/Paginate.vue';
-    import Tabs from '../../components/bulma/components/Tabs.vue';
+    import VueSelect from '../../components/enso/select/VueSelect.vue';
+    import DataTable from '../../components/enso/datatable/Datatable.vue';
+    import FileUploader from '../../components/enso/fileuploader/FileUploader.vue';
+    import Modal from '../../components/enso/components/Modal.vue';
+    import Card from '../../components/enso/components/Card.vue';
+    import Overlay from '../../components/enso/components/Overlay.vue';
+    import Paginate from '../../components/enso/components/Paginate.vue';
+    import Tabs from '../../components/enso/components/Tabs.vue';
     import { mapGetters } from 'vuex';
 
     export default {
