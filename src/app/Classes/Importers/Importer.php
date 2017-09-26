@@ -19,12 +19,12 @@ class Importer
 
     public function __construct(string $fileName, ImportConfiguration $config, SheetCollection $sheets)
     {
-        $this->sheets             = $sheets;
+        $this->sheets = $sheets;
         $this->skipsContentErrors = !$config->getStopOnErrors();
-        $this->summary            = new ImportSummary($fileName);
+        $this->summary = new ImportSummary($fileName);
         $this->structureValidator = new StructureValidator($config, $this->sheets, $this->summary);
-        $this->contentValidator   = new ContentValidator($config, $this->sheets, $this->summary);
-        $this->importer           = $config->getImporter($this->sheets, $this->summary);
+        $this->contentValidator = new ContentValidator($config, $this->sheets, $this->summary);
+        $this->importer = $config->getImporter($this->sheets, $this->summary);
     }
 
     public function run()
