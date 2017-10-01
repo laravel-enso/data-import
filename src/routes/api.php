@@ -1,8 +1,8 @@
 <?php
 
-Route::middleware(['web', 'auth', 'core'])
+Route::middleware(['auth:api', 'api', 'core'])
     ->namespace('LaravelEnso\DataImport\app\Http\Controllers')
-    ->prefix('import')->as('import.')
+    ->prefix('api/import')->as('api.import.')
     ->group(function () {
         Route::get('initTable', 'DataImportTableController@initTable')
             ->name('initTable');
