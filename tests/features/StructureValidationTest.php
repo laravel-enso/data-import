@@ -13,14 +13,14 @@ class StructureValidationTest extends TestHelper
 {
     use DatabaseMigrations;
 
-    const IMPORT_DIRECTORY          = 'testImportDirectory/';
-    const PATH                      = __DIR__ . '/../testFiles/';
-    const INVALID_SHEETS_FILE       = 'invalid_sheets_file.xlsx';
-    const INVALID_SHEETS_TEST_FILE  = 'invalid_sheets_test_file.xlsx';
-    const INVALID_COLUMNS_FILE      = 'invalid_columns_file.xlsx';
+    const IMPORT_DIRECTORY = 'testImportDirectory/';
+    const PATH = __DIR__.'/../testFiles/';
+    const INVALID_SHEETS_FILE = 'invalid_sheets_file.xlsx';
+    const INVALID_SHEETS_TEST_FILE = 'invalid_sheets_test_file.xlsx';
+    const INVALID_COLUMNS_FILE = 'invalid_columns_file.xlsx';
     const INVALID_COLUMNS_TEST_FILE = 'invalid_columns_test_file.xlsx';
-    const TWO_ENTRIES_FILE          = 'owners_import_file.xlsx';
-    const TWO_ENTRIES_TEST_FILE     = 'owners_import_test_file.xlsx';
+    const TWO_ENTRIES_FILE = 'owners_import_file.xlsx';
+    const TWO_ENTRIES_TEST_FILE = 'owners_import_test_file.xlsx';
 
     protected function setUp()
     {
@@ -111,12 +111,12 @@ class StructureValidationTest extends TestHelper
     private function getInvalidSheetsUploadedFile()
     {
         \File::copy(
-            self::PATH . self::INVALID_SHEETS_FILE,
-            self::PATH . self::INVALID_SHEETS_TEST_FILE
+            self::PATH.self::INVALID_SHEETS_FILE,
+            self::PATH.self::INVALID_SHEETS_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::INVALID_SHEETS_TEST_FILE,
+            self::PATH.self::INVALID_SHEETS_TEST_FILE,
             self::INVALID_SHEETS_TEST_FILE, null, null, null, true
         );
     }
@@ -124,12 +124,12 @@ class StructureValidationTest extends TestHelper
     private function getInvalidColumnsUploadedFile()
     {
         \File::copy(
-            self::PATH . self::INVALID_COLUMNS_FILE,
-            self::PATH . self::INVALID_COLUMNS_TEST_FILE
+            self::PATH.self::INVALID_COLUMNS_FILE,
+            self::PATH.self::INVALID_COLUMNS_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::INVALID_COLUMNS_TEST_FILE,
+            self::PATH.self::INVALID_COLUMNS_TEST_FILE,
             self::INVALID_COLUMNS_TEST_FILE, null, null, null, true
         );
     }
@@ -137,12 +137,12 @@ class StructureValidationTest extends TestHelper
     private function getTwoEntriesUploadedFile()
     {
         \File::copy(
-            self::PATH . self::TWO_ENTRIES_FILE,
-            self::PATH . self::TWO_ENTRIES_TEST_FILE
+            self::PATH.self::TWO_ENTRIES_FILE,
+            self::PATH.self::TWO_ENTRIES_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::TWO_ENTRIES_TEST_FILE,
+            self::PATH.self::TWO_ENTRIES_TEST_FILE,
             self::TWO_ENTRIES_TEST_FILE, null, null, null, true
         );
     }

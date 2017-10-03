@@ -14,9 +14,9 @@ class ContentValidationTest extends TestHelper
 {
     use DatabaseMigrations;
 
-    const IMPORT_DIRECTORY         = 'testImportDirectory/';
-    const PATH                     = __DIR__ . '/../testFiles/';
-    const CONTENT_ERRORS_FILE      = 'content_errors_file.xlsx';
+    const IMPORT_DIRECTORY = 'testImportDirectory/';
+    const PATH = __DIR__.'/../testFiles/';
+    const CONTENT_ERRORS_FILE = 'content_errors_file.xlsx';
     const CONTENT_ERRORS_TEST_FILE = 'content_errors_test_file.xlsx';
 
     protected function setUp()
@@ -93,12 +93,12 @@ class ContentValidationTest extends TestHelper
     private function getContentErrorsUploadedFile()
     {
         \File::copy(
-            self::PATH . self::CONTENT_ERRORS_FILE,
-            self::PATH . self::CONTENT_ERRORS_TEST_FILE
+            self::PATH.self::CONTENT_ERRORS_FILE,
+            self::PATH.self::CONTENT_ERRORS_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::CONTENT_ERRORS_TEST_FILE,
+            self::PATH.self::CONTENT_ERRORS_TEST_FILE,
             self::CONTENT_ERRORS_TEST_FILE, null, null, null, true
         );
     }
