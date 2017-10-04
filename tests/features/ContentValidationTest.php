@@ -9,15 +9,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
-use Tests\TestCase;
 
 class ContentValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY         = 'testImportDirectory/';
-    const PATH                     = __DIR__ . '/../testFiles/';
-    const CONTENT_ERRORS_FILE      = 'content_errors_file.xlsx';
+    const IMPORT_DIRECTORY = 'testImportDirectory/';
+    const PATH = __DIR__.'/../testFiles/';
+    const CONTENT_ERRORS_FILE = 'content_errors_file.xlsx';
     const CONTENT_ERRORS_TEST_FILE = 'content_errors_test_file.xlsx';
 
     protected function setUp()
@@ -92,12 +91,12 @@ class ContentValidationTest extends TestCase
     private function getContentErrorsUploadedFile()
     {
         \File::copy(
-            self::PATH . self::CONTENT_ERRORS_FILE,
-            self::PATH . self::CONTENT_ERRORS_TEST_FILE
+            self::PATH.self::CONTENT_ERRORS_FILE,
+            self::PATH.self::CONTENT_ERRORS_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::CONTENT_ERRORS_TEST_FILE,
+            self::PATH.self::CONTENT_ERRORS_TEST_FILE,
             self::CONTENT_ERRORS_TEST_FILE, null, null, null, true
         );
     }

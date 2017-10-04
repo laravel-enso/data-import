@@ -9,15 +9,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
-use Tests\TestCase;
 
 class DataImportTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY        = 'testImportDirectory/';
-    const PATH                    = __DIR__ . '/../testFiles/';
-    const OWNERS_IMPORT_FILE      = 'owners_import_file.xlsx';
+    const IMPORT_DIRECTORY = 'testImportDirectory/';
+    const PATH = __DIR__.'/../testFiles/';
+    const OWNERS_IMPORT_FILE = 'owners_import_file.xlsx';
     const OWNERS_IMPORT_TEST_FILE = 'owners_import_test_file.xlsx';
 
     protected function setUp()
@@ -66,7 +65,7 @@ class DataImportTest extends TestCase
         $this->assertNotNull($dataImport);
         $this->assertNotNull(Owner::whereName('ImportTestName')->first());
 
-        Storage::assertExists(self::IMPORT_DIRECTORY . $dataImport->saved_name);
+        Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
 
         $this->cleanUp();
     }
@@ -81,7 +80,7 @@ class DataImportTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertHeader('content-disposition',
-            'attachment; filename="' . self::OWNERS_IMPORT_TEST_FILE . '"'
+            'attachment; filename="'.self::OWNERS_IMPORT_TEST_FILE.'"'
         );
 
         $this->cleanUp();
@@ -93,14 +92,14 @@ class DataImportTest extends TestCase
         $this->importOwnersFile();
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
-        Storage::assertExists(self::IMPORT_DIRECTORY . $dataImport->saved_name);
+        Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
         $this->assertNotNull($dataImport);
 
         $this->delete(route('import.destroy', [$dataImport->id], false))
             ->assertStatus(200);
 
         $this->assertNull($dataImport->fresh());
-        Storage::assertMissing(self::IMPORT_DIRECTORY . $dataImport->saved_name);
+        Storage::assertMissing(self::IMPORT_DIRECTORY.$dataImport->saved_name);
 
         $this->cleanUp();
     }
@@ -117,12 +116,12 @@ class DataImportTest extends TestCase
     private function getOwnersImportUploadedFile()
     {
         \File::copy(
-            self::PATH . self::OWNERS_IMPORT_FILE,
-            self::PATH . self::OWNERS_IMPORT_TEST_FILE
+            self::PATH.self::OWNERS_IMPORT_FILE,
+            self::PATH.self::OWNERS_IMPORT_TEST_FILE
         );
 
         return new UploadedFile(
-            self::PATH . self::OWNERS_IMPORT_TEST_FILE,
+            self::PATH.self::OWNERS_IMPORT_TEST_FILE,
             self::OWNERS_IMPORT_TEST_FILE, null, null, null, true
         );
     }
