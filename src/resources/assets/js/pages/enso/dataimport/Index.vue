@@ -193,8 +193,6 @@
         created() {
         	axios.get(route('import.index', [], false)).then(response => {
                 this.importTypes = response.data.importTypes;
-            }).catch(error => {
-                this.handleError(error);
             });
         },
 
@@ -211,7 +209,6 @@
                     this.loadingTemplate = false;
                 }).catch(error => {
                     this.loadingTemplate = false;
-                    this.handleError(error);
                 });
             },
             deleteTemplate(id) {
@@ -224,7 +221,6 @@
                 }).catch(error => {
                     this.showModal = false;
                     this.loadingTemplate = false;
-                    this.handleError(error);
                 });
             },
             getSummary(id) {
@@ -240,7 +236,6 @@
                     this.summary = response.data;
                 }).catch(error => {
                     this.loading = false;
-                    this.handleError(error);
                 });
             },
             getSheetTabs() {
