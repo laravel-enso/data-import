@@ -16,7 +16,7 @@
                     v-if="importType">
                     <file-uploader class="animated fadeIn"
                         v-if="!template.id"
-                        :url="'/import/uploadTemplate/' + importType"
+                        :url="uploadTemplateLink"
                         @upload-start="loadingTemplate=true"
                         @upload-successful="template=$event;loadingTemplate=false"
                         @upload-error="loadingTemplate=false">
@@ -31,7 +31,7 @@
                     <a class="button is-info animated fadeIn has-margin-right-small"
                         v-if="template.id"
                         v-tooltip="template.original_name"
-                        :href="'/import/downloadTemplate/' + template.id">
+                        :href="downloadTemplateLink">
                         <span>{{ __('Download Template') }}</span>
                         <span class="icon is-small">
                             <i class="fa fa-download"></i>
@@ -52,7 +52,7 @@
                         @upload-start="importing=true"
                         @upload-successful="summary=$event;importing=false"
                         @upload-error="importing=false;importType=null"
-                        :url="'/import/run/' + importType">
+                        :url="uploadImportLink">
                         <a slot="upload-button"
                             class="button is-success">
                             <span>{{ __('Start Import') }}</span>
@@ -172,10 +172,19 @@
     import { mapGetters } from 'vuex';
 
     export default {
-    	components: { VueSelect, DataTable, FileUploader, Card, Modal, Overlay, Tabs, Paginate },
+        components: { VueSelect, DataTable, FileUploader, Card, Modal, Overlay, Tabs, Paginate },
 
         computed: {
-            ...mapGetters('locale', ['__'])
+            ...mapGetters('locale', ['__']),
+            uploadTemplateLink() {
+                return route('import.uploadTemplate', this.importType, false)
+            },
+            downloadTemplateLink() {
+                return route('import.downloadTemplate', this.template.id, false)
+            },
+            uploadImportLink() {
+                return route('import.run', this.importType, false)
+            }
         },
 
         data() {
@@ -191,7 +200,7 @@
         },
 
         created() {
-        	axios.get(route('import.index', [], false)).then(response => {
+            axios.get(route('import.index', [], false)).then(response => {
                 this.importTypes = response.data.importTypes;
             });
         },
@@ -204,7 +213,7 @@
 
                 this.loadingTemplate = true;
 
-                axios.get('/import/getTemplate/' + this.importType).then(response => {
+                axios.get(route('import.getTemplate', this.importType, false)).then(response => {
                     this.template = response.data;
                     this.loadingTemplate = false;
                 }).catch(error => {
@@ -213,7 +222,7 @@
             },
             deleteTemplate(id) {
                 this.loadingTemplate = true;
-                axios.delete('/import/deleteTemplate/' + id).then(response => {
+                axios.delete(route('import.deleteTemplate', id, false)).then(response => {
                     this.template = {};
                     this.showModal = false;
                     toastr.success(response.data.message);
@@ -226,7 +235,7 @@
             getSummary(id) {
                 this.loading = true;
 
-                axios.get('/import/getSummary/' + id).then(response => {
+                axios.get(route('import.getSummary', id, false)).then(response => {
                     this.loading = false;
 
                     if (response.data.errors === 0) {

@@ -1,6 +1,6 @@
 <?php
 
-Route::middleware(['auth:api', 'api', 'core'])
+Route::middleware(['web', 'auth', 'core'])
     ->namespace('LaravelEnso\DataImport\app\Http\Controllers')
     ->prefix('api/import')->as('import.')
     ->group(function () {
