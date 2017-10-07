@@ -14,7 +14,12 @@ class ImportTemplateService
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->fileManager = new FileManager(config('enso.config.paths.imports'), config('enso.config.paths.temp'));
+        $this->fileManager = new FileManager(
+            config('laravel-enso.paths.imports'),
+            config('laravel-enso.paths.temp')
+        );
+
+        $this->fileManager->setValidExtensions(['xls', 'xlsx']);
     }
 
     public function getTemplate(string $type)
