@@ -134,7 +134,7 @@
                                             :slot="category.name">
                                              <paginate :list="category.issues"
                                                 border>
-                                                <template scope="props">
+                                                <template slot-scope="props">
                                                     <h5>{{ __('Error List') }}</h5>
                                                     <ul class="errors">
                                                         <li v-for="issue in props.list">
