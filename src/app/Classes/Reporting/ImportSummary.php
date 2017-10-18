@@ -30,11 +30,15 @@ class ImportSummary extends AbstractObject
 
     public function getRowsWithIssues(string $sheetName)
     {
+        $rows = collect();
+
         $sheetIssues = $this->issues->filter(function ($sheet) use ($sheetName) {
             return $sheet->name === $sheetName;
         })->first();
 
-        $rows = collect();
+        if (!$sheetIssues) {
+            return $rows;
+        }
 
         foreach ($sheetIssues->categories as $category) {
             foreach ($category->issues as $issue) {
@@ -67,16 +71,6 @@ class ImportSummary extends AbstractObject
     public function incSuccess()
     {
         $this->successful++;
-    }
-
-    public function getSuccessfulCount()
-    {
-        return $this->successful;
-    }
-
-    public function getErrorCount()
-    {
-        return $this->errors;
     }
 
     public function hasErrors()
