@@ -73,6 +73,16 @@ class ImportSummary extends AbstractObject
         $this->successful++;
     }
 
+    public function getSuccessfulCount()
+    {
+        return $this->successful;
+    }
+
+    public function getErrorCount()
+    {
+        return $this->errors;
+    }
+
     public function hasErrors()
     {
         return $this->hasStructureErrors || $this->hasContentErrors;
