@@ -78,7 +78,7 @@ class ContentValidator extends AbstractValidator
         $columns = $this->template->getUniqueValueColumns($sheet);
 
         $columns->each(function ($column) use ($sheet) {
-            $category = config('importing.validationLabels.unique_in_column').': '.$column;
+            $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
             $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
                 return trim($value);
             });
