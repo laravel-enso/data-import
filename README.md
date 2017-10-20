@@ -31,13 +31,14 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 
 ### Installation steps
 
-1. Add the `LaravelEnso\DataImport\DataImportServiceProvider::class` provider to `config/app.php`.
+1. Run the migrations.
 
-2. Run the migrations.
-
-3. Publish the configuration and example classes:
+2. Publish the configuration, example classes and assets:
     * `php artisan vendor:publish --tag=dataimport-config`
     * `php artisan vendor:publish --tag=dataimport-classes`
+    * `php artisan vendor:publish --tag=import-assets`
+
+3. Compile with `gulp` / `npm run dev`
 
 4. Double check the permissions.
 
@@ -47,6 +48,27 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 
 - `php artisan vendor:publish --tag=dataimport-config` - configuration files
 - `php artisan vendor:publish --tag=dataimport-classes` - example import
+- `php artisan vendor:publish --tag=import-assets` - the required js assets 
+- `php artisan vendor:publish --tag=enso-config` - a common alias for when wanting to update configuration,
+once a newer version is released, can be used with the `--force` flag
+- `php artisan vendor:publish --tag=enso-assets` - a common alias for when wanting to update the assets,
+once a newer version is released, can be used with the `--force` flag
+
+### Notes
+
+The [Laravel Enso](https://github.com/laravel-enso/Enso) package comes with this package included.
+
+Depends on:
+ - [Core](https://github.com/laravel-enso/Core) for the core middleware 
+ - [Datatable](https://github.com/laravel-enso/Datatable) for listing the import results
+ - [FileManager](https://github.com/laravel-enso/FileManager) for managing the uploads 
+ - [Helpers](https://github.com/laravel-enso/Helpers) for various utility classes
+ - [Structure manager](https://github.com/laravel-enso/StructureManager) for the migrations 
+ - [ImageTransformer](https://github.com/laravel-enso/ImageTransformer) for the optimization of avatar images
+ - [TrackWho](https://github.com/laravel-enso/TrackWho) for keeping track of the users doing the imports
+ 
+ 
+
 
 <!--h-->
 ### Contributions
