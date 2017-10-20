@@ -30,11 +30,15 @@ class ImportSummary extends AbstractObject
 
     public function getRowsWithIssues(string $sheetName)
     {
+        $rows = collect();
+
         $sheetIssues = $this->issues->filter(function ($sheet) use ($sheetName) {
             return $sheet->name === $sheetName;
         })->first();
 
-        $rows = collect();
+        if (!$sheetIssues) {
+            return $rows;
+        }
 
         foreach ($sheetIssues->categories as $category) {
             foreach ($category->issues as $issue) {
@@ -45,10 +49,10 @@ class ImportSummary extends AbstractObject
         return $rows->unique();
     }
 
-    public function addStructureIssue(Issue $issue, string $category)
+    public function addStructureIssue(Issue $issue, string $category, string $sheetName = '')
     {
         $this->hasStructureErrors = true;
-        $this->addIssue($issue, $category, __(config('importing.validationLabels.structure_issues')));
+        $this->addIssue($issue, $category, $sheetName ?: __(config('importing.validationLabels.structure_issues')));
     }
 
     public function addContentIssue(Issue $issue, string $category, string $sheetName)
