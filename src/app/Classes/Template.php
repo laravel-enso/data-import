@@ -65,6 +65,40 @@ class Template
         return $columns;
     }
 
+    public function getExistsInSheetColumns(string $sheetName)
+    {
+        $columns = collect();
+
+        foreach ($this->getSheet($sheetName)->columns as $column) {
+            if (property_exists($column, 'complexValidations')) {
+                $column = $this->extractExistsInSheet($column);
+
+                if ($column) {
+                    $columns->push($column);
+                }
+            }
+        }
+
+        return $columns;
+    }
+
+    private function extractExistsInSheet($column)
+    {
+        $found = false;
+
+        foreach ($column->complexValidations as $key => $validation) {
+            if ($validation->type === 'exists_in_sheet') {
+                $found = true;
+
+                continue;
+            }
+
+            unset($column->complexValidations[$key]);
+        }
+
+        return $found ? $column : null;
+    }
+
     private function getSheet(string $sheetName)
     {
         foreach ($this->template->sheets as $sheet) {
