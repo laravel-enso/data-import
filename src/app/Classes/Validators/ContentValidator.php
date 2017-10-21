@@ -101,7 +101,7 @@ class ContentValidator extends AbstractValidator
 
             foreach ($column->complexValidations as $validation) {
                 $sourceValues = $this->getSheet($validation->sheet)->pluck($validation->column);
-                $missingValues = $values->diff($sourceValues);
+                $missingValues = $values->diff($sourceValues)->filter();
 
                 if ($missingValues->count()) {
                     $this->addIssues($sheet, $column->name, $missingValues, $validation);
