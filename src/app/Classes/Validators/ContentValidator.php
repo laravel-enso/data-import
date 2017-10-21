@@ -96,7 +96,7 @@ class ContentValidator extends AbstractValidator
     {
         $columns = $this->template->getExistsInSheetColumns($sheet);
 
-        $columns->each(function($column) use ($sheet) {
+        $columns->each(function ($column) use ($sheet) {
             $values = $this->getSheet($sheet)->pluck($column->name);
 
             foreach ($column->complexValidations as $validation) {
@@ -115,7 +115,7 @@ class ContentValidator extends AbstractValidator
         $category = config('importing.validationLabels.exists_in_sheet').': '
             .$validation->sheet.', '.__('on column').': '.$validation->column;
 
-        $missingValues->each(function($value, $rowNumber) use ($sheet, $category, $column) {
+        $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
             $this->addIssue($sheet, $category, $rowNumber + 1, $column, $value);
         });
     }
