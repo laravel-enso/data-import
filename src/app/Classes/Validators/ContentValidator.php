@@ -77,42 +77,42 @@ class ContentValidator extends AbstractValidator
     {
         $this->template->getUniqueValueColumns($sheet)
             ->each(function ($column) use ($sheet) {
-            $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
-                return trim($value);
-            });
-
-            $doubles = $values->diffKeys($values->unique());
-
-            if ($doubles->isNotEmpty()) {
-                $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
-
-                $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
-                    $this->addIssue($sheet, $category, $rowNumber + 2, $column, $value);
+                $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
+                    return trim($value);
                 });
-            }
-        });
+
+                $doubles = $values->diffKeys($values->unique());
+
+                if ($doubles->isNotEmpty()) {
+                    $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
+
+                    $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
+                        $this->addIssue($sheet, $category, $rowNumber + 2, $column, $value);
+                    });
+                }
+            });
     }
 
     private function doExistsInSheetValidation(string $sheet)
     {
         $this->template->getExistsInSheetColumns($sheet)
             ->each(function ($column) use ($sheet) {
-            $values = $this->getSheet($sheet)->pluck($column->name);
+                $values = $this->getSheet($sheet)->pluck($column->name);
 
-            foreach ($column->complexValidations as $validation) {
-                $sourceValues = $this->getSheet($validation->sheet)->pluck($validation->column);
-                $missingValues = $values->diff($sourceValues)->filter();
+                foreach ($column->complexValidations as $validation) {
+                    $sourceValues = $this->getSheet($validation->sheet)->pluck($validation->column);
+                    $missingValues = $values->diff($sourceValues)->filter();
 
-                if ($missingValues->isNotEmpty()) {
-                    $category = config('importing.validationLabels.exists_in_sheet').': '
+                    if ($missingValues->isNotEmpty()) {
+                        $category = config('importing.validationLabels.exists_in_sheet').': '
                         .$validation->sheet.', '.__('on column').': '.$validation->column;
 
-                    $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
-                        $this->addIssue($sheet, $category, $rowNumber + 2, $column->name, $value);
-                    });
+                        $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
+                            $this->addIssue($sheet, $category, $rowNumber + 2, $column->name, $value);
+                        });
+                    }
                 }
-            }
-        });
+            });
     }
 
     private function addIssue(string $sheetName, string $category, int $rowNumber = null, string $column = null, $value = null)
