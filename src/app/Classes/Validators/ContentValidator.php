@@ -75,48 +75,43 @@ class ContentValidator extends AbstractValidator
 
     private function doUniqueInColumnValidation(string $sheet)
     {
-        $columns = $this->template->getUniqueValueColumns($sheet);
-
-        $columns->each(function ($column) use ($sheet) {
-            $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
+        $this->template->getUniqueValueColumns($sheet)
+            ->each(function ($column) use ($sheet) {
             $values = $this->getSheet($sheet)->pluck($column)->each(function ($value) {
                 return trim($value);
             });
 
-            $uniqueValues = $values->unique();
-            $doubles = $values->diffKeys($uniqueValues);
+            $doubles = $values->diffKeys($values->unique());
 
-            $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
-                $this->addIssue($sheet, $category, $rowNumber + 1, $column, $value);
-            });
+            if ($doubles->isNotEmpty()) {
+                $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
+
+                $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
+                    $this->addIssue($sheet, $category, $rowNumber + 2, $column, $value);
+                });
+            }
         });
     }
 
     private function doExistsInSheetValidation(string $sheet)
     {
-        $columns = $this->template->getExistsInSheetColumns($sheet);
-
-        $columns->each(function ($column) use ($sheet) {
+        $this->template->getExistsInSheetColumns($sheet)
+            ->each(function ($column) use ($sheet) {
             $values = $this->getSheet($sheet)->pluck($column->name);
 
             foreach ($column->complexValidations as $validation) {
                 $sourceValues = $this->getSheet($validation->sheet)->pluck($validation->column);
                 $missingValues = $values->diff($sourceValues)->filter();
 
-                if ($missingValues->count()) {
-                    $this->addIssues($sheet, $column->name, $missingValues, $validation);
+                if ($missingValues->isNotEmpty()) {
+                    $category = config('importing.validationLabels.exists_in_sheet').': '
+                        .$validation->sheet.', '.__('on column').': '.$validation->column;
+
+                    $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
+                        $this->addIssue($sheet, $category, $rowNumber + 2, $column->name, $value);
+                    });
                 }
             }
-        });
-    }
-
-    private function addIssues($sheet, $column, $missingValues, $validation)
-    {
-        $category = config('importing.validationLabels.exists_in_sheet').': '
-            .$validation->sheet.', '.__('on column').': '.$validation->column;
-
-        $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
-            $this->addIssue($sheet, $category, $rowNumber + 1, $column, $value);
         });
     }
 
