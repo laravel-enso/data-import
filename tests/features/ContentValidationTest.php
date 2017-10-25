@@ -39,11 +39,11 @@ class ContentValidationTest extends TestHelper
             ->assertJsonFragment([
                 'hasContentErrors' => true,
                 'errors'           => 3,
-                'successful'       => 1,
+                'successful'       => 2,
             ])
             ->assertJsonFragment([
                 'name'      => 'This sheet lines are doubles',
-                'rowNumber' => 3,
+                'rowNumber' => 4,
             ])
             ->assertJsonFragment([
                 'name'  => 'Value must be unique in its column: name',
@@ -55,8 +55,7 @@ class ContentValidationTest extends TestHelper
                 'value'  => 'notBoolean',
             ]);
 
-        $this->assertNull(Owner::whereIn('name', ['NotUniqueName', 'BooleanTest'])
-                ->first()
+        $this->assertNull(Owner::whereName('BooleanTest')->first()
         );
         $this->assertNotNull(Owner::whereName('TestName')->first());
         $this->assertNotNull(
