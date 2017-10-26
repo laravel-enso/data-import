@@ -92,7 +92,7 @@ class StructureValidator extends AbstractValidator
     {
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
-                $category = config('enso.importing.validationLabels.sheet_entries_limit_excedeed').': '.$this->sheetEntriesLimit;
+                $category = config('enso.importing.validationLabels.sheet_entries_limit_exceeded').': '.$this->sheetEntriesLimit;
                 $this->addIssue($category, $sheet->count(), $sheet->getTitle());
             }
         });

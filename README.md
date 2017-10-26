@@ -27,22 +27,38 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 - permits limiting of the number of rows to be imported, in order to avoid timeouts and imports taking too long for the end user experience
 - import issues are grouped by sheet and type of error and are paginated for a better experience
 - each import type can be configured to halt the import when encountering cell value validation errors, or  
-- if choosing to continue the import w/ errors, you can opt to process just valid rows 
+- if choosing to continue the import w/ errors, you can opt to process just valid rows
 
 ### Installation steps
 
-1. Run the migrations.
+The component is already included in the Enso install and should not require any additional installation steps.
 
-2. Publish the configuration, example classes and assets:
+### Usage
+
+1. Publish the configuration, example classes and assets:
     * `php artisan vendor:publish --tag=dataimport-config`
     * `php artisan vendor:publish --tag=dataimport-classes`
     * `php artisan vendor:publish --tag=import-assets`
 
-3. Compile with `gulp` / `npm run dev`
+2. In `config/excel.php` set `'force_sheets_collection' => true,` where the default was false
 
-4. Double check the permissions.
+3. In the library `samples` folder, `vendor/laravel-enso/dataimport/samples`, we have included a couple of 
+ sample import files for you to play with 
 
-5. In `config/excel.php` set `'force_sheets_collection' => true,` where the default was false.
+### Configuration
+The configuration can be found/published in `config/enso/importing.php` and has the following options:
+- `validationLabels`, a list of messages used throughout the importer, which you can customize
+- `configs`, a list of import configurations. Each configuration has:
+    - `label`, the label visible to the user | required
+    - `template`, the relative path to the JSON import templates | required
+    - `importerClass`, the fully qualified importer class name | required
+    - `customValidatorClass`, the fully qualified custom validator class name, if you are using custom validators | optional
+    - `sheetEntriesLimit`, the limit of entries in the imported files | default is 5000 | optional
+    - `stopOnErrors`, boolean flag that makes the import stops on content validation errors  | default false | optional
+
+Please note that the import does not continue if structure errors are encountered, such as missing sheets.
+If there are no structure errors, the `stopOnErrors` flag is false and content errors are found, 
+the rows with errors are skipped and valid rows are imported. 
 
 ### Publishes
 
@@ -67,9 +83,6 @@ Depends on:
  - [ImageTransformer](https://github.com/laravel-enso/ImageTransformer) for the optimization of avatar images
  - [TrackWho](https://github.com/laravel-enso/TrackWho) for keeping track of the users doing the imports
  
- 
-
-
 <!--h-->
 ### Contributions
 
