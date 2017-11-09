@@ -204,9 +204,7 @@ export default {
     created() {
         axios.get(route('import.index', [], false)).then((response) => {
             this.importTypes = response.data.importTypes;
-        }).catch((error) => {
-            this.handleError(error);
-        });
+        }).catch(error => this.handleError(error));
     },
 
     methods: {
