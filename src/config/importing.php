@@ -13,7 +13,7 @@ return [
         'sheet_entries_limit_exceeded' => 'Exceeded the entries limit of',
         'missing_param_from_config'    => 'The following parameter is missing from the config file',
     ],
-    'configs'          => [
+    'configs' => [
         'example' => [
             'label'                => 'Example import',
             'template'             => 'app/Importing/Templates/exampleTemplate.json',

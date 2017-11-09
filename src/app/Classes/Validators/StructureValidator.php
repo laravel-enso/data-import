@@ -112,7 +112,7 @@ class StructureValidator extends AbstractValidator
     private function addIssue(string $category, string $value)
     {
         $issue = new Issue([
-            'value'    => $value,
+            'value' => $value,
         ]);
 
         $this->summary->addStructureIssue($issue, $category);
