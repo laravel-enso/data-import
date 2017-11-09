@@ -17,16 +17,16 @@ class ImportTableStructure extends TableStructure
             'customActionButtons' => [
                 ['icon' => 'fa fa-info-circle', 'class' => 'is-info', 'event' => 'get-summary'],
             ],
-            'headerAlign'         => 'center',
-            'bodyAlign'           => 'center',
-            'appends'             => ['successful', 'errors'],
-            'render'              => [2, 3],
-            'notSearchable'       => [2, 3],
-            'notSortable'         => [2, 3],
-            'enumMappings'        => [
+            'headerAlign'   => 'center',
+            'bodyAlign'     => 'center',
+            'appends'       => ['successful', 'errors'],
+            'render'        => [2, 3],
+            'notSearchable' => [2, 3],
+            'notSortable'   => [2, 3],
+            'enumMappings'  => [
                 'type' => ImportTypes::class,
             ],
-            'columns'             => [
+            'columns' => [
                 0 => [
                     'label' => __('Import Type'),
                     'data'  => 'type',
