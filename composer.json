@@ -30,9 +30,9 @@
         "laravel/framework": "5.5.*",
         "laravel-enso/core": "2.1.*",
         "laravel-enso/vue-datatable": "2.1.*",
-        "laravel-enso/filemanager": "2.0.*",
+        "laravel-enso/filemanager": "2.1.*",
         "laravel-enso/helpers": "1.5.*",
-        "laravel-enso/structuremanager": "2.0.*",
+        "laravel-enso/structuremanager": "2.1.*",
         "laravel-enso/trackwho": "1.5.*",
         "maatwebsite/excel": "^2.1",
         "laravel-enso/testhelper": "1.*"
