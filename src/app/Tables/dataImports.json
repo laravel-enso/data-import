@@ -1,0 +1,51 @@
+{
+    "routePrefix": "import",
+    "readSuffix": "getTableData",
+    "writeSuffix": null,
+    "name": "Past Imports",
+    "icon": "fa fa-fw fa-cloud-upload",
+    "crtNo": true,
+    "appends": ["successful", "errors"],
+    "buttons": [
+        {
+            "type": "row",
+            "icon": "fa fa-info-circle",
+            "event": "get-summary",
+            "routeSuffix": "getSummary",
+            "class": "is-info"
+        },
+        "download", "destroy"],
+    "columns": [
+        {
+            "label": "ImportType",
+            "name": "type",
+            "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
+            "meta": ["searchable", "sortable"]
+        },
+        {
+            "label": "File name",
+            "name": "original_name",
+            "meta": ["searchable", "sortable"]
+        },
+        {
+            "label": "Successful",
+            "name": "successful",
+            "meta": ["render"]
+        },
+        {
+            "label": "Errors",
+            "name": "errors",
+            "meta": ["render"]
+        },
+        {
+            "label": "Imported By",
+            "name": "created_by",
+            "meta": ["searchable", "sortable"]
+        },
+        {
+            "label": "Imported At",
+            "name": "created_at",
+            "meta": ["searchable", "sortable"]
+        }
+    ]
+}

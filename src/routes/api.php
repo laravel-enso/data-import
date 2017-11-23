@@ -4,11 +4,11 @@ Route::middleware(['web', 'auth', 'core'])
     ->namespace('LaravelEnso\DataImport\app\Http\Controllers')
     ->prefix('api/import')->as('import.')
     ->group(function () {
-        Route::get('initTable', 'DataImportTableController@initTable')
+        Route::get('initTable', 'DataImportTableController@init')
             ->name('initTable');
-        Route::get('getTableData', 'DataImportTableController@getTableData')
+        Route::get('getTableData', 'DataImportTableController@data')
             ->name('getTableData');
-        Route::get('exportExcel', 'DataImportTableController@exportExcel')
+        Route::get('exportExcel', 'DataImportTableController@excel')
             ->name('exportExcel');
 
         Route::get('', 'DataImportController@index')

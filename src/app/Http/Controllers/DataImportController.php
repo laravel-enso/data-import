@@ -12,7 +12,9 @@ class DataImportController extends Controller
 {
     public function index()
     {
-        return ['importTypes' => (new ImportTypes())->getData()];
+        $types = new ImportTypes;
+
+        return ['importTypes' => $types::all()];
     }
 
     public function getSummary(DataImport $dataImport)
