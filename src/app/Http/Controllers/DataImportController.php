@@ -12,7 +12,7 @@ class DataImportController extends Controller
 {
     public function index()
     {
-        $types = new ImportTypes;
+        $types = new ImportTypes();
 
         return ['importTypes' => $types::all()];
     }
