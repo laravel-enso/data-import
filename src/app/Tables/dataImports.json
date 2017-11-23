@@ -19,32 +19,38 @@
         {
             "label": "ImportType",
             "name": "type",
+            "data": "data_imports.type",
             "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
-            "meta": ["searchable", "sortable"]
+            "meta": ["sortable"]
         },
         {
             "label": "File name",
             "name": "original_name",
+            "data": "data_imports.original_name",
             "meta": ["searchable", "sortable"]
         },
         {
             "label": "Successful",
             "name": "successful",
+            "data": "data_imports.successful",
             "meta": ["render"]
         },
         {
             "label": "Errors",
             "name": "errors",
+            "data": "data_imports.errors",
             "meta": ["render"]
         },
         {
             "label": "Imported By",
             "name": "created_by",
+            "data": "data_imports.created_by",
             "meta": ["searchable", "sortable"]
         },
         {
             "label": "Imported At",
             "name": "created_at",
+            "data": "data_imports.created_at",
             "meta": ["searchable", "sortable"]
         }
     ]
