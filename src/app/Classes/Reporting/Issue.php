@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-use LaravelEnso\Helpers\Classes\AbstractObject;
+use LaravelEnso\Helpers\Classes\Obj;
 
-class Issue extends AbstractObject
+class Issue extends Obj
 {
     public $value;
     public $rowNumber;

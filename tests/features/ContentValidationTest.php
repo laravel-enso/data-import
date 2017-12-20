@@ -23,7 +23,7 @@ class ContentValidationTest extends TestCase
     {
         parent::setUp();
 
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
 
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
 
@@ -33,32 +33,36 @@ class ContentValidationTest extends TestCase
     /** @test */
     public function cant_import_entries_with_errors()
     {
-        $this->post(route('import.run', ['owners'], false),
-            ['file' => $this->getContentErrorsUploadedFile()])
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['file' => $this->getContentErrorsUploadedFile()]
+        )
             ->assertStatus(200)
             ->assertJsonFragment([
                 'hasContentErrors' => true,
-                'errors'           => 3,
-                'successful'       => 2,
+                'errors' => 3,
+                'successful' => 2,
             ])
             ->assertJsonFragment([
-                'name'      => 'This sheet lines are doubles',
+                'name' => 'This sheet lines are doubles',
                 'rowNumber' => 4,
             ])
             ->assertJsonFragment([
-                'name'  => 'Value must be unique in its column: name',
+                'name' => 'Value must be unique in its column: name',
                 'value' => 'NotUniqueName',
             ])
             ->assertJsonFragment([
-                'name'   => 'The is active field must be true or false.',
+                'name' => 'The is active field must be true or false.',
                 'column' => 'is_active',
-                'value'  => 'notBoolean',
+                'value' => 'notBoolean',
             ]);
 
-        $this->assertNull(Owner::whereName('BooleanTest')->first()
+        $this->assertNull(
+            Owner::whereName('BooleanTest')->first()
         );
         $this->assertNotNull(Owner::whereName('TestName')->first());
-        $this->assertNotNull(DataImport::whereOriginalName(self::CONTENT_ERRORS_TEST_FILE)
+        $this->assertNotNull(
+            DataImport::whereOriginalName(self::CONTENT_ERRORS_TEST_FILE)
                 ->first()
         );
 
@@ -70,17 +74,20 @@ class ContentValidationTest extends TestCase
     {
         config()->set('enso.importing.configs.owners.stopOnErrors', true);
 
-        $this->post(route('import.run', ['owners'], false),
-            ['file' => $this->getContentErrorsUploadedFile()])
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['file' => $this->getContentErrorsUploadedFile()]
+        )
             ->assertStatus(200)
             ->assertJsonFragment([
                 'hasContentErrors' => true,
-                'errors'           => 3,
-                'successful'       => 0,
+                'errors' => 3,
+                'successful' => 0,
             ]);
 
         $this->assertNull(Owner::whereName('TestName')->first());
-        $this->assertNull(DataImport::whereOriginalName(self::CONTENT_ERRORS_TEST_FILE)
+        $this->assertNull(
+            DataImport::whereOriginalName(self::CONTENT_ERRORS_TEST_FILE)
                 ->first()
         );
 
@@ -96,7 +103,11 @@ class ContentValidationTest extends TestCase
 
         return new UploadedFile(
             self::PATH.self::CONTENT_ERRORS_TEST_FILE,
-            self::CONTENT_ERRORS_TEST_FILE, null, null, null, true
+            self::CONTENT_ERRORS_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 

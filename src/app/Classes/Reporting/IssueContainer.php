@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-use LaravelEnso\Helpers\Classes\AbstractObject;
+use LaravelEnso\Helpers\Classes\Obj;
 
-class IssueContainer extends AbstractObject
+class IssueContainer extends Obj
 {
     public $name;
     public $categories;

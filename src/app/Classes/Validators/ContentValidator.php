@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
-use LaravelEnso\Helpers\Classes\Object;
+use LaravelEnso\Helpers\Classes\Obj;
 use Maatwebsite\Excel\Collections\RowCollection;
 use Maatwebsite\Excel\Collections\SheetCollection;
 
@@ -58,7 +58,7 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function doLaravelValidations(string $sheetName, Object $rules, Collection $row, int $rowNumber)
+    private function doLaravelValidations(string $sheetName, Obj $rules, Collection $row, int $rowNumber)
     {
         $result = Validator::make($row->toArray(), $rules->toArray());
 
@@ -119,8 +119,8 @@ class ContentValidator extends AbstractValidator
     {
         $issue = new Issue([
             'rowNumber' => $rowNumber,
-            'column'    => $column,
-            'value'     => $value,
+            'column' => $column,
+            'value' => $value,
         ]);
 
         $this->summary->addContentIssue($issue, $category, $sheetName);

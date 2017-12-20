@@ -3,9 +3,9 @@
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
 use Carbon\Carbon;
-use LaravelEnso\Helpers\Classes\AbstractObject;
+use LaravelEnso\Helpers\Classes\Obj;
 
-class ImportSummary extends AbstractObject
+class ImportSummary extends Obj
 {
     public $hasStructureErrors;
     public $hasContentErrors;

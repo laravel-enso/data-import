@@ -30,12 +30,14 @@
         "laravel/framework": "5.5.*",
         "laravel-enso/core": "2.1.*",
         "laravel-enso/filemanager": "2.1.*",
-        "laravel-enso/helpers": "1.5.*",
+        "laravel-enso/helpers": "1.6.*",
         "laravel-enso/structuremanager": "2.1.*",
         "laravel-enso/trackwho": "1.5.*",
         "laravel-enso/vuedatatable": "1.0.*",
-        "maatwebsite/excel": "^2.1",
-        "laravel-enso/testhelper": "1.*"
+        "maatwebsite/excel": "^2.1"
+    },
+    "require-dev": {
+        "laravel-enso/testhelper": "1.4.*"
     },
     "autoload": {
         "psr-4": {
