@@ -2,11 +2,11 @@
 
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
-use LaravelEnso\DataImport\App\Http\Services\DataImportService;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\App\Http\Services\DataImportService;
 
 class DataImportController extends Controller
 {

@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 
 class ImportConfiguration
 {

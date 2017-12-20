@@ -3,11 +3,11 @@
 namespace LaravelEnso\DataImport\App\Http\Services;
 
 use Illuminate\Http\Request;
-use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
-use LaravelEnso\DataImport\app\Classes\Importers\Importer;
+use LaravelEnso\FileManager\Classes\FileManager;
 use LaravelEnso\DataImport\app\Classes\XlsReader;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\FileManager\Classes\FileManager;
+use LaravelEnso\DataImport\app\Classes\Importers\Importer;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 
 class DataImportService
 {

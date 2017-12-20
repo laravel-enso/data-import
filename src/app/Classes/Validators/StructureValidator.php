@@ -3,10 +3,10 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
-use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
-use Maatwebsite\Excel\Collections\SheetCollection;
 
 class StructureValidator extends AbstractValidator
 {

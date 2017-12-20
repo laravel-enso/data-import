@@ -2,10 +2,10 @@
 
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use LaravelEnso\DataImport\App\Http\Services\ImportTemplateService;
+use App\Http\Controllers\Controller;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use LaravelEnso\DataImport\App\Http\Services\ImportTemplateService;
 
 class ImportTemplateController extends Controller
 {

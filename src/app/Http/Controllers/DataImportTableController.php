@@ -3,9 +3,9 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use LaravelEnso\VueDatatable\app\Traits\Excel;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\VueDatatable\app\Traits\Datatable;
-use LaravelEnso\VueDatatable\app\Traits\Excel;
 
 class DataImportTableController extends Controller
 {

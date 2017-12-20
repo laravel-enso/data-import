@@ -3,13 +3,13 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
-use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
-use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
-use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
 use LaravelEnso\Helpers\Classes\Obj;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Collections\RowCollection;
 use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
+use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 
 class ContentValidator extends AbstractValidator
 {

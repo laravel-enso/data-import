@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
-use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Template;
 use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 
 abstract class AbstractValidator
 {
