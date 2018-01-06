@@ -95,7 +95,7 @@ class StructureValidationTest extends TestCase
             ->assertJsonFragment([
                 'hasStructureErrors' => true,
                 'errors'             => 1,
-                'name'               => 'Excedeed the entries limit of: 1',
+                'name'               => 'Exceeded the entries limit of: 1',
             ]);
 
         $this->assertNull(DataImport::whereOriginalName(self::TWO_ENTRIES_TEST_FILE)
