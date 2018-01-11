@@ -5,7 +5,7 @@ namespace LaravelEnso\DataImport;
 use Illuminate\Support\ServiceProvider;
 use LaravelEnso\DataImport\app\Classes\Template;
 
-class DataImportServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {

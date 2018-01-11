@@ -1,4 +1,4 @@
-import DataImportIndex from '../../pages/enso/dataimport/Index.vue';
+const DataImportIndex = () => import('../pages/dataimport/Index.vue');
 
 export default {
     name: 'import.index',
