@@ -48,7 +48,7 @@ class ContentValidationTest extends TestCase
                 'rowNumber' => 4,
             ])
             ->assertJsonFragment([
-                'name' => 'Value must be unique in its column: name',
+                'name' => 'Value must be unique in column "name"',
                 'value' => 'NotUniqueName',
             ])
             ->assertJsonFragment([

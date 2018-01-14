@@ -93,7 +93,7 @@ class StructureValidator extends AbstractValidator
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
                 $category = __(
-                    'Exceeded the entries limit of :limit',
+                    'Exceeded the entries limit of: :limit',
                     ['limit' => $this->sheetEntriesLimit]
                 );
                 $this->addIssue($category, $sheet->count(), $sheet->getTitle());

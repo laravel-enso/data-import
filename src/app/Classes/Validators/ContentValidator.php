@@ -85,7 +85,7 @@ class ContentValidator extends AbstractValidator
 
                 if ($doubles->isNotEmpty()) {
                     $category = __(
-                        'Value must be unique in column :column',
+                        'Value must be unique in column ":column"',
                         ['column' => $column]
                     );
 
