@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
     private function loadDependencies()
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-        $this->mergeConfigFrom(__DIR__.'/config/importing.php', 'importing');
+        $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'imports');
         $this->loadRoutesFrom(__DIR__.'/routes/api.php');
     }
 

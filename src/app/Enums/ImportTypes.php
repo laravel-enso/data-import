@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Enums;
 
-use LaravelEnso\Helpers\Classes\Enum;
+use LaravelEnso\Helpers\app\Classes\Enum;
 
 class ImportTypes extends Enum
 {
@@ -11,8 +11,8 @@ class ImportTypes extends Enum
     public function __construct()
     {
         self::$data = array_combine(
-            array_keys(config('enso.importing.configs')),
-            array_column(config('enso.importing.configs'), 'label')
+            array_keys(config('enso.imports')),
+            array_column(config('enso.imports'), 'label')
         );
     }
 }

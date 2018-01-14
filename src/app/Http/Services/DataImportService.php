@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\App\Http\Services;
 
 use Illuminate\Http\Request;
-use LaravelEnso\FileManager\Classes\FileManager;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Classes\XlsReader;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Classes\Importers\Importer;
@@ -15,16 +15,12 @@ class DataImportService
 
     public function __construct()
     {
-        $this->fileManager = new FileManager(
-            config('enso.config.paths.imports'),
-            config('enso.config.paths.temp')
-        );
-
-        $this->fileManager->setValidExtensions(['xls', 'xlsx']);
+        $this->fileManager = new FileManager(config('enso.config.paths.imports'));
     }
 
     public function store(Request $request, string $type) //fixme. We need a class to handle the file reading process
     {
+        $this->setUploader();
         $this->fileManager->startUpload($request->allFiles());
         $importer = $this->getImporter($type);
 
@@ -61,7 +57,7 @@ class DataImportService
 
     private function getImporter(string $type)
     {
-        $file = $this->fileManager->getUploadedFiles()->first();
+        $file = $this->fileManager->uploadedFiles()->first();
         $sheets = (new XlsReader($file['full_path']))->get();
         $config = new ImportConfiguration($type);
 
@@ -70,9 +66,15 @@ class DataImportService
 
     private function createDataImportRecord($type, $summary)
     {
-        $dataImport = new DataImport($this->fileManager->getUploadedFiles()->first());
+        $dataImport = new DataImport($this->fileManager->uploadedFiles()->first());
         $dataImport->type = $type;
         $dataImport->summary = $summary;
         $dataImport->save();
+    }
+
+    private function setUploader()
+    {
+        $this->fileManager->tempPath((config('enso.config.paths.temp')))
+            ->validExtensions(['xls', 'xlsx']);
     }
 }

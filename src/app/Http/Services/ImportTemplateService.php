@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\App\Http\Services;
 
 use Illuminate\Http\Request;
-use LaravelEnso\FileManager\Classes\FileManager;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class ImportTemplateService
@@ -14,12 +14,7 @@ class ImportTemplateService
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->fileManager = new FileManager(
-            config('enso.config.paths.imports'),
-            config('enso.config.paths.temp')
-        );
-
-        $this->fileManager->setValidExtensions(['xls', 'xlsx']);
+        $this->fileManager = new FileManager(config('enso.config.paths.imports'));
     }
 
     public function getTemplate(string $type)
@@ -31,11 +26,13 @@ class ImportTemplateService
 
     public function store(string $type)
     {
+        $this->setUploader();
+
         $template = null;
 
         \DB::transaction(function () use (&$template, $type) {
             $this->fileManager->startUpload($this->request->allFiles());
-            $template = new ImportTemplate($this->fileManager->getUploadedFiles()->first());
+            $template = new ImportTemplate($this->fileManager->uploadedFiles()->first());
             $template->type = $type;
             $template->save();
             $this->fileManager->commitUpload();
@@ -57,5 +54,11 @@ class ImportTemplateService
         });
 
         return ['message' => __(config('enso.labels.successfulOperation'))];
+    }
+
+    private function setUploader()
+    {
+        $this->fileManager->tempPath(config('enso.config.paths.temp'))
+            ->validExtensions(['xls', 'xlsx']);
     }
 }

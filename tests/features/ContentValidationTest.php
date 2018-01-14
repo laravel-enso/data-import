@@ -72,7 +72,7 @@ class ContentValidationTest extends TestCase
     /** @test */
     public function stops_on_content_errors()
     {
-        config()->set('enso.importing.configs.owners.stopOnErrors', true);
+        config()->set('enso.imports.owners.stopOnErrors', true);
 
         $this->post(
             route('import.run', ['owners'], false),

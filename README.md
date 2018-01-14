@@ -46,9 +46,7 @@ The component is already included in the Enso install and should not require any
  sample import files for you to play with 
 
 ### Configuration
-The configuration can be found/published in `config/enso/importing.php` and has the following options:
-- `validationLabels`, a list of messages used throughout the importer, which you can customize
-- `configs`, a list of import configurations. Each configuration has:
+The configuration can be found/published in `config/enso/imports.php` and contains a list of configurations for imports with the following options:
     - `label`, the label visible to the user | required
     - `template`, the relative path to the JSON import templates | required
     - `importerClass`, the fully qualified importer class name | required

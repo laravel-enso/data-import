@@ -2,7 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\DataImport\app\Exceptions\TemplateException;
 
 class Template
 {
@@ -113,7 +114,7 @@ class Template
         $template = json_decode($jsonTemplate);
 
         if (!$template) {
-            throw new \EnsoException('Invalid template');
+            throw new TemplateException(__('Template is not readable'));
         }
 
         return $template;

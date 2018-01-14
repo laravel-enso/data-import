@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
 use Carbon\Carbon;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 class ImportSummary extends Obj
 {
@@ -52,7 +52,7 @@ class ImportSummary extends Obj
     public function addStructureIssue(Issue $issue, string $category, string $sheetName = '')
     {
         $this->hasStructureErrors = true;
-        $this->addIssue($issue, $category, $sheetName ?: __(config('importing.validationLabels.structure_issues')));
+        $this->addIssue($issue, $category, $sheetName ?: __('Structure Issues'));
     }
 
     public function addContentIssue(Issue $issue, string $category, string $sheetName)

@@ -45,7 +45,7 @@ class StructureValidator extends AbstractValidator
         $extraSheets = $xlsxSheets->diff($templateSheets);
 
         $extraSheets->each(function ($sheet) {
-            $this->addIssue(__(config('enso.importing.validationLabels.extra_sheets')), $sheet);
+            $this->addIssue(__('Extra Sheets'), $sheet);
         });
     }
 
@@ -54,7 +54,7 @@ class StructureValidator extends AbstractValidator
         $missingSheets = $templateSheets->diff($xlsxSheets);
 
         $missingSheets->each(function ($sheet) {
-            $this->addIssue(__(config('enso.importing.validationLabels.missing_sheets')), $sheet);
+            $this->addIssue(__('Missing Sheets'), $sheet);
         });
     }
 
@@ -75,7 +75,7 @@ class StructureValidator extends AbstractValidator
         $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__(config('enso.importing.validationLabels.missing_columns')), $column, $sheetName);
+            $this->addIssue(__('Missing Columns'), $column, $sheetName);
         });
     }
 
@@ -84,7 +84,7 @@ class StructureValidator extends AbstractValidator
         $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__(config('enso.importing.validationLabels.extra_columns')), $column, $sheetName);
+            $this->addIssue(__('Extra Columns'), $column, $sheetName);
         });
     }
 
@@ -92,7 +92,10 @@ class StructureValidator extends AbstractValidator
     {
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
-                $category = config('enso.importing.validationLabels.sheet_entries_limit_exceeded').': '.$this->sheetEntriesLimit;
+                $category = __(
+                    'Exceeded the entries limit of :limit',
+                    ['limit' => $this->sheetEntriesLimit]
+                );
                 $this->addIssue($category, $sheet->count(), $sheet->getTitle());
             }
         });

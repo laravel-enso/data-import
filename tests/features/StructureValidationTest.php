@@ -87,7 +87,7 @@ class StructureValidationTest extends TestCase
     /** @test */
     public function cant_import_file_that_exceeds_entries_limit()
     {
-        config()->set('enso.importing.configs.owners.sheetEntriesLimit', '1');
+        config()->set('enso.imports.owners.sheetEntriesLimit', '1');
 
         $this->post(route('import.run', ['owners'], false),
             ['file' => $this->getTwoEntriesUploadedFile()])

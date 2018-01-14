@@ -3,6 +3,8 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Exceptions\ConfigException;
+use LaravelEnso\DataImport\app\Exceptions\TemplateException;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 
 class ImportConfiguration
@@ -56,7 +58,7 @@ class ImportConfiguration
 
     private function getConfiguration(string $type)
     {
-        return collect(config('enso.importing.configs'))->first(
+        return collect(config('enso.imports'))->first(
             function ($config, $key) use ($type) {
                 return $key === $type;
             }
@@ -76,9 +78,10 @@ class ImportConfiguration
     private function readJsonTemplate()
     {
         if (!\File::exists(base_path($this->config['template']))) {
-            throw new \EnsoException(
-                __('Template file is missing').': '.base_path($this->config['template'])
-            );
+            throw new TemplateException(__(
+                'Template :file is missing',
+                ['file' => base_path($this->config['template'])]
+            ));
         }
 
         return \File::get(base_path($this->config['template']));
@@ -86,9 +89,10 @@ class ImportConfiguration
 
     private function throwMissingParamException($param)
     {
-        throw new \EnsoException(
-            __(config('enso.importing.validationLabels.missing_param_from_config')).': '.$param
-        );
+        throw new ConfigException(__(
+            'The parameter :param is missing from the config file',
+            ['param' => $param]
+        ));
     }
 
     private function resolveTemplateInstance()

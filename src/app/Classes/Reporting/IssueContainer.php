@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reporting;
 
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 class IssueContainer extends Obj
 {

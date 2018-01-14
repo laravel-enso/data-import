@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\app\Classes\Obj;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Collections\RowCollection;
 use Maatwebsite\Excel\Collections\SheetCollection;
@@ -51,7 +51,7 @@ class ContentValidator extends AbstractValidator
     {
         $uniqueRows = $sheet->unique();
         $duplicateLines = $sheet->diffKeys($uniqueRows);
-        $category = __(config('importing.validationLabels.duplicate_lines'));
+        $category = __('This sheet lines are doubles');
 
         foreach ($duplicateLines->keys() as $rowNumber) {
             $this->addIssue($sheet->getTitle(), $category, $rowNumber + 2);
@@ -84,7 +84,10 @@ class ContentValidator extends AbstractValidator
                 $doubles = $values->diffKeys($values->unique());
 
                 if ($doubles->isNotEmpty()) {
-                    $category = __(config('importing.validationLabels.unique_in_column')).': '.$column;
+                    $category = __(
+                        'Value must be unique in column :column',
+                        ['column' => $column]
+                    );
 
                     $doubles->each(function ($value, $rowNumber) use ($sheet, $column, $category) {
                         $this->addIssue($sheet, $category, $rowNumber + 2, $column, $value);
@@ -104,8 +107,10 @@ class ContentValidator extends AbstractValidator
                     $missingValues = $values->diff($sourceValues)->filter();
 
                     if ($missingValues->isNotEmpty()) {
-                        $category = config('importing.validationLabels.exists_in_sheet').': '
-                        .$validation->sheet.', '.__('on column').': '.$validation->column;
+                        $category = __(
+                            'Value must exist in the sheet :sheet on column :column',
+                            ['sheet' => $validation->sheet, 'column' => $validation->column]
+                        );
 
                         $missingValues->each(function ($value, $rowNumber) use ($sheet, $category, $column) {
                             $this->addIssue($sheet, $category, $rowNumber + 2, $column->name, $value);
