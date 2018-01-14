@@ -8,7 +8,7 @@ use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
 use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
 
-class Importer
+final class Importer
 {
     protected $sheets;
     protected $summary;

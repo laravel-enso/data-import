@@ -20,6 +20,4 @@ class DataImportTableController extends Controller
                 concat(users.first_name, " ", users.last_name) as created_by'))
             ->join('users', 'data_imports.created_by', '=', 'users.id');
     }
-
-    use DataTable;
 }

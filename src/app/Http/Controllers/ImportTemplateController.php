@@ -9,30 +9,23 @@ use LaravelEnso\DataImport\App\Http\Services\ImportTemplateService;
 
 class ImportTemplateController extends Controller
 {
-    private $importTemplates;
-
-    public function __construct(Request $request)
+    public function getTemplate(string $type, ImportTemplateService $service)
     {
-        $this->importTemplates = new ImportTemplateService($request);
+        return $service->getTemplate($type);
     }
 
-    public function getTemplate(string $type)
+    public function store(Request $request, string $type, ImportTemplateService $service)
     {
-        return $this->importTemplates->getTemplate($type);
+        return $service->store($request, $type);
     }
 
-    public function store(string $type)
+    public function show(ImportTemplate $template, ImportTemplateService $service)
     {
-        return $this->importTemplates->store($type);
+        return $service->show($template);
     }
 
-    public function show(ImportTemplate $template)
+    public function destroy(ImportTemplate $template, ImportTemplateService $service)
     {
-        return $this->importTemplates->show($template);
-    }
-
-    public function destroy(ImportTemplate $template)
-    {
-        return $this->importTemplates->destroy($template);
+        return $service->destroy($template);
     }
 }

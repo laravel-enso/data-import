@@ -8,12 +8,10 @@ use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class ImportTemplateService
 {
-    private $request;
     private $fileManager;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
-        $this->request = $request;
         $this->fileManager = new FileManager(config('enso.config.paths.imports'));
     }
 
@@ -24,14 +22,14 @@ class ImportTemplateService
         return $template ?: new ImportTemplate();
     }
 
-    public function store(string $type)
+    public function store(Request $request, string $type)
     {
         $this->setUploader();
 
         $template = null;
 
-        \DB::transaction(function () use (&$template, $type) {
-            $this->fileManager->startUpload($this->request->allFiles());
+        \DB::transaction(function () use (&$template, $request, $type) {
+            $this->fileManager->startUpload($request->allFiles());
             $template = new ImportTemplate($this->fileManager->uploadedFiles()->first());
             $template->type = $type;
             $template->save();
