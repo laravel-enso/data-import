@@ -75,7 +75,9 @@ class StructureValidator extends AbstractValidator
         $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__(config('importing.validationLabels.missing_columns')), $column, $sheetName);
+            $value = __('Sheet ":sheet", column ":column"', ['sheet' => $sheetName, 'column' => $column]);
+
+            $this->addIssue(__(config('importing.validationLabels.missing_columns')), $value);
         });
     }
 
@@ -84,7 +86,9 @@ class StructureValidator extends AbstractValidator
         $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__(config('importing.validationLabels.extra_columns')), $column, $sheetName);
+            $value = __('Sheet :"sheet", column ":column"', ['sheet' => $sheetName, 'column' => $column]);
+
+            $this->addIssue(__(config('importing.validationLabels.extra_columns')), $value);
         });
     }
 
@@ -92,8 +96,9 @@ class StructureValidator extends AbstractValidator
     {
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
-                $category = config('importing.validationLabels.sheet_entries_limit_excedeed').': '.$this->sheetEntriesLimit;
-                $this->addIssue($category, $sheet->count(), $sheet->getTitle());
+                $value = __('Sheet ":sheet", count :count', ['sheet' => $sheetName, 'count' => $sheet->count()]);
+
+                $this->addIssue(config('importing.validationLabels.sheet_entries_limit_excedeed'), $value);
             }
         });
     }
@@ -112,7 +117,7 @@ class StructureValidator extends AbstractValidator
     private function addIssue(string $category, string $value)
     {
         $issue = new Issue([
-            'value'    => $value,
+            'value' => $value,
         ]);
 
         $this->summary->addStructureIssue($issue, $category);
