@@ -75,7 +75,9 @@ class StructureValidator extends AbstractValidator
         $missingColumns = $templateSheetColumns->diff($xlsxSheetColumns);
 
         $missingColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__('Missing Columns'), $column, $sheetName);
+            $message = __('Sheet ":sheet", column ":column"', ['sheet' => $sheetName, 'column' => $column]);
+
+            $this->addIssue(__('Missing Columns'), $message);
         });
     }
 
@@ -84,7 +86,9 @@ class StructureValidator extends AbstractValidator
         $extraColumns = $xlsxSheetColumns->diff($templateSheetColumns);
 
         $extraColumns->each(function ($column) use ($sheetName) {
-            $this->addIssue(__('Extra Columns'), $column, $sheetName);
+            $message = __('Sheet ":sheet", column ":column"', ['sheet' => $sheetName, 'column' => $column]);
+
+            $this->addIssue(__('Extra Columns'), $message);
         });
     }
 
@@ -96,7 +100,10 @@ class StructureValidator extends AbstractValidator
                     'Exceeded the entries limit of: :limit',
                     ['limit' => $this->sheetEntriesLimit]
                 );
-                $this->addIssue($category, $sheet->count(), $sheet->getTitle());
+
+                $message = __('Sheet ":sheet", count :count', ['sheet' => $sheetName, 'count' => $sheet->count()]);
+
+                $this->addIssue($category, $message);
             }
         });
     }
