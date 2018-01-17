@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Classes;
 
-use LaravelEnso\Helpers\Classes\Object;
+use LaravelEnso\Helpers\Classes\Obj;
 
 class Template
 {
@@ -37,7 +37,7 @@ class Template
 
     public function getLaravelValidationRules(string $sheetName)
     {
-        $rules = new Object();
+        $rules = new Obj();
 
         foreach ($this->getSheet($sheetName)->columns as $column) {
             if (property_exists($column, 'laravelValidations')) {
