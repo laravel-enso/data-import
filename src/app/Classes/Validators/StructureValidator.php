@@ -96,7 +96,7 @@ class StructureValidator extends AbstractValidator
     {
         $this->sheets->each(function ($sheet) {
             if ($sheet->count() > $this->sheetEntriesLimit) {
-                $value = __('Sheet ":sheet", count :count', ['sheet' => $sheetName, 'count' => $sheet->count()]);
+                $value = __('Sheet ":sheet", count :count', ['sheet' => $sheet->getTitle(), 'count' => $sheet->count()]);
 
                 $this->addIssue(config('importing.validationLabels.sheet_entries_limit_excedeed'), $value);
             }
