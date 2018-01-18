@@ -26,7 +26,7 @@ class StructureValidationTest extends TestCase
     {
         parent::setUp();
 
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
 
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
 
@@ -36,23 +36,26 @@ class StructureValidationTest extends TestCase
     /** @test */
     public function cant_import_file_with_invalid_sheets()
     {
-        $this->post(route('import.run', ['owners'], false),
-            ['file' => $this->getInvalidSheetsUploadedFile()])
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['file' => $this->getInvalidSheetsUploadedFile()]
+        )
             ->assertStatus(200)
             ->assertJsonFragment([
                 'hasStructureErrors' => true,
-                'errors'             => 2,
+                'errors' => 2,
             ])
             ->assertJsonFragment([
-                'name'  => 'Missing Sheets',
+                'name' => 'Missing Sheets',
                 'value' => 'owners',
             ])
             ->assertJsonFragment([
-                'name'  => 'Extra Sheets',
+                'name' => 'Extra Sheets',
                 'value' => 'invalid_sheet',
             ]);
 
-        $this->assertNull(DataImport::whereOriginalName(self::INVALID_SHEETS_TEST_FILE)
+        $this->assertNull(
+            DataImport::whereOriginalName(self::INVALID_SHEETS_TEST_FILE)
                 ->first()
         );
 
@@ -62,22 +65,25 @@ class StructureValidationTest extends TestCase
     /** @test */
     public function cant_import_file_with_invalid_columns()
     {
-        $this->post(route('import.run', ['owners'], false),
-            ['file' => $this->getInvalidColumnsUploadedFile()])
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['file' => $this->getInvalidColumnsUploadedFile()]
+        )
             ->assertStatus(200)
             ->assertJsonFragment([
                 'hasStructureErrors' => true,
-                'errors'             => 2,
+                'errors' => 2,
             ])
             ->assertJsonFragment([
-                'name'  => 'Missing Columns',
-                'value' => 'is_active',
+                'name' => 'Missing Columns',
+                'value' => 'Sheet "owners", column "is_active"',
             ])
             ->assertJsonFragment([
-                'name'  => 'Extra Columns',
-                'value' => 'invalid_column',
+                'name' => 'Extra Columns',
+                'value' => 'Sheet "owners", column "invalid_column"',
             ]);
-        $this->assertNull(DataImport::whereOriginalName(self::INVALID_COLUMNS_TEST_FILE)
+        $this->assertNull(
+            DataImport::whereOriginalName(self::INVALID_COLUMNS_TEST_FILE)
                 ->first()
         );
 
@@ -89,16 +95,19 @@ class StructureValidationTest extends TestCase
     {
         config()->set('enso.imports.owners.sheetEntriesLimit', '1');
 
-        $this->post(route('import.run', ['owners'], false),
-            ['file' => $this->getTwoEntriesUploadedFile()])
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['file' => $this->getTwoEntriesUploadedFile()]
+        )
             ->assertStatus(200)
             ->assertJsonFragment([
                 'hasStructureErrors' => true,
-                'errors'             => 1,
-                'name'               => 'Exceeded the entries limit of: 1',
+                'errors' => 1,
+                'name' => 'Exceeded the entries limit of: 1',
             ]);
 
-        $this->assertNull(DataImport::whereOriginalName(self::TWO_ENTRIES_TEST_FILE)
+        $this->assertNull(
+            DataImport::whereOriginalName(self::TWO_ENTRIES_TEST_FILE)
                 ->first()
         );
 
@@ -114,7 +123,11 @@ class StructureValidationTest extends TestCase
 
         return new UploadedFile(
             self::PATH.self::INVALID_SHEETS_TEST_FILE,
-            self::INVALID_SHEETS_TEST_FILE, null, null, null, true
+            self::INVALID_SHEETS_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 
@@ -127,7 +140,11 @@ class StructureValidationTest extends TestCase
 
         return new UploadedFile(
             self::PATH.self::INVALID_COLUMNS_TEST_FILE,
-            self::INVALID_COLUMNS_TEST_FILE, null, null, null, true
+            self::INVALID_COLUMNS_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 
@@ -140,7 +157,11 @@ class StructureValidationTest extends TestCase
 
         return new UploadedFile(
             self::PATH.self::TWO_ENTRIES_TEST_FILE,
-            self::TWO_ENTRIES_TEST_FILE, null, null, null, true
+            self::TWO_ENTRIES_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 

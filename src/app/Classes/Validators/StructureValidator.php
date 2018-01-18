@@ -101,7 +101,7 @@ class StructureValidator extends AbstractValidator
                     ['limit' => $this->sheetEntriesLimit]
                 );
 
-                $message = __('Sheet ":sheet", count :count', ['sheet' => $sheetName, 'count' => $sheet->count()]);
+                $message = __('Sheet ":sheet", count :count', ['sheet' => $sheet->getTitle(), 'count' => $sheet->count()]);
 
                 $this->addIssue($category, $message);
             }
