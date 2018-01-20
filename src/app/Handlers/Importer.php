@@ -64,7 +64,7 @@ class Importer extends Handler
         DataImport::create(
             $this->fileManager->uploadedFiles()->first() + [
                 'type' => $this->type,
-                'summary' => $this->importer->getSummary()
+                'summary' => $this->importer->getSummary(),
             ]
         );
     }
