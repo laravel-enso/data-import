@@ -4,28 +4,34 @@ namespace LaravelEnso\DataImport\App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use LaravelEnso\DataImport\app\Handlers\Storer;
+use LaravelEnso\DataImport\app\Handlers\Presenter;
+use LaravelEnso\DataImport\app\Handlers\Destroyer;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
-use LaravelEnso\DataImport\App\Http\Services\ImportTemplateService;
 
 class ImportTemplateController extends Controller
 {
-    public function getTemplate(string $type, ImportTemplateService $service)
+    public function getTemplate(string $type)
     {
-        return $service->getTemplate($type);
+        $template = ImportTemplate::whereType($type)->first();
+
+        return $template ?: new ImportTemplate();
     }
 
-    public function store(Request $request, string $type, ImportTemplateService $service)
+    public function store(Request $request, string $type)
     {
-        return $service->store($request, $type);
+        return (new Storer($request->allFiles(), $type))->run();
     }
 
-    public function show(ImportTemplate $template, ImportTemplateService $service)
+    public function show(ImportTemplate $template)
     {
-        return $service->show($template);
+        return (new Presenter($template))->download();
     }
 
-    public function destroy(ImportTemplate $template, ImportTemplateService $service)
+    public function destroy(ImportTemplate $template)
     {
-        return $service->destroy($template);
+        (new Destroyer($template))->run();
+
+        return ['message' => __(config('enso.labels.successfulOperation'))];
     }
 }

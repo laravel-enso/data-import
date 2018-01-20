@@ -29,7 +29,7 @@
         "php": ">=7.1.0",
         "laravel/framework": "5.5.*",
         "laravel-enso/core": "2.1.*",
-        "laravel-enso/filemanager": "2.2.*",
+        "laravel-enso/filemanager": "2.3.*",
         "laravel-enso/helpers": "1.7.*",
         "laravel-enso/structuremanager": "2.1.*",
         "laravel-enso/trackwho": "1.5.*",

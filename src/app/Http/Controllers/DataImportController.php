@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\App\Http\Services\DataImportService;
+use LaravelEnso\DataImport\app\Handlers\Importer;
+use LaravelEnso\DataImport\app\Handlers\Presenter;
+use LaravelEnso\DataImport\app\Handlers\Destroyer;
 
 class DataImportController extends Controller
 {
@@ -22,18 +24,20 @@ class DataImportController extends Controller
         return json_encode($dataImport->summary);
     }
 
-    public function store(Request $request, string $type, DataImportService $service)
+    public function store(Request $request, string $type)
     {
-        return $service->store($request, $type);
+        return (new Importer($request->allFiles(), $type))->run();
     }
 
-    public function download(DataImport $dataImport, DataImportService $service)
+    public function download(DataImport $dataImport)
     {
-        return $service->download($dataImport);
+        return (new Presenter($dataImport))->download();
     }
 
-    public function destroy(DataImport $dataImport, DataImportService $service)
+    public function destroy(DataImport $dataImport)
     {
-        return $service->destroy($dataImport);
+        (new Destroyer($dataImport))->run();
+
+        return ['message' => __(config('enso.labels.successfulOperation'))];
     }
 }

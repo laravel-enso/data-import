@@ -210,8 +210,8 @@ export default {
     },
 
     created() {
-        axios.get(route('import.index', [], false)).then((response) => {
-            this.importTypes = response.data.importTypes;
+        axios.get(route('import.index', [], false)).then(({ data }) => {
+            this.importTypes = data.importTypes;
         }).catch(error => this.handleError(error));
     },
 
@@ -223,8 +223,8 @@ export default {
 
             this.loadingTemplate = true;
 
-            axios.get(route('import.getTemplate', this.importType, false)).then((response) => {
-                this.template = response.data;
+            axios.get(route('import.getTemplate', this.importType, false)).then(({ data }) => {
+                this.template = data;
                 this.loadingTemplate = false;
             }).catch((error) => {
                 this.loadingTemplate = false;
@@ -233,10 +233,10 @@ export default {
         },
         deleteTemplate(id) {
             this.loadingTemplate = true;
-            axios.delete(route('import.deleteTemplate', id, false)).then((response) => {
+            axios.delete(route('import.deleteTemplate', id, false)).then(({ data }) => {
                 this.template = {};
                 this.showModal = false;
-                toastr.success(response.data.message);
+                toastr.success(data.message);
                 this.loadingTemplate = false;
             }).catch((error) => {
                 this.showModal = false;
@@ -247,15 +247,15 @@ export default {
         getSummary(row) {
             this.loading = true;
 
-            axios.get(route('import.getSummary', row.dtRowId, false)).then((response) => {
+            axios.get(route('import.getSummary', row.dtRowId, false)).then(({ data }) => {
                 this.loading = false;
 
-                if (response.data.errors === 0) {
+                if (data.errors === 0) {
                     toastr.info('The import has no errors');
                     return;
                 }
 
-                this.summary = response.data;
+                this.summary = data;
             }).catch((error) => {
                 this.loading = false;
                 this.handleError(error);
