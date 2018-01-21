@@ -24,7 +24,7 @@
                             class="button is-info">
                             <span>{{ __('Upload Template') }}</span>
                             <span class="icon is-small">
-                                <i class="fa fa-upload"></i>
+                                <i class="fas fa-upload"></i>
                             </span>
                         </a>
                     </file-uploader>
@@ -34,7 +34,7 @@
                         :href="downloadTemplateLink">
                         <span>{{ __('Download Template') }}</span>
                         <span class="icon is-small">
-                            <i class="fa fa-download"></i>
+                            <i class="fas fa-download"></i>
                         </span>
                     </a>
                     <a class="button is-danger animated fadeIn"
@@ -42,7 +42,7 @@
                         @click="showModal = true">
                         <span>{{ __('Delete Template') }}</span>
                         <span class="icon is-small">
-                            <i class="fa fa-trash"></i>
+                            <i class="fas fa-trash-alt"></i>
                         </span>
                     </a>
                 </div>
@@ -57,7 +57,7 @@
                             class="button is-success">
                             <span>{{ __('Start Import') }}</span>
                             <span class="icon is-small">
-                                <i class="fa fa-upload"></i>
+                                <i class="fas fa-upload"></i>
                             </span>
                         </a>
                     </file-uploader>
@@ -82,25 +82,25 @@
                     </p>
                     <a class="panel-block">
                         <span class="panel-icon has-text-info">
-                            <i class="fa fa-file-excel-o"></i>
+                            <i class="fas fa-file-excel"></i>
                         </span>
                         {{ __('File') }}:&emsp;<span class="has-text-info">{{ summary.fileName }}</span>
                     </a>
                     <a class="panel-block">
                         <span class="panel-icon has-text-info">
-                            <i class="fa fa-calendar-check-o"></i>
+                            <i class="fas fa-calendar-alt"></i>
                         </span>
                         {{ __('Created at') }}:&emsp;<span class="has-text-info">{{ summary.date }}, {{ summary.time }}</span>
                     </a>
                     <a class="panel-block">
                         <span class="panel-icon has-text-success">
-                            <i class="fa fa-check"></i>
+                            <i class="fas fa-check"></i>
                         </span>
                         {{ __('Imported Entries') }}:&emsp;<span class="has-text-success">{{ summary.successful }}</span>
                     </a>
                     <a class="panel-block">
                         <span class="panel-icon has-text-danger">
-                            <i class="fa fa-times"></i>
+                            <i class="fas fa-times"></i>
                         </span>
                         {{ __('Errors') }}:&emsp;<span class="has-text-danger">{{ summary.errors }}</span>
                     </a>
@@ -113,14 +113,14 @@
                 </nav>
             </div>
             <div class="column is-half-tablet is-two-thirds-widescreen is-three-quarters-fullhd animated bounceInRight">
-                <card icon="fa fa-book"
+                <card icon="fas fa-book"
                     :title="__('Error List')"
                     @remove="summary=null"
                     v-if="summary.errors > 0">
                     <tabs class="has-padding-medium"
                         title="__('Summary')"
                         align="right"
-                        icon="fa fa-file-excel-o"
+                        icon="fas fa-file-excel"
                         :tabs="getSheetTabs()">
                         <span v-for="sheet in summary.issues"
                             :slot="sheet.name"

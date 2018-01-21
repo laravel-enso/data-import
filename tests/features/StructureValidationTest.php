@@ -26,7 +26,7 @@ class StructureValidationTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
 

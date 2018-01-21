@@ -22,7 +22,7 @@ class ImportTemplateTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
         $this->signIn(User::first());
     }
@@ -88,7 +88,8 @@ class ImportTemplateTest extends TestCase
 
     private function uploadTemplateFile()
     {
-        $this->post(route('import.uploadTemplate', ['owners'], false),
+        $this->post(
+            route('import.uploadTemplate', ['owners'], false),
             ['file' => $this->getTemplateUploadedFile()]
         );
         $importTemplate = ImportTemplate::whereOriginalName(self::TEMPLATE_TEST_FILE)->first();
@@ -103,8 +104,13 @@ class ImportTemplateTest extends TestCase
             self::PATH.self::TEMPLATE_TEST_FILE
         );
 
-        return new UploadedFile(self::PATH.self::TEMPLATE_TEST_FILE,
-            self::TEMPLATE_TEST_FILE, null, null, null, true
+        return new UploadedFile(
+            self::PATH.self::TEMPLATE_TEST_FILE,
+            self::TEMPLATE_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 

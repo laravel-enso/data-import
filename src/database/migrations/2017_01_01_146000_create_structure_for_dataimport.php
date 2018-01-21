@@ -24,7 +24,7 @@ class CreateStructureForDataImport extends StructureMigration
     ];
 
     protected $menu = [
-        'name' => 'Data Import', 'icon' => 'fa fa-fw fa-cloud-upload', 'link' => 'import.index', 'has_children' => false,
+        'name' => 'Data Import', 'icon' => 'fas fa-fw fa-cloud-upload-alt', 'link' => 'import.index', 'has_children' => false,
     ];
 
     protected $parentMenu = '';

@@ -3,13 +3,13 @@
     "readSuffix": "getTableData",
     "writeSuffix": null,
     "name": "Past Imports",
-    "icon": "fa fa-fw fa-cloud-upload",
+    "icon": "fas fa-cloud-upload-alt",
     "crtNo": true,
     "appends": ["successful", "errors"],
     "buttons": [
         {
             "type": "row",
-            "icon": "fa fa-info-circle",
+            "icon": "fas fa-info-circle",
             "event": "get-summary",
             "routeSuffix": "getSummary",
             "class": "is-info"
