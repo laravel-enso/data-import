@@ -34,6 +34,7 @@
         "laravel-enso/structuremanager": "2.1.*",
         "laravel-enso/trackwho": "1.5.*",
         "laravel-enso/vuedatatable": "1.0.*",
+        "laravel-enso/vuecomponents": "2.1.*",
         "maatwebsite/excel": "^2.1"
     },
     "require-dev": {
