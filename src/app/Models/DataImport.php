@@ -20,10 +20,10 @@ class DataImport extends Model
         return $import->summary->successful;
     }
 
-    public function getErrorsAttribute()
+    public function getIssuesAttribute()
     {
         $import = self::find($this->id);
 
-        return $import->summary->errors;
+        return collect($import->summary->contentIssues)->count();
     }
 }

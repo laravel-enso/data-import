@@ -2,73 +2,80 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Importers;
 
-use Maatwebsite\Excel\Collections\SheetCollection;
-use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
-use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
-use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
-use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
+use LaravelEnso\DataImport\app\Classes\Config;
+use LaravelEnso\DataImport\app\Classes\Summary;
+use LaravelEnso\DataImport\app\Classes\Validator;
+use LaravelEnso\DataImport\app\Classes\Reader\XLSXReader;
 
 final class DataImporter
 {
-    protected $sheets;
+    protected $template;
     protected $summary;
-    protected $structureValidator;
-    protected $contentValidator;
-    protected $importer;
-    protected $skipsContentErrors;
+    protected $sheets;
 
-    public function __construct(string $fileName, ImportConfiguration $config, SheetCollection $sheets)
+    public function __construct(array $file, string $type)
     {
-        $this->sheets = $sheets;
-        $this->skipsContentErrors = !$config->getStopOnErrors();
-        $this->summary = new ImportSummary($fileName);
-        $this->structureValidator = new StructureValidator($config, $this->sheets, $this->summary);
-        $this->contentValidator = new ContentValidator($config, $this->sheets, $this->summary);
-        $this->importer = $config->getImporter($this->sheets, $this->summary);
+        $this->template = (new Config($type))->template();
+        $this->summary = new Summary($file['original_name']);
+        $this->readSheets($file['full_path']);
     }
 
     public function run()
     {
-        $this->structureValidator->run();
+        $this->setMaxExecutionTime();
 
-        if ($this->summary->hasStructureErrors()) {
-            return false;
+        (new Validator(
+            $this->template,
+            $this->sheets,
+            $this->summary
+        ))->run();
+
+        if ($this->cannotImport()) {
+            return;
         }
 
-        $this->trimContents();
-
-        $this->contentValidator->run();
-
-        if (!$this->summary->hasErrors() || $this->canRunWithErrors()) {
-            $this->importer->run();
-        }
+        $this->importer()->run();
     }
 
     public function fails()
     {
-        return $this->summary->hasStructureErrors()
-            || ($this->summary->hasContentErrors() && !$this->skipsContentErrors);
+        return $this->cannotImport() || $this->noneImported();
     }
 
-    public function canRunWithErrors()
-    {
-        return !$this->summary->hasStructureErrors()
-        && $this->skipsContentErrors;
-    }
-
-    public function getSummary()
+    public function summary()
     {
         return $this->summary;
     }
 
-    private function trimContents()
+    private function cannotImport()
     {
-        $this->sheets->each(function ($sheet) {
-            $sheet->each(function ($row) {
-                foreach ($row as $key => $value) {
-                    $row[$key] = is_string($value) ? trim($value) : $value;
-                }
-            });
-        });
+        return $this->summary->hasStructureIssues()
+            || ($this->summary->hasContentIssues() && $this->template->stopsOnIssues());
+    }
+
+    private function noneImported()
+    {
+        return $this->summary->successful() === 0;
+    }
+
+    private function setMaxExecutionTime()
+    {
+        ini_set(
+            'max_execution_time',
+            $this->template->maxExecutionTime()
+        );
+    }
+
+    private function importer()
+    {
+        $importerClass = $this->template->importer();
+
+        return new $importerClass($this->sheets, $this->summary);
+    }
+
+    private function readSheets($file)
+    {
+        $this->sheets = (new XLSXReader($file))
+            ->sheets();
     }
 }

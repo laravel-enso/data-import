@@ -2,16 +2,16 @@
 
 namespace LaravelEnso\DataImport\app\Handlers;
 
-use LaravelEnso\DataImport\app\Classes\XlsReader;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
+use LaravelEnso\DataImport\app\Classes\Validators\Template as TemplateValidator;
 
 class Importer extends Handler
 {
+    private const ValidExtensions = ['xls', 'xlsx'];
+
     private $file;
     private $type;
-    private $importer;
 
     public function __construct(array $file, string $type)
     {
@@ -23,55 +23,64 @@ class Importer extends Handler
 
     public function run()
     {
-        $this->setUploader();
-
-        $this->fileManager->startUpload($this->file);
-
-        $this->setImporter();
-
-        $this->import();
-
-        return $this->importer->getSummary();
+        return $this->validateTemplate()
+            ->startUpload()
+            ->import();
     }
 
     private function import()
     {
-        \DB::transaction(function () {
-            $this->importer->run();
+        $importer = $this->importerInstance();
 
-            if ($this->importer->fails() || $this->importer->getSummary()->getSuccessfulCount() === 0) {
+        \DB::transaction(function () use ($importer) {
+            $importer->run();
+
+            if ($importer->fails()) {
                 $this->fileManager->deleteTempFiles();
 
                 return;
             }
 
-            $this->storeModel();
+            $this->storeModel($importer->summary());
             $this->fileManager->commitUpload();
         });
+
+        return $importer->summary();
     }
 
-    private function setImporter()
-    {
-        $file = $this->fileManager->uploadedFiles()->first();
-        $sheets = (new XlsReader($file['full_path']))->get();
-        $config = new ImportConfiguration($this->type);
-
-        $this->importer = new DataImporter($file['original_name'], $config, $sheets);
-    }
-
-    private function storeModel()
+    private function storeModel($summary)
     {
         DataImport::create(
             $this->fileManager->uploadedFiles()->first() + [
                 'type' => $this->type,
-                'summary' => $this->importer->getSummary(),
+                'summary' => $summary,
             ]
         );
     }
 
-    private function setUploader()
+    private function validateTemplate()
+    {
+        if (config('app.env') === 'local') {
+            (new TemplateValidator($this->type))->run();
+        }
+
+        return $this;
+    }
+
+    private function startUpload()
     {
         $this->fileManager->tempPath((config('enso.config.paths.temp')))
-            ->validExtensions(['xls', 'xlsx']);
+            ->validExtensions(self::ValidExtensions);
+
+        $this->fileManager->startUpload($this->file);
+
+        return $this;
+    }
+
+    private function importerInstance()
+    {
+        $file = $this->fileManager->uploadedFiles()->first();
+
+        return new DataImporter($file, $this->type);
     }
 }

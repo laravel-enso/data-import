@@ -18,14 +18,14 @@ Excel Importer dependency for [Laravel Enso](https://github.com/laravel-enso/Ens
 
 ### Features
 
-- imports `xlsx` files into the application using the minimum required custom logic
+- uses JSON templates to import `xlsx` files into the application, with minimum custom logic
 - import types are defined in the package configuration
 - each import type can be validated against required columns, sheets, data types and more
 - the Laravel validation is used for maximum reuse of existing mechanisms while custom validators can be added when necessary
 - an example import type is included in the package
-- uses [Laravel Excel](https://github.com/Maatwebsite/Laravel-Excel) for reading the `xlsx` file
-- permits limiting of the number of rows to be imported, in order to avoid timeouts and imports taking too long for the end user experience
-- import issues are grouped by sheet and type of error and are paginated for a better experience
+- uses [Spout](https://github.com/box/spout) for reading the `xlsx` file
+- allows limiting of the number of rows to be imported, in order to avoid timeouts and imports taking too long for the end user experience
+- import issues are grouped by sheet and type of error and are reported with pagination
 - each import type can be configured to halt the import when encountering cell value validation errors, or  
 - if choosing to continue the import w/ errors, you can opt to process just valid rows
 
@@ -40,22 +40,23 @@ The component is already included in the Enso install and should not require any
     * `php artisan vendor:publish --tag=dataimport-classes`
     * `php artisan vendor:publish --tag=import-assets`
 
-2. In `config/excel.php` set `'force_sheets_collection' => true,` where the default was false
-
-3. In the library `samples` folder, `vendor/laravel-enso/dataimport/samples`, we have included a couple of 
+2. In the library `samples` folder, `vendor/laravel-enso/dataimport/samples`, we have included a couple of 
  sample import files for you to play with 
 
 ### Configuration
-The configuration can be found/published in `config/enso/imports.php` and contains a list of configurations for imports with the following options:
-    - `label`, the label visible to the user | required
-    - `template`, the relative path to the JSON import templates | required
-    - `importerClass`, the fully qualified importer class name | required
-    - `customValidatorClass`, the fully qualified custom validator class name, if you are using custom validators | optional
-    - `sheetEntriesLimit`, the limit of entries in the imported files | default is 5000 | optional
-    - `stopOnErrors`, boolean flag that makes the import stops on content validation errors  | default false | optional
+The configuration can be found/published in `config/enso/imports.php` and contains what's needed to hook the JSON templates to the import package:
+    - `label`, the label visible to the user in the interface
+    - `template`, the relative path to the JSON import templates
 
-Please note that the import does not continue if structure errors are encountered, such as missing sheets.
-If there are no structure errors, the `stopOnErrors` flag is false and content errors are found, 
+JSON Template structure:
+
+- `importerClass`, the fully qualified importer class name | required. Here you write the import logic.
+- `validatorClass`, the fully qualified custom validator class name, if you are using custom validators | optional
+- `entryLimit`, the limit of entries per sheet in the imported files | default is 5000 | optional
+- `stopsOnIssues`, boolean flag that tells the importer to stop or continue when content validation issues are found  | default false | optional
+
+Please note that the import does not continue if structure errors are encountered, such as missing sheets or columns.
+If there are no structure errors, the `stopsOnIssues` flag is false and content errors are found, 
 the rows with errors are skipped and valid rows are imported. 
 
 ### Publishes
@@ -73,12 +74,12 @@ once a newer version is released, can be used with the `--force` flag
 The [Laravel Enso](https://github.com/laravel-enso/Enso) package comes with this package included.
 
 Depends on:
+ - [Spout](https://github.com/box/spout) for reading xlsx files
  - [Core](https://github.com/laravel-enso/Core) for the core middleware 
- - [Datatable](https://github.com/laravel-enso/Datatable) for listing the import results
+ - [VueDatatable](https://github.com/laravel-enso/vueatatable) for listing the import results
  - [FileManager](https://github.com/laravel-enso/FileManager) for managing the uploads 
  - [Helpers](https://github.com/laravel-enso/Helpers) for various utility classes
  - [Structure manager](https://github.com/laravel-enso/StructureManager) for the migrations 
- - [ImageTransformer](https://github.com/laravel-enso/ImageTransformer) for the optimization of avatar images
  - [TrackWho](https://github.com/laravel-enso/TrackWho) for keeping track of the users doing the imports
  
 <!--h-->

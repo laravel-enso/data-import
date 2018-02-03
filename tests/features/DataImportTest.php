@@ -55,9 +55,7 @@ class DataImportTest extends TestCase
         $this->post(route('import.run', ['owners'], false), ['file' => $uploadedFile])
             ->assertStatus(200)
             ->assertJsonFragment([
-                'hasStructureErrors' => false,
-                'hasContentErrors'   => false,
-                'successful'         => 2,
+                'successful' => 2,
             ]);
 
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
@@ -79,7 +77,8 @@ class DataImportTest extends TestCase
         $response = $this->get(route('import.download', [$dataImport->id], false));
 
         $response->assertStatus(200);
-        $response->assertHeader('content-disposition',
+        $response->assertHeader(
+            'content-disposition',
             'attachment; filename="'.self::OWNERS_IMPORT_TEST_FILE.'"'
         );
 
@@ -122,7 +121,11 @@ class DataImportTest extends TestCase
 
         return new UploadedFile(
             self::PATH.self::OWNERS_IMPORT_TEST_FILE,
-            self::OWNERS_IMPORT_TEST_FILE, null, null, null, true
+            self::OWNERS_IMPORT_TEST_FILE,
+            null,
+            null,
+            null,
+            true
         );
     }
 

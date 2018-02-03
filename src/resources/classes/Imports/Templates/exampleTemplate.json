@@ -1,0 +1,35 @@
+{
+	"importerClass": "App\\Imports\\Importers\\ExampleImporter",
+	"entryLimit": 40000,
+	"stopsOnIssues": false,
+	"sheets": [
+		{
+			"name": "sheet1",
+			"columns": [
+				{
+					"name": "string",
+					"laravelValidations": "string",
+					"complexValidations": "unique_in_column|exists_in_sheet:sheet2,matching_column"
+				},
+				{
+					"name": "date",
+					"laravelValidations": "date",
+					"complexValidations": "unique_in_column"
+				},
+				{
+					"name": "email",
+					"laravelValidations": "string|email"
+				}
+			]
+		},
+		{
+			"name": "sheet2",
+			"columns": [
+				{
+					"name": "matching_column",
+					"laravelValidations": "required|string"
+				}
+            ]
+        }
+	]
+}

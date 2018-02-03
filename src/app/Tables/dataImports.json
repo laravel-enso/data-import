@@ -5,7 +5,7 @@
     "name": "Past Imports",
     "icon": "cloud-upload-alt",
     "crtNo": true,
-    "appends": ["successful", "errors"],
+    "appends": ["successful", "issues"],
     "buttons": [
         {
             "type": "row",
@@ -36,9 +36,9 @@
             "meta": ["render"]
         },
         {
-            "label": "Errors",
-            "name": "errors",
-            "data": "data_imports.errors",
+            "label": "Issues",
+            "name": "issues",
+            "data": "data_imports.issues",
             "meta": ["render"]
         },
         {

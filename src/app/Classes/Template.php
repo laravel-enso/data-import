@@ -3,120 +3,130 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
-use LaravelEnso\DataImport\app\Exceptions\TemplateException;
 
 class Template
 {
+    private const MaxExecutionTime = 60;
+    private const EntryLimit = 5000;
+    private const stopsOnIssues = false;
+
     private $template;
 
     public function __construct(string $jsonTemplate)
     {
-        $this->template = $this->parseTemplate($jsonTemplate);
+        $this->readTemplate($jsonTemplate);
     }
 
-    public function getSheetNames()
+    public function maxExecutionTime()
     {
-        $sheetNames = collect();
-
-        foreach ($this->template->sheets as $sheet) {
-            $sheetNames->push($sheet->name);
-        }
-
-        return $sheetNames;
+        return $this->template->maxExecutionTime ?? self::MaxExecutionTime;
     }
 
-    public function getColumnsFromSheet(string $sheetName)
+    public function importer()
     {
-        $columnNames = collect();
-
-        foreach ($this->getSheet($sheetName)->columns as $column) {
-            $columnNames->push($column->name);
-        }
-
-        return $columnNames;
+        return $this->template->importerClass;
     }
 
-    public function getLaravelValidationRules(string $sheetName)
+    public function validator()
     {
-        $rules = new Obj();
-
-        foreach ($this->getSheet($sheetName)->columns as $column) {
-            if (property_exists($column, 'laravelValidations')) {
-                $rules->{$column->name} = $column->laravelValidations;
-            }
-        }
-
-        return $rules;
+        return $this->template->validatorClass ?? null;
     }
 
-    public function getUniqueValueColumns(string $sheetName)
+    public function entryLimit()
     {
-        $columns = collect();
+        return $this->template->entryLimit ?? self::EntryLimit;
+    }
 
-        foreach ($this->getSheet($sheetName)->columns as $column) {
-            if (property_exists($column, 'complexValidations')) {
-                foreach ($column->complexValidations as $validation) {
-                    if ($validation->type === 'unique_in_column') {
-                        $columns->push($column->name);
-                    }
+    public function stopsOnIssues()
+    {
+        return $this->template->stopsOnIssues ?? self::stopsOnIssues;
+    }
+
+    public function sheetNames()
+    {
+        return collect($this->template->sheets)
+            ->pluck('name');
+    }
+
+    public function columns(string $sheetName)
+    {
+        return collect($this->sheet($sheetName)->columns)
+            ->pluck('name');
+    }
+
+    public function laravelValidations(string $sheetName)
+    {
+        return collect($this->sheet($sheetName)->columns)
+            ->reduce(function ($rules, $column) {
+                if (property_exists($column, 'laravelValidations')) {
+                    $rules[$column->name] = $column->laravelValidations;
                 }
-            }
-        }
 
-        return $columns;
+                return $rules;
+            }, []);
     }
 
-    public function getExistsInSheetColumns(string $sheetName)
+    public function uniqueValueColumns(string $sheetName)
     {
-        $columns = collect();
+        return $this->columnsWithComplexValidation($sheetName, 'unique_in_column')
+            ->pluck('name');
+    }
 
-        foreach ($this->getSheet($sheetName)->columns as $column) {
-            if (property_exists($column, 'complexValidations')) {
-                $column = $this->extractExistsInSheet($column);
+    public function existsInSheetColumns(string $sheetName)
+    {
+        return $this->columnsWithComplexValidation($sheetName, 'exists_in_sheet')
+            ->map(function ($column) {
+                return $this->buildExistsInSheetValidationObject($column);
+            });
+    }
 
-                if ($column) {
+    private function columnsWithComplexValidation(string $sheetName, string $type)
+    {
+        return collect($this->sheet($sheetName)->columns)
+            ->reduce(function ($columns, $column) use ($type) {
+                if ($this->hasComplexValidation($column, $type)) {
                     $columns->push($column);
                 }
-            }
-        }
 
-        return $columns;
+                return $columns;
+            }, collect());
     }
 
-    private function extractExistsInSheet($column)
+    private function hasComplexValidation(\stdClass $column, string $type)
     {
-        $found = false;
-
-        foreach ($column->complexValidations as $key => $validation) {
-            if ($validation->type === 'exists_in_sheet') {
-                $found = true;
-
-                continue;
-            }
-
-            unset($column->complexValidations[$key]);
-        }
-
-        return $found ? $column : null;
+        return property_exists($column, 'complexValidations')
+            && collect(explode('|', $column->complexValidations))
+                ->first(function ($validation) use ($type) {
+                    return strpos($validation, $type) >= 0;
+                });
     }
 
-    private function getSheet(string $sheetName)
+    private function buildExistsInSheetValidationObject(\stdClass $column)
     {
-        foreach ($this->template->sheets as $sheet) {
-            if ($sheet->name === $sheetName) {
-                return $sheet;
-            }
-        }
+        return collect(explode('|', $column->complexValidations))
+            ->filter(function ($validation) {
+                return strpos($validation, 'exists_in_sheet') === 0;
+            })->values()->map(function ($validation) use ($column) {
+                $args = explode(',', collect(explode(':', $validation))->last());
+
+                return new Obj([
+                    'column' => $column->name,
+                    'matchingSheet' => $args[0],
+                    'matchingColumn' => $args[1]
+                ]);
+            });
     }
 
-    private function parseTemplate(string $jsonTemplate)
+    private function sheet(string $sheetName)
     {
-        $template = json_decode($jsonTemplate);
+        return collect($this->template->sheets)
+            ->first(function ($sheet) use ($sheetName) {
+                return $sheet->name === $sheetName;
+            });
+    }
 
-        if (!$template) {
-            throw new TemplateException(__('Template is not readable'));
-        }
-
-        return $template;
+    private function readTemplate(string $jsonTemplate)
+    {
+        $this->template = json_decode($jsonTemplate);
     }
 }
