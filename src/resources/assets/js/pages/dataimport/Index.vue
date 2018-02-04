@@ -12,7 +12,7 @@
                         ref="importTypeSelect">
                     </vue-select>
                 </div>
-                <div class="template-controls has-text-centered has-padding-medium"
+                <div class="column has-text-centered has-padding-medium"
                     v-if="importType">
                     <file-uploader class="animated fadeIn"
                         v-if="!template"
@@ -49,12 +49,12 @@
                 <div class="column animated fadeIn"
                     v-if="importType">
                     <file-uploader class="is-pulled-right"
-                        @upload-start="importing=true"
-                        @upload-successful="summary=$event;importing=false"
-                        @upload-error="importing=false;importType=null"
+                        @upload-start=" importing = true"
+                        @upload-successful="summary = $event;importing = false"
+                        @upload-error="importing = false;importType = null"
                         :url="importLink">
                         <a slot="upload-button"
-                            class="button is-success">
+                            :class="['button is-success', { 'is-loading': importing }]">
                             <span>{{ __('Start Import') }}</span>
                             <span class="icon is-small">
                                 <fa icon="upload"></fa>
@@ -111,7 +111,7 @@
                         {{ __('Issues') }}:&emsp;<span class="has-text-danger">{{ summary.issues }}</span>
                     </a>
                     <div class="panel-block">
-                        <button class="button is-primary is-outlined is-fullwidth"
+                        <button class="button is-info is-outlined is-fullwidth"
                             @click="summary=null">
                             {{ __("Back") }}
                         </button>
@@ -129,11 +129,10 @@
                         <tab v-for="(issues, category) in summary.structureIssues"
                             :key="category"
                             :id="category">
-                            <ul class="errors has-margin-left-large">
+                            <ul class="issues has-margin-left-large">
                                 <li v-for="(issue, index) in issues"
                                     :key="index">
                                     <span>
-                                        {{ __("Issue") }}:
                                         <b class="has-text-danger">{{ issue }}</b>
                                     </span>
                                 </li>
@@ -149,14 +148,14 @@
                                     <paginate :list="issues">
                                         <template slot-scope="props">
                                             <h5 class="title is-5 has-text-centered">{{ __('Issues') }}</h5>
-                                            <ul class="errors has-margin-left-large">
+                                            <ul class="issues has-margin-left-large">
                                                 <li v-for="(issue, index) in props.list"
                                                     :key="index">
                                                     <span v-if="issue.column">
-                                                        {{ __("Column") }}: <b class="has-text-info">{{ issue.column }}</b>
+                                                        {{ __("Column") }}: <b class="has-text-warning">{{ issue.column }}</b>
                                                     </span>
                                                     <span v-if="issue.rowNumber">
-                                                        {{ __("Line") }}: <b class="has-text-info">{{ issue.rowNumber }}</b>
+                                                        {{ __("Line") }}: <b class="has-text-warning">{{ issue.rowNumber }}</b>
                                                     </span>
                                                     <span v-if="issue.value">
                                                         {{ __("Value") }}: <b class="has-text-danger">{{ issue.value }}</b>
@@ -281,8 +280,8 @@ export default {
             axios.get(route('import.getSummary', row.dtRowId, false)).then(({ data }) => {
                 this.loading = false;
 
-                if (data.errors === 0) {
-                    this.$toastr.info('The import has no errors');
+                if (data.issues === 0) {
+                    this.$toastr.info('The import has no issues');
                     return;
                 }
 
@@ -308,16 +307,20 @@ export default {
 
 </script>
 
-<style>
+<style lang="scss" scoped>
 
-    div.template-controls {
-        display: flex;
-        width: 396px;
-    }
+    ul.issues {
+        list-style-type: square;
 
-    ul.errors > li{
-        border-bottom: 1px dotted gray;
-        padding: 3px;
+        li {
+            cursor: pointer;
+            width: fit-content;
+            padding: 0.2em;
+
+            &:hover {
+                background: lightgray;
+            }
+        }
     }
 
 </style>
