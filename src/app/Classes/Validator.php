@@ -36,10 +36,10 @@ class Validator
 
     private function make(string $validatorClass)
     {
-        return (new $validatorClass(
+        return new $validatorClass(
             $this->template,
             $this->sheets,
             $this->summary
-        ));
+        );
     }
 }

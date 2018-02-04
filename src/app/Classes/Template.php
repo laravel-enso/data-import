@@ -112,7 +112,7 @@ class Template
                 return new Obj([
                     'column' => $column->name,
                     'matchingSheet' => $args[0],
-                    'matchingColumn' => $args[1]
+                    'matchingColumn' => $args[1],
                 ]);
             });
     }
