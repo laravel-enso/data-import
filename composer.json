@@ -35,6 +35,7 @@
         "laravel-enso/trackwho": "1.5.*",
         "laravel-enso/vuedatatable": "1.0.*",
         "laravel-enso/vuecomponents": "2.1.*",
+        "laravel-enso/select": "2.2.*",
         "box/spout": "2.7.*"
     },
     "require-dev": {
