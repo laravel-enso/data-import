@@ -27,7 +27,6 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "laravel/framework": "5.5.*",
         "laravel-enso/core": "1.3.*",
         "laravel-enso/datatable": "1.3.*",
         "laravel-enso/filemanager": "1.3.*",
