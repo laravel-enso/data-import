@@ -22,7 +22,7 @@ class ImportTemplateTest extends TestCase
     {
         parent::setUp();
 
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
         $this->signIn(User::first());
     }
@@ -42,7 +42,7 @@ class ImportTemplateTest extends TestCase
         $this->post(
             route('import.uploadTemplate', ['owners'], false),
             ['file' => $this->getTemplateUploadedFile()]
-        )->assertStatus(200);
+        )->assertStatus(201);
 
         $importTemplate = ImportTemplate::whereOriginalName(self::TEMPLATE_TEST_FILE)->first();
         Storage::assertExists(self::IMPORT_DIRECTORY.$importTemplate->saved_name);
