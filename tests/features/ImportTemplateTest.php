@@ -22,7 +22,7 @@ class ImportTemplateTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
         $this->signIn(User::first());
     }
