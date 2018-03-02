@@ -16,7 +16,7 @@ class DataImportController extends Controller
     {
         $types = new ImportTypes();
 
-        return ['importTypes' => $types::all()];
+        return ['importTypes' => $types::select()];
     }
 
     public function getSummary(DataImport $dataImport)
