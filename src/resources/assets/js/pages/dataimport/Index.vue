@@ -6,6 +6,7 @@
             <div class="columns">
                 <div class="column is-one-third">
                     <vue-select :options="importTypes"
+                        :i18n="__"
                         v-model="importType"
                         @input="getTemplate"
                         ref="importTypeSelect">
