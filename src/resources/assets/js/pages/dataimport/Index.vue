@@ -72,8 +72,8 @@
         </vue-table>
         <div class="columns"
             v-if="summary">
-            <div class="column is-half-tablet is-one-third-widescreen is-one-quarter-fullhd animated bounceInLeft">
-                <nav class="box panel is-paddingless">
+            <div class="column is-half-tablet is-one-third-widescreen is-one-quarter-fullhd">
+                <nav class="box panel is-paddingless  animated bounceInLeft">
                     <p class="panel-heading">
                         {{ __('Import Summary') }}
                     </p>
@@ -130,8 +130,9 @@
                     </div>
                 </nav>
             </div>
-            <div class="column is-half-tablet is-two-thirds-widescreen is-three-quarters-fullhd animated bounceInRight">
-                <card :icon="icon"
+            <div class="column is-half-tablet is-two-thirds-widescreen is-three-quarters-fullhd">
+                <card class=" animated bounceInRight"
+                    :icon="icon"
                     :title="__('Issues')"
                     removable
                     @remove="summary = null"
