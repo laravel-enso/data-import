@@ -69,7 +69,7 @@ class Template
 
         if ($diff->isNotEmpty()) {
             throw new ConfigException(__(
-                'Mandatory Attribute(s) Missing in template: :attr',
+                'Mandatory Attribute(s) Missing in template: ":attr"',
                 ['attr' => $diff->implode('", "')]
             ));
         }
@@ -88,7 +88,7 @@ class Template
 
         if ($diff->isNotEmpty()) {
             throw new ConfigException(__(
-                'Unknown Attribute(s) Found in template: :attr',
+                'Unknown Attribute(s) Found in template: ":attr"',
                 ['attr' => $diff->implode('", "')]
             ));
         }
