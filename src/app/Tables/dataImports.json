@@ -33,13 +33,13 @@
             "label": "Successful",
             "name": "successful",
             "data": "data_imports.successful",
-            "meta": ["render"]
+            "meta": ["slot"]
         },
         {
             "label": "Issues",
             "name": "issues",
             "data": "data_imports.issues",
-            "meta": ["render"]
+            "meta": ["slot"]
         },
         {
             "label": "Imported By",
