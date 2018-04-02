@@ -13,9 +13,8 @@ class ImportTemplateController extends Controller
 {
     public function getTemplate(string $type)
     {
-        $template = ImportTemplate::whereType($type)->first();
-
-        return $template ?: new ImportTemplate();
+        return ImportTemplate::whereType($type)
+            ->first();
     }
 
     public function store(Request $request, string $type)
