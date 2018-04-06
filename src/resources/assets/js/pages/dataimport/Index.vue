@@ -3,7 +3,7 @@
     <div>
         <div class="columns"
             v-if="!summary">
-            <div class="column is-4 is-9-tablet is-12-mobile">
+            <div class="column is-4-desktop is-9-tablet is-12-mobile">
                 <div class="">
                     <vue-select v-model="importType"
                         :options="importTypes"
@@ -22,7 +22,9 @@
                         @upload-successful="template = $event;loadingTemplate = false"
                         @upload-error="loadingTemplate=false">
                         <a slot="upload-button"
-                            class="button is-info">
+                            class="button is-info"
+                            slot-scope="{ openFileBrowser }"
+                            @click="openFileBrowser">
                             <span>{{ __('Upload Template') }}</span>
                             <span class="icon is-small">
                                 <fa icon="upload"></fa>
@@ -57,6 +59,8 @@
                         :url="importLink"
                         v-if="importType">
                         <a slot="upload-button"
+                            slot-scope="{ openFileBrowser }"
+                            @click="openFileBrowser"
                             :class="['button is-success', { 'is-loading': importing }]">
                             <span>{{ __('Import') }}</span>
                             <span class="icon is-small">
