@@ -41,8 +41,9 @@
                         </span>
                     </a>
                     <a class="button is-danger animated fadeIn"
+                        @click="modal = true"
                         v-if="template"
-                        @click="modal = true">
+                        :disabled="!canAccess('import.deleteTemplate')">
                         <span>{{ __('Delete Template') }}</span>
                         <span class="icon is-small">
                             <fa icon="trash-alt"></fa>
