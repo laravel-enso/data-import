@@ -8,15 +8,17 @@ use LaravelEnso\DataImport\app\Exceptions\ConfigException;
 
 class ImportTypes extends Enum
 {
-    public function __construct()
+    public static function attributes()
     {
         try {
-            static::$data = array_combine(
+            $data = array_combine(
                 array_keys(config('enso.imports')),
                 array_column(config('enso.imports'), 'label')
             );
         } catch (Exception $e) {
             throw new ConfigException(__('Imports config file is not readable'));
         }
+
+        return $data;
     }
 }
