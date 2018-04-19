@@ -6,13 +6,13 @@ use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
-use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 
 class StructureValidator extends AbstractValidator
 {
     protected $sheetEntriesLimit;
 
-    public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
+    public function __construct(ImportConfiguration $config, Workbook $sheets, ImportSummary $summary)
     {
         parent::__construct($config->getTemplate(), $sheets, $summary);
 

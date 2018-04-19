@@ -6,6 +6,7 @@ use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
 use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
+use LaravelEnso\DataImport\app\Classes\Wrappers\SpoutReader;
 
 class Importer
 {
@@ -20,6 +21,7 @@ class Importer
     {
         $config = new ImportConfiguration($type);
         $this->sheets = $this->loadXlsx($file['full_path']);
+        \Log::debug($this->sheets);
 
         $this->skipsContentErrors = !$config->getStopOnErrors();
         $this->summary = new ImportSummary($file['original_name']);
@@ -64,6 +66,14 @@ class Importer
 
     private function loadXlsx($file)
     {
+        if(config('importing.spout')) {
+
+            $sr = new SpoutReader($file);
+            $result = $sr->get();
+
+            \Log::debug($result);
+            return $result;
+        }
         return \Excel::load($file)->get();
     }
 

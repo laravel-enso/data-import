@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
-use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 
 class ImportConfiguration
 {
@@ -26,14 +26,14 @@ class ImportConfiguration
             : $this->throwMissingParamException('template');
     }
 
-    public function getImporter(SheetCollection $sheets, ImportSummary $summary)
+    public function getImporter(Workbook $sheets, ImportSummary $summary)
     {
         return isset($this->config['importerClass'])
             ? new $this->config['importerClass']($sheets, $summary)
             : $this->throwMissingParamException('importerClass');
     }
 
-    public function getCustomValidator(SheetCollection $sheets, ImportSummary $summary)
+    public function getCustomValidator(Workbook $sheets, ImportSummary $summary)
     {
         return isset($this->config['customValidatorClass'])
             ? new $this->config['customValidatorClass']($this->getTemplate(), $sheets, $summary)

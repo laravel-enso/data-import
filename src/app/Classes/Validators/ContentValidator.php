@@ -7,15 +7,16 @@ use Illuminate\Support\Facades\Validator;
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Sheet;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 use LaravelEnso\Helpers\Classes\Obj;
-use Maatwebsite\Excel\Collections\RowCollection;
-use Maatwebsite\Excel\Collections\SheetCollection;
+
 
 class ContentValidator extends AbstractValidator
 {
     protected $customValidator;
 
-    public function __construct(ImportConfiguration $config, SheetCollection $sheets, ImportSummary $summary)
+    public function __construct(ImportConfiguration $config, Workbook $sheets, ImportSummary $summary)
     {
         parent::__construct($config->getTemplate(), $sheets, $summary);
 
@@ -33,7 +34,7 @@ class ContentValidator extends AbstractValidator
         }
     }
 
-    private function doValidations(RowCollection $sheet)
+    private function doValidations(Sheet $sheet)
     {
         $this->doDuplicateLinesCheck($sheet);
 

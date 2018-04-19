@@ -4,14 +4,14 @@ namespace LaravelEnso\DataImport\app\Classes\Importers;
 
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
 use LaravelEnso\DataImport\app\Classes\Reporting\Issue;
-use Maatwebsite\Excel\Collections\SheetCollection;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 
 abstract class AbstractImporter
 {
     protected $sheets;
     protected $summary;
 
-    public function __construct(SheetCollection $sheets, ImportSummary $summary)
+    public function __construct(Workbook $sheets, ImportSummary $summary)
     {
         $this->sheets = $sheets;
         $this->summary = $summary;
