@@ -3,18 +3,16 @@
  * Created with luv for adline.
  * User: mihai
  * Date: 4/19/18
- * Time: 1:47 PM
+ * Time: 1:47 PM.
  */
 
 namespace LaravelEnso\DataImport\app\Classes\Wrappers;
 
-use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
-
+use Box\Spout\Reader\ReaderFactory;
 
 class SpoutReader
 {
-
     public $reader;
 
     public function __construct($filePath)
@@ -23,20 +21,18 @@ class SpoutReader
         $this->reader->open($filePath);
     }
 
-    public function get() {
-
+    public function get()
+    {
         $result = new Workbook();
         $sheetIterator = $this->reader->getSheetIterator();
 
         foreach ($sheetIterator as $sheet) {
-
             $tempSheet = new Sheet();
             $tempSheet->setTitle($sheet->getName());
 
             $rowIterator = $sheet->getRowIterator();
             foreach ($sheet->getRowIterator() as $row) {
-
-                if(!$tempSheet->header) {
+                if (!$tempSheet->header) {
                     $tempSheet->header = $row;
                     continue;
                 }
@@ -48,6 +44,5 @@ class SpoutReader
         }
 
         return $result;
-
     }
 }

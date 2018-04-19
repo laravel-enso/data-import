@@ -11,7 +11,6 @@ use LaravelEnso\DataImport\app\Classes\Wrappers\Sheet;
 use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 use LaravelEnso\Helpers\Classes\Obj;
 
-
 class ContentValidator extends AbstractValidator
 {
     protected $customValidator;

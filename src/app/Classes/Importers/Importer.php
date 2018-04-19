@@ -66,14 +66,15 @@ class Importer
 
     private function loadXlsx($file)
     {
-        if(config('importing.spout')) {
-
+        if (config('importing.spout')) {
             $sr = new SpoutReader($file);
             $result = $sr->get();
 
             \Log::debug($result);
+
             return $result;
         }
+
         return \Excel::load($file)->get();
     }
 
