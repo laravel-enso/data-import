@@ -38,7 +38,7 @@ class Sheet extends Collection
     private function setHeader($row)
     {
         foreach ($row as $value) {
-            $this->header[] = snake_case($value);
+            $this->header[] = str_replace(' ', '_', strtolower($value));
         }
     }
 
