@@ -6,8 +6,9 @@ use Illuminate\Support\Collection;
 
 class Sheet extends Collection
 {
+
     protected $title;
-    public $header;
+    protected $header=[];
 
     public function getTitle()
     {
@@ -21,11 +22,30 @@ class Sheet extends Collection
 
     public function processAndAddRow($row)
     {
-        $newRow = collect();
+        if(empty($this->header)) {
+            $this->setHeader($row);
+            return;
+        }
+
+        $newRow = new Row();
         foreach ($this->header as $key => $value) {
-            $newRow->put($value, $row[$key]);
+            $newRow->put($value, $this->valueOrNull($row, $key));
         }
 
         $this->push($newRow);
+    }
+
+    private function setHeader($row)
+    {
+        foreach ($row as $value) {
+            $this->header[] = snake_case($value);
+        }
+    }
+
+    private function valueOrNull($row, $key)
+    {
+        return !isset($row[$key]) || $row[$key] === ''
+            ? null
+            : $row[$key];
     }
 }

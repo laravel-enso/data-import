@@ -28,17 +28,17 @@ class SpoutReader
 
             $rowIterator = $sheet->getRowIterator();
             foreach ($sheet->getRowIterator() as $row) {
-                if (!$tempSheet->header) {
-                    $tempSheet->header = $row;
-                    continue;
-                }
-
                 $tempSheet->processAndAddRow($row);
             }
 
             $result->push($tempSheet);
         }
 
+        \Log::debug("spout reader");
+        \Log::debug($result);
+
         return $result;
+
+
     }
 }
