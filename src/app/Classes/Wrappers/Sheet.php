@@ -6,9 +6,8 @@ use Illuminate\Support\Collection;
 
 class Sheet extends Collection
 {
-
     protected $title;
-    protected $header=[];
+    protected $header = [];
 
     public function getTitle()
     {
@@ -22,8 +21,9 @@ class Sheet extends Collection
 
     public function processAndAddRow($row)
     {
-        if(empty($this->header)) {
+        if (empty($this->header)) {
             $this->setHeader($row);
+
             return;
         }
 
