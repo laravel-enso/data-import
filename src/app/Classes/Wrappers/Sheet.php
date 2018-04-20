@@ -1,10 +1,4 @@
 <?php
-/**
- * Created with luv for adline.
- * User: mihai
- * Date: 4/19/18
- * Time: 3:43 PM.
- */
 
 namespace LaravelEnso\DataImport\app\Classes\Wrappers;
 

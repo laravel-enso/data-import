@@ -1,15 +1,11 @@
 <?php
-/**
- * Created with luv for adline.
- * User: mihai
- * Date: 4/19/18
- * Time: 1:47 PM.
- */
 
-namespace LaravelEnso\DataImport\app\Classes\Wrappers;
+namespace LaravelEnso\DataImport\app\Classes;
 
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Sheet;
+use LaravelEnso\DataImport\app\Classes\Wrappers\Workbook;
 
 class SpoutReader
 {
