@@ -34,11 +34,9 @@ class SpoutReader
             $result->push($tempSheet);
         }
 
-        \Log::debug("spout reader");
+        \Log::debug('spout reader');
         \Log::debug($result);
 
         return $result;
-
-
     }
 }
