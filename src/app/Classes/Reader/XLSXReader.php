@@ -43,18 +43,19 @@ class XLSXReader
     private function sheet(XLSXSheet $sheet)
     {
         $rowCollection = $this->rowCollection($sheet);
-        $keys = $rowCollection->splice(0, 1)
+
+        $header = $rowCollection->splice(0, 1)
             ->first()->map(function ($key) {
-                return snake_case($key);
+                return $this->normalize($key);
             });
 
-        $rows = $rowCollection->map(function ($row) use ($keys) {
+        $rows = $rowCollection->map(function ($row) use ($header) {
             return new Row(
-                $keys->combine($row)->all()
+                $header->combine($row)->all()
             );
         });
 
-        $name = snake_case($sheet->getName());
+        $name = $this->normalize($sheet->getName());
 
         return new Sheet($name, $rows);
     }
@@ -64,16 +65,27 @@ class XLSXReader
         $rowCollection = collect();
 
         foreach ($sheet->getRowIterator() as $row) {
-            $rowCollection->push($this->trim($row));
+            $rowCollection->push($this->sanitize($row));
         }
 
         return $rowCollection;
     }
 
-    private function trim(array $row)
+    private function normalize($string)
+    {
+        return str_replace(' ', '_', (strtolower($string)));
+    }
+
+    private function sanitize(array $row)
     {
         return collect($row)->map(function ($cell) {
-            return is_string($cell) ? trim($cell) : $cell;
+            if (!is_string($cell)) {
+                return $cell;
+            }
+
+            return $cell === ''
+                ? null
+                : trim($cell);
         });
     }
 }
