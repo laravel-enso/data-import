@@ -4,13 +4,12 @@ namespace LaravelEnso\DataImport\app\Classes\Importers;
 
 use LaravelEnso\DataImport\app\Classes\ImportConfiguration;
 use LaravelEnso\DataImport\app\Classes\Reporting\ImportSummary;
+use LaravelEnso\DataImport\app\Classes\SpoutReader;
 use LaravelEnso\DataImport\app\Classes\Validators\ContentValidator;
 use LaravelEnso\DataImport\app\Classes\Validators\StructureValidator;
-use LaravelEnso\DataImport\app\Classes\SpoutReader;
 
 class Importer
 {
-
     protected $sheets;
     protected $summary;
     protected $structureValidator;
@@ -66,6 +65,7 @@ class Importer
     private function loadXlsx($file)
     {
         $reader = new SpoutReader($file);
+
         return $reader->get();
     }
 
