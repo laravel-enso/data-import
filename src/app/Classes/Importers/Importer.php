@@ -20,16 +20,18 @@ abstract class Importer
 
     protected function rowsFromSheet(string $sheetName)
     {
-        $sheet = $this->sheets->first(function ($sheet) use ($sheetName) {
-            return $sheet->name() === $sheetName;
-        });
+        $sheet = $this->sheets
+            ->first(function ($sheet) use ($sheetName) {
+                return $sheet->name() === $sheetName;
+            });
 
         if ($this->summary->hasContentIssues()) {
             $rows = $this->summary->rowsWithIssues($sheetName);
 
-            return $sheet->rows()->filter(function ($row, $index) use ($rows) {
-                return !$rows->contains($index + 2);
-            });
+            return $sheet->rows()
+                ->filter(function ($row, $index) use ($rows) {
+                    return !$rows->contains($index + 2);
+                });
         }
 
         return $sheet->rows();

@@ -19,10 +19,10 @@ Route::middleware(['web', 'auth', 'core'])
             ->name('run');
         Route::get('download/{dataImport}', 'DataImportController@download')
             ->name('download');
-        Route::get('getSummary/{dataImport}', 'DataImportController@getSummary')
+        Route::get('getSummary/{dataImport}', 'DataImportController@summary')
             ->name('getSummary');
 
-        Route::get('getTemplate/{type}', 'ImportTemplateController@getTemplate')
+        Route::get('getTemplate/{type}', 'ImportTemplateController@template')
             ->name('getTemplate');
         Route::post('uploadTemplate/{type}', 'ImportTemplateController@store')
             ->name('uploadTemplate');

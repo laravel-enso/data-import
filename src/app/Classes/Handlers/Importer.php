@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Handlers;
+namespace LaravelEnso\DataImport\app\Classes\Handlers;
 
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;

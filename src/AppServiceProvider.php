@@ -3,6 +3,9 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use LaravelEnso\DataImport\app\Observers\Observer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/assets/js' => resource_path('assets/js'),
         ], 'enso-assets');
+
+        DataImport::observe(Observer::class);
+
+        ImportTemplate::observe(Observer::class);
     }
 
     private function loadDependencies()

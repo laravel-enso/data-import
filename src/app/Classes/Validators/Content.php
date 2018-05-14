@@ -13,9 +13,10 @@ class Content extends Validator
         $this->sheets->each(function (Sheet $sheet) {
             $this->checkDuplicateLines($sheet);
 
-            $sheet->rows()->each(function ($row, $index) use ($sheet) {
-                $this->runLaravelValidations($sheet->name(), $row, $index);
-            });
+            $sheet->rows()
+                ->each(function ($row, $index) use ($sheet) {
+                    $this->runLaravelValidations($sheet->name(), $row, $index);
+                });
 
             $this->runUniqueInColumn($sheet->name());
             $this->runExistsInSheet($sheet->name());
@@ -24,8 +25,10 @@ class Content extends Validator
 
     private function checkDuplicateLines(Sheet $sheet)
     {
-        $sheet->rows()->diffKeys($sheet->rows()->unique())
-            ->keys()->each(function ($index) use ($sheet) {
+        $sheet->rows()
+            ->diffKeys($sheet->rows()->unique())
+            ->keys()
+            ->each(function ($index) use ($sheet) {
                 $this->addIssue($sheet->name(), __('Doubled sheet lines'), $index + 2);
             });
     }
@@ -56,7 +59,10 @@ class Content extends Validator
 
     private function checkUniqueInColumn(string $sheet, string $column)
     {
-        $values = $this->sheet($sheet)->rows()->pluck($column);
+        $values = $this->sheet($sheet)
+            ->rows()
+            ->pluck($column);
+
         $doubles = $values->diffKeys($values->unique());
 
         if ($doubles->isNotEmpty()) {

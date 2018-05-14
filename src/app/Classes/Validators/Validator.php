@@ -28,8 +28,9 @@ abstract class Validator
 
     protected function sheet(string $sheetName)
     {
-        return $this->sheets->first(function ($sheet) use ($sheetName) {
-            return $sheet->name() === $sheetName;
-        });
+        return $this->sheets
+            ->first(function ($sheet) use ($sheetName) {
+                return $sheet->name() === $sheetName;
+            });
     }
 }

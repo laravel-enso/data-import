@@ -32,9 +32,7 @@ class XLSXReader
         $reader->open($this->filename);
 
         foreach ($reader->getSheetIterator() as $sheet) {
-            $this->sheets->push(
-                $this->sheet($sheet)
-            );
+            $this->sheets->push($this->sheet($sheet));
         }
 
         $reader->close();
@@ -44,8 +42,8 @@ class XLSXReader
     {
         $rowCollection = $this->rowCollection($sheet);
 
-        $header = $rowCollection->splice(0, 1)
-            ->first()->map(function ($key) {
+        $header = $rowCollection->splice(0, 1)->first()
+            ->map(function ($key) {
                 return $this->normalize($key);
             });
 

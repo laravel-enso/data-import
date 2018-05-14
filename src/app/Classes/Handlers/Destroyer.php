@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Handlers;
+namespace LaravelEnso\DataImport\app\Classes\Handlers;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +17,7 @@ class Destroyer extends Handler
 
     public function run()
     {
-        \DB::transaction(function () {
-            $this->model->delete();
-            $this->fileManager->delete($this->model->saved_name);
-        });
+        $this->fileManager
+            ->delete($this->model->saved_name);
     }
 }

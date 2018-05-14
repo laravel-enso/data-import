@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Handlers;
+namespace LaravelEnso\DataImport\app\Classes\Handlers;
 
 use Illuminate\Database\Eloquent\Model;
 
