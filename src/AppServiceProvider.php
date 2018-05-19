@@ -4,8 +4,8 @@ namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Models\ImportTemplate;
 use LaravelEnso\DataImport\app\Observers\Observer;
+use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class AppServiceProvider extends ServiceProvider
 {
