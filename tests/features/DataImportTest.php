@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use App\Owner;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -61,7 +60,7 @@ class DataImportTest extends TestCase
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
         $this->assertNotNull($dataImport);
-        $this->assertNotNull(Owner::whereName('ImportTestName')->first());
+        $this->assertNotNull(config('enso.config.ownerModel')::whereName('ImportTestName')->first());
 
         Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
 

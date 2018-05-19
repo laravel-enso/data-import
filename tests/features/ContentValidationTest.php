@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use App\Owner;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -59,9 +58,9 @@ class ContentValidationTest extends TestCase
             ]);
 
         $this->assertNull(
-            Owner::whereName('BooleanTest')->first()
+            config('enso.config.ownerModel')::whereName('BooleanTest')->first()
         );
-        $this->assertNotNull(Owner::whereName('TestName')->first());
+        $this->assertNotNull(config('enso.config.ownerModel')::whereName('TestName')->first());
         $this->assertNotNull(
             DataImport::whereOriginalName(self::CONTENT_ISSUES_TEST_FILE)
                 ->first()
@@ -84,7 +83,7 @@ class ContentValidationTest extends TestCase
     //             'contentIssues',
     //         ]);
 
-    //     $this->assertNull(Owner::whereName('TestName')->first());
+    //     $this->assertNull(config('enso.config.ownerModel')::whereName('TestName')->first());
     //     $this->assertNull(
     //         DataImport::whereOriginalName(self::CONTENT_ISSUES_TEST_FILE)
     //             ->first()
