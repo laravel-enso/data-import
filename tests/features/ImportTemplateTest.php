@@ -13,8 +13,8 @@ class ImportTemplateTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory/';
-    const PATH = __DIR__.'/../testFiles/';
+    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     const TEMPLATE_FILE = 'owners_import_file.xlsx';
     const TEMPLATE_TEST_FILE = 'owners_import_test_file.xlsx';
 
@@ -57,14 +57,12 @@ class ImportTemplateTest extends TestCase
     {
         $importTemplate = $this->uploadTemplateFile();
 
-        $response = $this->get(route('import.downloadTemplate', [$importTemplate->id], false));
-
-        $response->assertStatus(200);
-        $this->assertTrue(
-            $response->headers->get('content-disposition')
-            ===
-            'attachment; filename="'.self::TEMPLATE_TEST_FILE.'"'
-        );
+        $response = $this->get(route('import.downloadTemplate', [$importTemplate->id], false))
+            ->assertStatus(200)
+            ->assertHeader(
+                'content-disposition',
+                'attachment; filename='.self::TEMPLATE_TEST_FILE
+            );
 
         $this->cleanUp();
     }
@@ -75,12 +73,14 @@ class ImportTemplateTest extends TestCase
         $importTemplate = $this->uploadTemplateFile();
 
         Storage::assertExists(self::IMPORT_DIRECTORY.$importTemplate->saved_name);
+
         $this->assertNotNull($importTemplate);
 
         $this->delete(route('import.deleteTemplate', [$importTemplate->id], false))
             ->assertStatus(200);
 
         $this->assertNull($importTemplate->fresh());
+
         Storage::assertMissing(self::IMPORT_DIRECTORY.$importTemplate->saved_name);
 
         $this->cleanUp();
@@ -92,6 +92,7 @@ class ImportTemplateTest extends TestCase
             route('import.uploadTemplate', ['owners'], false),
             ['file' => $this->getTemplateUploadedFile()]
         );
+
         $importTemplate = ImportTemplate::whereOriginalName(self::TEMPLATE_TEST_FILE)->first();
 
         return $importTemplate;

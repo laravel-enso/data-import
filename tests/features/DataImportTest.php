@@ -13,8 +13,8 @@ class DataImportTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory/';
-    const PATH = __DIR__.'/../testFiles/';
+    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     const OWNERS_IMPORT_FILE = 'owners_import_file.xlsx';
     const OWNERS_IMPORT_TEST_FILE = 'owners_import_test_file.xlsx';
 
@@ -40,6 +40,7 @@ class DataImportTest extends TestCase
     public function getSummary()
     {
         $this->importOwnersFile();
+
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
         $this->get(route('import.getSummary', [$dataImport->id], false))
@@ -53,14 +54,16 @@ class DataImportTest extends TestCase
 
         $this->post(route('import.run', ['owners'], false), ['file' => $uploadedFile])
             ->assertStatus(200)
-            ->assertJsonFragment([
-                'successful' => 2,
-            ]);
+            ->assertJsonFragment(['successful' => 2]);
 
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
         $this->assertNotNull($dataImport);
-        $this->assertNotNull(config('enso.config.ownerModel')::whereName('ImportTestName')->first());
+
+        $this->assertNotNull(
+            config('enso.config.ownerModel')::whereName('ImportTestName')
+                ->first()
+        );
 
         Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
 
@@ -71,15 +74,15 @@ class DataImportTest extends TestCase
     public function download()
     {
         $this->importOwnersFile();
+
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
-        $response = $this->get(route('import.download', [$dataImport->id], false));
-
-        $response->assertStatus(200);
-        $response->assertHeader(
-            'content-disposition',
-            'attachment; filename="'.self::OWNERS_IMPORT_TEST_FILE.'"'
-        );
+        $response = $this->get(route('import.download', [$dataImport->id], false))
+            ->assertStatus(200)
+            ->assertHeader(
+                'content-disposition',
+                'attachment; filename='.self::OWNERS_IMPORT_TEST_FILE
+            );
 
         $this->cleanUp();
     }
@@ -88,9 +91,11 @@ class DataImportTest extends TestCase
     public function destroy()
     {
         $this->importOwnersFile();
+
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
         Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
+
         $this->assertNotNull($dataImport);
 
         $this->delete(route('import.destroy', [$dataImport->id], false))

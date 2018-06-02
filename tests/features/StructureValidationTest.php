@@ -13,8 +13,8 @@ class StructureValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory/';
-    const PATH = __DIR__.'/../testFiles/';
+    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     const INVALID_SHEETS_FILE = 'invalid_sheets_file.xlsx';
     const INVALID_SHEETS_TEST_FILE = 'invalid_sheets_test_file.xlsx';
     const INVALID_COLUMNS_FILE = 'invalid_columns_file.xlsx';

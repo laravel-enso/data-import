@@ -13,8 +13,8 @@ class ContentValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory/';
-    const PATH = __DIR__.'/../testFiles/';
+    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     const CONTENT_ISSUES_ORIGINAL_FILE = 'content_issues_file.xlsx';
     const CONTENT_ISSUES_TEST_FILE = 'content_issues_test_file.xlsx';
 
