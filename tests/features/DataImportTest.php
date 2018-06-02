@@ -77,7 +77,7 @@ class DataImportTest extends TestCase
 
         $dataImport = DataImport::whereOriginalName(self::OWNERS_IMPORT_TEST_FILE)->first();
 
-        $response = $this->get(route('import.download', [$dataImport->id], false))
+        $this->get(route('import.download', [$dataImport->id], false))
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',

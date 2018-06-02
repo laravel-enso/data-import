@@ -57,7 +57,7 @@ class ImportTemplateTest extends TestCase
     {
         $importTemplate = $this->uploadTemplateFile();
 
-        $response = $this->get(route('import.downloadTemplate', [$importTemplate->id], false))
+        $this->get(route('import.downloadTemplate', [$importTemplate->id], false))
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',
