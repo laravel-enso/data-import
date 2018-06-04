@@ -11,11 +11,25 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        $this->setObservers();
         $this->loadDependencies();
-        $this->publishesAll();
+        $this->setPublishes();
     }
 
-    private function publishesAll()
+    public function setObservers()
+    {
+        DataImport::observe(Observer::class);
+        ImportTemplate::observe(Observer::class);
+    }
+
+    private function loadDependencies()
+    {
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/routes/api.php');
+        $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'imports');
+    }
+
+    private function setPublishes()
     {
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),
@@ -36,17 +50,6 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/assets/js' => resource_path('assets/js'),
         ], 'enso-assets');
-
-        DataImport::observe(Observer::class);
-
-        ImportTemplate::observe(Observer::class);
-    }
-
-    private function loadDependencies()
-    {
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-        $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'imports');
-        $this->loadRoutesFrom(__DIR__.'/routes/api.php');
     }
 
     public function register()

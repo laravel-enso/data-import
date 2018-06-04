@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Presenter extends Handler
 {
-    protected $model;
+    private $model;
 
     public function __construct(Model $model)
     {
