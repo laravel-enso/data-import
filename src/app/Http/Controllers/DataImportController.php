@@ -36,7 +36,7 @@ class DataImportController extends Controller
         $dataImport->delete();
 
         return [
-            'message' => __('The import record was successfully deleted')
+            'message' => __('The import record was successfully deleted'),
         ];
     }
 }
