@@ -28,6 +28,8 @@ class ImportTemplateController extends Controller
     {
         $template->delete();
 
-        return ['message' => __('The template was successfully deleted')];
+        return [
+            'message' => __('The template was successfully deleted')
+        ];
     }
 }

@@ -10,13 +10,16 @@ class CreateDataImportsTable extends Migration
     {
         Schema::create('data_imports', function (Blueprint $table) {
             $table->increments('id');
+
             $table->string('type');
             $table->string('original_name');
             $table->string('saved_name');
             $table->string('comment')->nullable();
             $table->json('summary');
+
             $table->integer('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

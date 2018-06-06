@@ -26,7 +26,8 @@ class DataImport extends Model
     {
         $import = self::find($this->id);
 
-        return collect($import->summary->contentIssues)->count();
+        return collect($import->summary->contentIssues)
+            ->count();
     }
 
     public function download()
