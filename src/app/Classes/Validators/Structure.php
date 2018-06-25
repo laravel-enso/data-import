@@ -40,7 +40,7 @@ class Structure extends Validator
 
         $extraSheets->each(function ($sheet) {
             $this->addIssue(__('Extra Sheets'), $sheet);
-        }); //fixme try higher order function
+        });
     }
 
     private function setMissingSheets(Collection $templateSheets, Collection $xlsxSheets)
