@@ -1,7 +1,6 @@
 {
     "routePrefix": "import",
     "readSuffix": "getTableData",
-    "writeSuffix": null,
     "name": "Past Imports",
     "icon": "cloud-upload-alt",
     "crtNo": true,
