@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests;
-
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DataImportTest extends TestCase
 {
