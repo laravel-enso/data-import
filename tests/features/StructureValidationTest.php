@@ -1,20 +1,20 @@
 <?php
 
-namespace Tests;
-
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StructureValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
     const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+        .'testFiles'.DIRECTORY_SEPARATOR;
     const INVALID_SHEETS_FILE = 'invalid_sheets_file.xlsx';
     const INVALID_SHEETS_TEST_FILE = 'invalid_sheets_test_file.xlsx';
     const INVALID_COLUMNS_FILE = 'invalid_columns_file.xlsx';
@@ -44,16 +44,14 @@ class StructureValidationTest extends TestCase
             ->assertJsonFragment([
                 'issues' => 2,
                 'successful' => 0,
+            ])->assertJsonStructure([
                 'structureIssues',
-            ])
-            ->assertJsonFragment(['Missing Sheets'])
-            ->assertJsonFragment(['owners'])
-            ->assertJsonFragment(['Extra Sheets'])
-            ->assertJsonFragment(['invalid_sheet']);
+            ]);
 
         $this->assertNull(
-            DataImport::whereOriginalName(self::INVALID_SHEETS_TEST_FILE)
-                ->first()
+            DataImport::whereOriginalName(
+                self::INVALID_SHEETS_TEST_FILE
+            )->first()
         );
 
         $this->cleanUp();
@@ -69,11 +67,7 @@ class StructureValidationTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment([
                 'issues' => 2,
-            ])
-            ->assertJsonFragment(['Missing Columns'])
-            ->assertJsonFragment(['Sheet "owners", column "is_active"'])
-            ->assertJsonFragment(['Extra Columns'])
-            ->assertJsonFragment(['Sheet "owners", column "invalid_column"']);
+            ]);
 
         $this->assertNull(
             DataImport::whereOriginalName(self::INVALID_COLUMNS_TEST_FILE)

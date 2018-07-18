@@ -13,7 +13,8 @@ class ContentValidationTest extends TestCase
     use RefreshDatabase, SignIn;
 
     const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+        .'testFiles'.DIRECTORY_SEPARATOR;
     const CONTENT_ISSUES_ORIGINAL_FILE = 'content_issues_file.xlsx';
     const CONTENT_ISSUES_TEST_FILE = 'content_issues_test_file.xlsx';
 
@@ -48,12 +49,18 @@ class ContentValidationTest extends TestCase
             ]);
 
         $this->assertNull(
-            config('enso.config.ownerModel')::whereName('BooleanTest')->first()
+            config('enso.config.ownerModel')
+                ::whereName('BooleanTest')->first()
         );
-        $this->assertNotNull(config('enso.config.ownerModel')::whereName('TestName')->first());
         $this->assertNotNull(
-            DataImport::whereOriginalName(self::CONTENT_ISSUES_TEST_FILE)
-                ->first()
+            config('enso.config.ownerModel')
+                ::whereName('TestName')->first()
+        );
+
+        $this->assertNotNull(
+            DataImport::whereOriginalName(
+                self::CONTENT_ISSUES_TEST_FILE
+            )->first()
         );
 
         $this->cleanUp();
