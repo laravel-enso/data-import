@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests;
-
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ContentValidationTest extends TestCase
 {
@@ -42,17 +41,8 @@ class ContentValidationTest extends TestCase
             ->assertJsonFragment([
                 'issues' => 3,
                 'successful' => 2,
-            ])
-            ->assertJsonFragment([
-                'Doubled sheet lines',
                 'rowNumber' => 4,
-            ])
-            ->assertJsonFragment([
-                'Values must be unique in column "name"',
                 'value' => 'NotUniqueName',
-            ])
-            ->assertJsonFragment([
-                'The is active field must be true or false.',
                 'column' => 'is_active',
                 'value' => 'notBoolean',
             ]);
