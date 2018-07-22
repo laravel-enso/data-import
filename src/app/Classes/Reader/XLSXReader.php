@@ -47,9 +47,13 @@ class XLSXReader
                 return $this->normalize($key);
             });
 
-        $rows = $rowCollection->map(function ($row) use ($header) {
+        $headerLength = $header->count();
+
+        $rows = $rowCollection->map(function ($row) use ($header, $headerLength) {
             return new Row(
-                $header->combine($row)->all()
+                $header->combine(
+                    $row->pad($headerLength, null)
+                )->all()
             );
         });
 
@@ -81,9 +85,7 @@ class XLSXReader
                 return $cell;
             }
 
-            return $cell === ''
-                ? null
-                : trim($cell);
+            return trim($cell) ?? null;
         });
     }
 }
