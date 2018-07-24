@@ -11,7 +11,7 @@ class DataImport extends Model
 {
     use CreatedBy;
 
-    protected $fillable = ['type', 'original_name', 'saved_name', 'comment', 'summary'];
+    protected $fillable = ['type', 'original_name', 'saved_name', 'summary'];
 
     protected $casts = ['summary' => 'object'];
 
