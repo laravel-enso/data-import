@@ -4,16 +4,21 @@ namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
+use LaravelEnso\ActivityLog\app\Traits\LogActivity;
 use LaravelEnso\DataImport\app\Classes\Handlers\Importer;
 use LaravelEnso\DataImport\app\Classes\Handlers\Presenter;
 
 class DataImport extends Model
 {
-    use CreatedBy;
+    use CreatedBy, LogActivity;
 
     protected $fillable = ['type', 'original_name', 'saved_name', 'summary'];
 
     protected $casts = ['summary' => 'object'];
+
+    protected $loggableLabel = 'type';
+
+    protected $loggable = [];
 
     public function getSuccessfulAttribute()
     {
