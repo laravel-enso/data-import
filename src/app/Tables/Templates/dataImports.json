@@ -1,8 +1,6 @@
 {
     "routePrefix": "import",
     "readSuffix": "getTableData",
-    "name": "Past Imports",
-    "icon": "cloud-upload-alt",
     "crtNo": true,
     "appends": ["successful", "issues"],
     "buttons": [
@@ -11,7 +9,7 @@
             "icon": "info-circle",
             "event": "get-summary",
             "routeSuffix": "getSummary",
-            "class": "is-info"
+            "class": "is-row-button"
         },
         "download", "destroy"],
     "columns": [
