@@ -70,9 +70,8 @@ class Importer extends Handler
     private function startUpload()
     {
         $this->fileManager->tempPath((config('enso.config.paths.temp')))
-            ->validExtensions(self::ValidExtensions);
-
-        $this->fileManager->startUpload($this->file);
+            ->validExtensions(self::ValidExtensions)
+            ->startUpload($this->file);
 
         return $this;
     }

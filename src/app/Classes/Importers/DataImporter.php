@@ -9,32 +9,27 @@ use LaravelEnso\DataImport\app\Classes\Reader\XLSXReader;
 
 final class DataImporter
 {
-    protected $template;
-    protected $summary;
-    protected $sheets;
+    private $template;
+    private $summary;
+    private $fullPath;
+    private $sheets;
 
     public function __construct(array $file, string $type)
     {
         $this->template = (new Config($type))->template();
         $this->summary = new Summary($file['original_name']);
-        $this->readSheets($file['full_path']);
+        $this->fullPath = $file['full_path'];
     }
 
     public function run()
     {
-        $this->setMaxExecutionTime();
+        $this->setMaxExecutionTime()
+            ->readSheets()
+            ->validate();
 
-        (new Validator(
-            $this->template,
-            $this->sheets,
-            $this->summary
-        ))->run();
-
-        if ($this->cannotImport()) {
-            return;
+        if ($this->canImport()) {
+            $this->importer()->run();
         }
-
-        $this->importer()->run();
     }
 
     public function fails()
@@ -45,6 +40,11 @@ final class DataImporter
     public function summary()
     {
         return $this->summary;
+    }
+
+    private function canImport()
+    {
+        return !$this->cannotImport();
     }
 
     private function cannotImport()
@@ -58,12 +58,23 @@ final class DataImporter
         return $this->summary->successful() === 0;
     }
 
+    private function validate()
+    {
+        (new Validator(
+            $this->template,
+            $this->sheets,
+            $this->summary
+        ))->run();
+    }
+
     private function setMaxExecutionTime()
     {
         ini_set(
             'max_execution_time',
             $this->template->maxExecutionTime()
         );
+
+        return $this;
     }
 
     private function importer()
@@ -73,9 +84,10 @@ final class DataImporter
         return new $importerClass($this->sheets, $this->summary);
     }
 
-    private function readSheets($file)
+    private function readSheets()
     {
-        $this->sheets = (new XLSXReader($file))
-            ->sheets();
+        $this->sheets = (new XLSXReader($this->fullPath))->sheets();
+
+        return $this;
     }
 }
