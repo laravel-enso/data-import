@@ -77,6 +77,6 @@ class DataImport extends Model implements Attachable
 
     public function folder()
     {
-        return config('enso.paths.imports');
+        return config('enso.config.paths.imports');
     }
 }
