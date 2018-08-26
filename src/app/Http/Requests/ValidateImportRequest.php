@@ -14,7 +14,7 @@ class ValidateImportRequest extends FormRequest
     public function rules()
     {
         return [
-            'import' => 'required|file'
+            'import' => 'required|file',
         ];
     }
 }

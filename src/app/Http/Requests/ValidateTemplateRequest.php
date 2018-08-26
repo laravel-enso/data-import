@@ -14,7 +14,7 @@ class ValidateTemplateRequest extends FormRequest
     public function rules()
     {
         return [
-            'template' => 'required|file'
+            'template' => 'required|file',
         ];
     }
 }
