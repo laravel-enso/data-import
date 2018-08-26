@@ -39,7 +39,8 @@ class Template
 
     public function stopsOnIssues()
     {
-        return $this->template->stopsOnIssues ?? self::stopsOnIssues;
+        return $this->template->stopsOnIssues
+            ?? self::stopsOnIssues;
     }
 
     public function sheetNames()

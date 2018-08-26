@@ -3,8 +3,8 @@
 use App\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,11 +12,10 @@ class DataImportTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
         .'testFiles'.DIRECTORY_SEPARATOR;
-    const OWNERS_IMPORT_FILE = 'owners_import_file.xlsx';
-    const OWNERS_IMPORT_TEST_FILE = 'owners_import_test_file.xlsx';
+    const ImportFile = 'owners_import_file.xlsx';
+    const ImportTestFile = 'owners_import_test_file.xlsx';
 
     protected function setUp()
     {
@@ -24,9 +23,8 @@ class DataImportTest extends TestCase
 
         // $this->withoutExceptionHandling();
 
-        config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
-
-        $this->signIn(User::first());
+        $this->seed()
+            ->signIn(User::first());
     }
 
     /** @test */
@@ -41,9 +39,8 @@ class DataImportTest extends TestCase
     {
         $this->importOwnersFile();
 
-        $dataImport = DataImport::whereOriginalName(
-            self::OWNERS_IMPORT_TEST_FILE
-        )->first();
+        $dataImport = DataImport::whereName(self::ImportTestFile)
+                        ->first();
 
         $this->get(route('import.getSummary', [$dataImport->id], false))
             ->assertStatus(200);
@@ -55,13 +52,13 @@ class DataImportTest extends TestCase
         $uploadedFile = $this->getOwnersImportUploadedFile();
 
         $this->post(route('import.run', ['owners'], false), [
-            'file' => $uploadedFile
-        ])->assertStatus(200)
+                'import' => $uploadedFile
+            ])->assertStatus(200)
             ->assertJsonFragment(['successful' => 2]);
 
-        $dataImport = DataImport::whereOriginalName(
-            self::OWNERS_IMPORT_TEST_FILE
-        )->first();
+        $dataImport = DataImport::with('file')
+                        ->whereName(self::ImportTestFile)
+                        ->first();
 
         $this->assertNotNull($dataImport);
 
@@ -70,8 +67,8 @@ class DataImportTest extends TestCase
                 ->first()
         );
 
-        Storage::assertExists(
-            self::IMPORT_DIRECTORY.$dataImport->saved_name
+        \Storage::assertExists(
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name
         );
 
         $this->cleanUp();
@@ -82,15 +79,14 @@ class DataImportTest extends TestCase
     {
         $this->importOwnersFile();
 
-        $dataImport = DataImport::whereOriginalName(
-            self::OWNERS_IMPORT_TEST_FILE
-        )->first();
+        $dataImport = DataImport::whereName(self::ImportTestFile)
+                        ->first();
 
         $this->get(route('import.download', [$dataImport->id], false))
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',
-                'attachment; filename='.self::OWNERS_IMPORT_TEST_FILE
+                'attachment; filename='.self::ImportTestFile
             );
 
         $this->cleanUp();
@@ -101,11 +97,12 @@ class DataImportTest extends TestCase
     {
         $this->importOwnersFile();
 
-        $dataImport = DataImport::whereOriginalName(
-            self::OWNERS_IMPORT_TEST_FILE
-        )->first();
+        $dataImport = DataImport::with('file')
+                        ->whereName(self::ImportTestFile)
+                        ->first();
 
-        Storage::assertExists(self::IMPORT_DIRECTORY.$dataImport->saved_name);
+        $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name;
+        \Storage::assertExists($filename);
 
         $this->assertNotNull($dataImport);
 
@@ -113,9 +110,8 @@ class DataImportTest extends TestCase
             ->assertStatus(200);
 
         $this->assertNull($dataImport->fresh());
-        Storage::assertMissing(
-            self::IMPORT_DIRECTORY.$dataImport->saved_name
-        );
+
+        \Storage::assertMissing($filename);
 
         $this->cleanUp();
     }
@@ -125,7 +121,7 @@ class DataImportTest extends TestCase
         $uploadedFile = $this->getOwnersImportUploadedFile();
 
         $this->post(route('import.run', ['owners'], false), [
-            'file' => $uploadedFile
+            'import' => $uploadedFile
         ]);
 
         return $uploadedFile;
@@ -134,13 +130,13 @@ class DataImportTest extends TestCase
     private function getOwnersImportUploadedFile()
     {
         \File::copy(
-            self::PATH.self::OWNERS_IMPORT_FILE,
-            self::PATH.self::OWNERS_IMPORT_TEST_FILE
+            self::Path.self::ImportFile,
+            self::Path.self::ImportTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::OWNERS_IMPORT_TEST_FILE,
-            self::OWNERS_IMPORT_TEST_FILE,
+            self::Path.self::ImportTestFile,
+            self::ImportTestFile,
             null,
             null,
             null,
@@ -150,6 +146,6 @@ class DataImportTest extends TestCase
 
     private function cleanUp()
     {
-        Storage::deleteDirectory(self::IMPORT_DIRECTORY);
+        \Storage::deleteDirectory(FileManager::TestingFolder);
     }
 }

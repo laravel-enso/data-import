@@ -3,8 +3,8 @@
 use App\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,11 +12,10 @@ class ContentValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
         .'testFiles'.DIRECTORY_SEPARATOR;
-    const CONTENT_ISSUES_ORIGINAL_FILE = 'content_issues_file.xlsx';
-    const CONTENT_ISSUES_TEST_FILE = 'content_issues_test_file.xlsx';
+    const ContentIssueOriginalFile = 'content_issues_file.xlsx';
+    const ContentIssueTestFile = 'content_issues_test_file.xlsx';
 
     protected function setUp()
     {
@@ -24,19 +23,22 @@ class ContentValidationTest extends TestCase
 
         // $this->withoutExceptionHandling();
 
-        config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
+        $this->seed()
+            ->signIn(User::first());
 
-        $this->signIn(User::first());
+        config(['enso.imports.owners' => [
+                'label' => 'Owners',
+                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
+            ]
+        ]);
     }
 
     /** @test */
     public function skips_entries_with_issues()
     {
-        config()->set('enso.imports.owners.stopsOnIssues', false);
-
         $this->post(
             route('import.run', ['owners'], false),
-            ['file' => $this->getContentErrorsUploadedFile()]
+            ['import' => $this->getContentErrorsUploadedFile()]
         )
             ->assertStatus(200)
             ->assertJsonFragment([
@@ -52,53 +54,59 @@ class ContentValidationTest extends TestCase
             config('enso.config.ownerModel')
                 ::whereName('BooleanTest')->first()
         );
+
         $this->assertNotNull(
             config('enso.config.ownerModel')
                 ::whereName('TestName')->first()
         );
 
         $this->assertNotNull(
-            DataImport::whereOriginalName(
-                self::CONTENT_ISSUES_TEST_FILE
+            DataImport::whereName(
+                self::ContentIssueTestFile
             )->first()
         );
 
         $this->cleanUp();
     }
 
-    // /** @test */ // needs refactor with custom template
-    // public function stops_on_content_issues()
-    // {
-    //     config()->set('enso.imports.owners.stopsOnIssues', true);
+    /** @test */ // needs refactor with custom template
 
-    //     $this->post(
-    //         route('import.run', ['owners'], false),
-    //         ['file' => $this->getContentErrorsUploadedFile()]
-    //     )
-    //         ->assertStatus(200)
-    //         ->assertJsonFragment([
-    //             'contentIssues',
-    //         ]);
+    public function stops_on_content_issues()
+    {
+        config()->set(
+            'enso.imports.owners.template',
+            'vendor/laravel-enso/dataimport/src/resources/testing/ownersStops.json'
+        );
 
-    //     $this->assertNull(config('enso.config.ownerModel')::whereName('TestName')->first());
-    //     $this->assertNull(
-    //         DataImport::whereOriginalName(self::CONTENT_ISSUES_TEST_FILE)
-    //             ->first()
-    //     );
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['import' => $this->getContentErrorsUploadedFile()]
+        )
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'contentIssues',
+            ]);
 
-    //     $this->cleanUp();
-    // }
+        $this->assertNull(config('enso.config.ownerModel')::whereName('TestName')->first());
+
+        $this->assertNull(
+            DataImport::whereOriginalName(self::ContentIssueTestFile)
+                ->first()
+        );
+
+        $this->cleanUp();
+    }
 
     private function getContentErrorsUploadedFile()
     {
         \File::copy(
-            self::PATH.self::CONTENT_ISSUES_ORIGINAL_FILE,
-            self::PATH.self::CONTENT_ISSUES_TEST_FILE
+            self::Path.self::ContentIssueOriginalFile,
+            self::Path.self::ContentIssueTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::CONTENT_ISSUES_TEST_FILE,
-            self::CONTENT_ISSUES_TEST_FILE,
+            self::Path.self::ContentIssueTestFile,
+            self::ContentIssueTestFile,
             null,
             null,
             null,
@@ -108,6 +116,6 @@ class ContentValidationTest extends TestCase
 
     private function cleanUp()
     {
-        Storage::deleteDirectory(self::IMPORT_DIRECTORY);
+        \Storage::deleteDirectory(FileManager::TestingFolder);
     }
 }

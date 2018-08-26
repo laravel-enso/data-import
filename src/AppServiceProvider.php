@@ -3,23 +3,13 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Observers\Observer;
-use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->setObservers();
         $this->loadDependencies();
         $this->setPublishes();
-    }
-
-    public function setObservers()
-    {
-        DataImport::observe(Observer::class);
-        ImportTemplate::observe(Observer::class);
     }
 
     private function loadDependencies()

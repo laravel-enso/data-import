@@ -2,17 +2,22 @@
 
 namespace LaravelEnso\DataImport\app\Models;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
+use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\ActivityLog\app\Traits\LogActivity;
-use LaravelEnso\DataImport\app\Classes\Handlers\Importer;
-use LaravelEnso\DataImport\app\Classes\Handlers\Presenter;
+use LaravelEnso\FileManager\app\Contracts\Attachable;
+use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
+use LaravelEnso\DataImport\app\Classes\Validators\Template as TemplateValidator;
 
-class DataImport extends Model
+class DataImport extends Model implements Attachable
 {
-    use CreatedBy, LogActivity;
+    use HasFile, CreatedBy, LogActivity;
 
-    protected $fillable = ['type', 'original_name', 'saved_name', 'summary'];
+    protected $extensions = ['xlsx'];
+
+    protected $fillable = ['type', 'name', 'summary'];
 
     protected $casts = ['summary' => 'object'];
 
@@ -35,20 +40,43 @@ class DataImport extends Model
             ->count();
     }
 
-    public function download()
-    {
-        return (new Presenter($this))
-            ->download();
-    }
-
     public function summary()
     {
         return json_encode($this->summary);
     }
 
-    public static function store(array $request, $type)
+    public function store(UploadedFile $file, $type)
     {
-        return (new Importer($request, $type))
-            ->run();
+        $this->validateTemplate($type);
+
+        $importer = new DataImporter($file, $type);
+
+        \DB::transaction(function () use ($importer, $file, $type) {
+            $importer->run();
+
+            if (!$importer->fails()) {
+                $this->create([
+                    'name' => $file->getClientOriginalName(),
+                    'type' => $type,
+                    'summary' => $importer->summary(),
+                ])->upload($file);
+            }
+        });
+
+        return $importer->summary();
+    }
+
+    private function validateTemplate(string $type)
+    {
+        if (app()->environment() === 'local') {
+            (new TemplateValidator($type))->run();
+        }
+
+        return $this;
+    }
+
+    public function folder()
+    {
+        return config('enso.paths.imports');
     }
 }

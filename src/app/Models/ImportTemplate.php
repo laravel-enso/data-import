@@ -2,23 +2,37 @@
 
 namespace LaravelEnso\DataImport\app\Models;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\DataImport\app\Classes\Handlers\Storer;
-use LaravelEnso\DataImport\app\Classes\Handlers\Presenter;
+use LaravelEnso\FileManager\app\Traits\HasFile;
+use LaravelEnso\FileManager\app\Contracts\Attachable;
 
-class ImportTemplate extends Model
+class ImportTemplate extends Model implements Attachable
 {
-    protected $fillable = ['type', 'original_name', 'saved_name'];
+    use HasFile;
 
-    public function download()
+    protected $extensions = ['xlsx'];
+
+    protected $fillable = ['type', 'name'];
+
+    public function store(UploadedFile $file, $type)
     {
-        return (new Presenter($this))
-            ->download();
+        $template = null;
+
+        \DB::transaction(function () use (&$template, $file, $type) {
+            $template = $this->create([
+                'name' => $file->getClientOriginalName(),
+                'type' => $type,
+            ]);
+
+            $template->upload($file);
+        });
+
+        return $template;
     }
 
-    public static function store(array $request, $type)
+    public function folder()
     {
-        return (new Storer($request, $type))
-            ->run();
+        return config('enso.paths.imports');
     }
 }

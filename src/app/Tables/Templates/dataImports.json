@@ -11,10 +11,11 @@
             "routeSuffix": "getSummary",
             "class": "is-row-button"
         },
-        "download", "destroy"],
+        "download", "destroy"
+    ],
     "columns": [
         {
-            "label": "ImportType",
+            "label": "Type",
             "name": "type",
             "data": "data_imports.type",
             "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
@@ -22,8 +23,8 @@
         },
         {
             "label": "File name",
-            "name": "original_name",
-            "data": "data_imports.original_name",
+            "name": "name",
+            "data": "data_imports.name",
             "meta": ["searchable", "sortable"]
         },
         {

@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Importers;
 
+use Illuminate\Http\UploadedFile;
 use LaravelEnso\DataImport\app\Classes\Config;
 use LaravelEnso\DataImport\app\Classes\Summary;
 use LaravelEnso\DataImport\app\Classes\Validator;
@@ -11,14 +12,14 @@ final class DataImporter
 {
     private $template;
     private $summary;
-    private $fullPath;
+    private $file;
     private $sheets;
 
-    public function __construct(array $file, string $type)
+    public function __construct(UploadedFile $file, string $type)
     {
         $this->template = (new Config($type))->template();
-        $this->summary = new Summary($file['original_name']);
-        $this->fullPath = $file['full_path'];
+        $this->summary = new Summary($file->getClientOriginalName());
+        $this->file = $file;
     }
 
     public function run()
@@ -86,7 +87,7 @@ final class DataImporter
 
     private function readSheets()
     {
-        $this->sheets = (new XLSXReader($this->fullPath))->sheets();
+        $this->sheets = (new XLSXReader($this->file))->sheets();
 
         return $this;
     }

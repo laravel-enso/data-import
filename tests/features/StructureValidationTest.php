@@ -3,8 +3,8 @@
 use App\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -12,15 +12,14 @@ class StructureValidationTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
         .'testFiles'.DIRECTORY_SEPARATOR;
-    const INVALID_SHEETS_FILE = 'invalid_sheets_file.xlsx';
-    const INVALID_SHEETS_TEST_FILE = 'invalid_sheets_test_file.xlsx';
-    const INVALID_COLUMNS_FILE = 'invalid_columns_file.xlsx';
-    const INVALID_COLUMNS_TEST_FILE = 'invalid_columns_test_file.xlsx';
-    const TWO_ENTRIES_FILE = 'owners_import_file.xlsx';
-    const TWO_ENTRIES_TEST_FILE = 'owners_import_test_file.xlsx';
+    const InvalidSheetsFile = 'invalid_sheets_file.xlsx';
+    const InvalidSheetsTestFile = 'invalid_sheets_test_file.xlsx';
+    const InvalidColumnsFile = 'invalid_columns_file.xlsx';
+    const InvalidColumnsTestFile = 'invalid_columns_test_file.xlsx';
+    const TwoEntriesFile = 'owners_import_file.xlsx';
+    const TwoEntriesTestFile = 'owners_import_test_file.xlsx';
 
     protected function setUp()
     {
@@ -28,9 +27,8 @@ class StructureValidationTest extends TestCase
 
         // $this->withoutExceptionHandling();
 
-        config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
-
-        $this->signIn(User::first());
+        $this->seed()
+            ->signIn(User::first());
     }
 
     /** @test */
@@ -38,7 +36,7 @@ class StructureValidationTest extends TestCase
     {
         $this->post(
             route('import.run', ['owners'], false),
-            ['file' => $this->getInvalidSheetsUploadedFile()]
+            ['import' => $this->getInvalidSheetsUploadedFile()]
         )
             ->assertStatus(200)
             ->assertJsonFragment([
@@ -49,9 +47,8 @@ class StructureValidationTest extends TestCase
             ]);
 
         $this->assertNull(
-            DataImport::whereOriginalName(
-                self::INVALID_SHEETS_TEST_FILE
-            )->first()
+            DataImport::whereName(self::InvalidSheetsTestFile)
+                ->first()
         );
 
         $this->cleanUp();
@@ -62,7 +59,7 @@ class StructureValidationTest extends TestCase
     {
         $this->post(
             route('import.run', ['owners'], false),
-            ['file' => $this->getInvalidColumnsUploadedFile()]
+            ['import' => $this->getInvalidColumnsUploadedFile()]
         )
             ->assertStatus(200)
             ->assertJsonFragment([
@@ -70,47 +67,49 @@ class StructureValidationTest extends TestCase
             ]);
 
         $this->assertNull(
-            DataImport::whereOriginalName(self::INVALID_COLUMNS_TEST_FILE)
+            DataImport::whereName(self::InvalidColumnsTestFile)
                 ->first()
         );
 
         $this->cleanUp();
     }
 
-    // /** @test */ //needs refactor with custom template
-    // public function stops_if_exceeds_entries_limit()
-    // {
-    //     config()->set('enso.imports.owners.entryLimit', '1');
+    /** @test */
+    public function stops_if_exceeds_entries_limit()
+    {
+        config()->set(
+            'enso.imports.owners.template',
+            'vendor/laravel-enso/dataimport/src/resources/testing/ownersLimit.json'
+        );
 
-    //     $this->post(
-    //         route('import.run', ['owners'], false),
-    //         ['file' => $this->getTwoEntriesUploadedFile()]
-    //     )
-    //         ->assertStatus(200)
-    //         ->assertJsonFragment([
-    //             'structureIssues',
-    //             'issues' => 1,
-    //         ])
-    //         ->assertJsonFragment(['Exceeded the entries limit of: 1']);
+        $this->post(
+            route('import.run', ['owners'], false),
+            ['import' => $this->getTwoEntriesUploadedFile()]
+        )
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'structureIssues',
+                'issues',
+            ]);
 
-    //     $this->assertNull(
-    //         DataImport::whereOriginalName(self::TWO_ENTRIES_TEST_FILE)
-    //             ->first()
-    //     );
+        $this->assertNull(
+            DataImport::whereName(self::TwoEntriesTestFile)
+                ->first()
+        );
 
-    //     $this->cleanUp();
-    // }
+        $this->cleanUp();
+    }
 
     private function getInvalidSheetsUploadedFile()
     {
         \File::copy(
-            self::PATH.self::INVALID_SHEETS_FILE,
-            self::PATH.self::INVALID_SHEETS_TEST_FILE
+            self::Path.self::InvalidSheetsFile,
+            self::Path.self::InvalidSheetsTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::INVALID_SHEETS_TEST_FILE,
-            self::INVALID_SHEETS_TEST_FILE,
+            self::Path.self::InvalidSheetsTestFile,
+            self::InvalidSheetsTestFile,
             null,
             null,
             null,
@@ -121,13 +120,13 @@ class StructureValidationTest extends TestCase
     private function getInvalidColumnsUploadedFile()
     {
         \File::copy(
-            self::PATH.self::INVALID_COLUMNS_FILE,
-            self::PATH.self::INVALID_COLUMNS_TEST_FILE
+            self::Path.self::InvalidColumnsFile,
+            self::Path.self::InvalidColumnsTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::INVALID_COLUMNS_TEST_FILE,
-            self::INVALID_COLUMNS_TEST_FILE,
+            self::Path.self::InvalidColumnsTestFile,
+            self::InvalidColumnsTestFile,
             null,
             null,
             null,
@@ -138,13 +137,13 @@ class StructureValidationTest extends TestCase
     private function getTwoEntriesUploadedFile()
     {
         \File::copy(
-            self::PATH.self::TWO_ENTRIES_FILE,
-            self::PATH.self::TWO_ENTRIES_TEST_FILE
+            self::Path.self::TwoEntriesFile,
+            self::Path.self::TwoEntriesTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::TWO_ENTRIES_TEST_FILE,
-            self::TWO_ENTRIES_TEST_FILE,
+            self::Path.self::TwoEntriesTestFile,
+            self::TwoEntriesTestFile,
             null,
             null,
             null,
@@ -154,6 +153,6 @@ class StructureValidationTest extends TestCase
 
     private function cleanUp()
     {
-        Storage::deleteDirectory(self::IMPORT_DIRECTORY);
+        \Storage::deleteDirectory(FileManager::TestingFolder);
     }
 }

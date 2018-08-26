@@ -2,10 +2,10 @@
 
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Http\Requests\ValidateImportRequest;
 
 class DataImportController extends Controller
 {
@@ -21,9 +21,9 @@ class DataImportController extends Controller
         return $dataImport->summary();
     }
 
-    public function store(Request $request, string $type)
+    public function store(ValidateImportRequest $request, string $type, DataImport $import)
     {
-        return DataImport::store($request->allFiles(), $type);
+        return $import->store($request->file('import'), $type);
     }
 
     public function download(DataImport $dataImport)

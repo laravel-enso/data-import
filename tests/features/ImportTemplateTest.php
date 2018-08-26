@@ -3,8 +3,8 @@
 use App\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
@@ -12,19 +12,19 @@ class ImportTemplateTest extends TestCase
 {
     use RefreshDatabase, SignIn;
 
-    const IMPORT_DIRECTORY = 'testImportDirectory'.DIRECTORY_SEPARATOR;
-    const PATH = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
+    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
         .'testFiles'.DIRECTORY_SEPARATOR;
-    const TEMPLATE_FILE = 'owners_import_file.xlsx';
-    const TEMPLATE_TEST_FILE = 'owners_import_test_file.xlsx';
+    const TemplateFile = 'owners_import_file.xlsx';
+    const TemplateTestFile = 'owners_import_test_file.xlsx';
 
     protected function setUp()
     {
         parent::setUp();
 
         // $this->withoutExceptionHandling();
-        config()->set('enso.config.paths.imports', self::IMPORT_DIRECTORY);
-        $this->signIn(User::first());
+
+        $this->seed()
+            ->signIn(User::first());
     }
 
     /** @test */
@@ -41,15 +41,15 @@ class ImportTemplateTest extends TestCase
     {
         $this->post(
             route('import.uploadTemplate', ['owners'], false),
-            ['file' => $this->getTemplateUploadedFile()]
+            ['template' => $this->getTemplateUploadedFile()]
         )->assertStatus(201);
 
-        $importTemplate = ImportTemplate::whereOriginalName(
-            self::TEMPLATE_TEST_FILE
-        )->first();
+        $importTemplate = ImportTemplate::with('file')
+            ->whereName(self::TemplateTestFile)
+            ->first();
 
-        Storage::assertExists(
-            self::IMPORT_DIRECTORY.$importTemplate->saved_name
+        \Storage::assertExists(
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
         );
 
         $this->assertNotNull($importTemplate);
@@ -66,7 +66,7 @@ class ImportTemplateTest extends TestCase
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',
-                'attachment; filename='.self::TEMPLATE_TEST_FILE
+                'attachment; filename='.self::TemplateTestFile
             );
 
         $this->cleanUp();
@@ -77,8 +77,8 @@ class ImportTemplateTest extends TestCase
     {
         $importTemplate = $this->uploadTemplateFile();
 
-        Storage::assertExists(
-            self::IMPORT_DIRECTORY.$importTemplate->saved_name
+        \Storage::assertExists(
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
         );
 
         $this->assertNotNull($importTemplate);
@@ -88,8 +88,8 @@ class ImportTemplateTest extends TestCase
 
         $this->assertNull($importTemplate->fresh());
 
-        Storage::assertMissing(
-            self::IMPORT_DIRECTORY.$importTemplate->saved_name
+        \Storage::assertMissing(
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->name
         );
 
         $this->cleanUp();
@@ -99,24 +99,23 @@ class ImportTemplateTest extends TestCase
     {
         $this->post(
             route('import.uploadTemplate', ['owners'], false),
-            ['file' => $this->getTemplateUploadedFile()]
+            ['template' => $this->getTemplateUploadedFile()]
         );
 
-        return ImportTemplate::whereOriginalName(
-            self::TEMPLATE_TEST_FILE
-        )->first();
+        return ImportTemplate::whereName(self::TemplateTestFile)
+            ->first();
     }
 
     private function getTemplateUploadedFile()
     {
         \File::copy(
-            self::PATH.self::TEMPLATE_FILE,
-            self::PATH.self::TEMPLATE_TEST_FILE
+            self::Path.self::TemplateFile,
+            self::Path.self::TemplateTestFile
         );
 
         return new UploadedFile(
-            self::PATH.self::TEMPLATE_TEST_FILE,
-            self::TEMPLATE_TEST_FILE,
+            self::Path.self::TemplateTestFile,
+            self::TemplateTestFile,
             null,
             null,
             null,
@@ -126,6 +125,6 @@ class ImportTemplateTest extends TestCase
 
     private function cleanUp()
     {
-        Storage::deleteDirectory(self::IMPORT_DIRECTORY);
+        \Storage::deleteDirectory(FileManager::TestingFolder);
     }
 }

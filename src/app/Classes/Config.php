@@ -14,21 +14,13 @@ class Config
 
     public function template()
     {
-        if (!isset($this->template)) {
-            $this->setTemplate();
-        }
-
-        return $this->template;
+        return $this->template
+            ?? $this->template = new Template($this->jsonTemplate());
     }
 
     private function readConfig(string $type)
     {
         $this->config = config('enso.imports.'.$type);
-    }
-
-    private function setTemplate()
-    {
-        $this->template = new Template($this->jsonTemplate());
     }
 
     private function jsonTemplate()
