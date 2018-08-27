@@ -8,7 +8,7 @@ use LaravelEnso\DataImport\app\Models\DataImport;
 
 class ExcelSeeder extends Seeder
 {
-    protected $type = 'type';
+    protected $type;
 
     public function run()
     {
@@ -16,18 +16,13 @@ class ExcelSeeder extends Seeder
 
         DataImport::reguard();
 
-        DataImport::store([$this->importFile()], $this->type);
+        (new DataImport)->store($this->importFile(), $this->type);
     }
 
     private function importFile()
     {
-        \File::copy(
-            storage_path('app/files/'.$this->filename()),
-            storage_path('app/temp/'.$this->filename())
-        );
-
         return new UploadedFile(
-            storage_path('app/temp/'.$this->filename()),
+            storage_path('app/seeds/'.$this->filename()),
             $this->filename(),
             null,
             null,
