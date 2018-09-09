@@ -9,7 +9,6 @@ use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\ActivityLog\app\Traits\LogActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
-use LaravelEnso\DataImport\app\Classes\Validators\Template as TemplateValidator;
 
 class DataImport extends Model implements Attachable
 {
@@ -47,12 +46,10 @@ class DataImport extends Model implements Attachable
 
     public function store(UploadedFile $file, $type)
     {
-        $this->validateTemplate($type);
-
         $importer = new DataImporter($file, $type);
 
         \DB::transaction(function () use ($importer, $file, $type) {
-            $importer->run();
+            $importer->handle();
 
             if (!$importer->fails()) {
                 $this->create([
@@ -64,15 +61,6 @@ class DataImport extends Model implements Attachable
         });
 
         return $importer->summary();
-    }
-
-    private function validateTemplate(string $type)
-    {
-        if (app()->environment() === 'local') {
-            (new TemplateValidator($type))->run();
-        }
-
-        return $this;
     }
 
     public function folder()

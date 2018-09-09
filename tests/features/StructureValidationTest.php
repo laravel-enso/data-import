@@ -29,6 +29,12 @@ class StructureValidationTest extends TestCase
 
         $this->seed()
             ->signIn(User::first());
+
+        config(['enso.imports.configs.owners' => [
+                'label' => 'Owners',
+                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
+            ]
+        ]);
     }
 
     /** @test */
@@ -78,7 +84,7 @@ class StructureValidationTest extends TestCase
     public function stops_if_exceeds_entries_limit()
     {
         config()->set(
-            'enso.imports.owners.template',
+            'enso.imports.configs.owners.template',
             'vendor/laravel-enso/dataimport/src/resources/testing/ownersLimit.json'
         );
 

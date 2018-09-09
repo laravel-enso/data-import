@@ -2,9 +2,11 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Reader;
 
+use Exception;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\XLSX\Sheet as XLSXSheet;
+use LaravelEnso\DataImport\app\Exceptions\FileException;
 
 class XLSXReader
 {
@@ -29,7 +31,12 @@ class XLSXReader
     {
         $this->sheets = collect();
         $reader = ReaderFactory::create(Type::XLSX);
-        $reader->open($this->filename);
+
+        try {
+            $reader->open($this->filename);
+        } catch (Exception $exception) {
+            throw new FileException(__('Unable to read file'));
+        }
 
         foreach ($reader->getSheetIterator() as $sheet) {
             $this->sheets->push($this->sheet($sheet));

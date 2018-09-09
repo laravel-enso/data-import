@@ -12,14 +12,15 @@ class Template
 
     private $template;
 
-    public function __construct(string $jsonTemplate)
+    public function __construct(\stdClass $template)
     {
-        $this->readTemplate($jsonTemplate);
+        $this->template = $template;
     }
 
     public function maxExecutionTime()
     {
-        return $this->template->maxExecutionTime ?? self::MaxExecutionTime;
+        return $this->template->maxExecutionTime
+            ?? self::MaxExecutionTime;
     }
 
     public function importer()
@@ -29,12 +30,14 @@ class Template
 
     public function validator()
     {
-        return $this->template->validatorClass ?? null;
+        return $this->template->validatorClass
+            ?? null;
     }
 
     public function entryLimit()
     {
-        return $this->template->entryLimit ?? self::EntryLimit;
+        return $this->template->entryLimit
+            ?? self::EntryLimit;
     }
 
     public function stopsOnIssues()
@@ -124,10 +127,5 @@ class Template
             ->first(function ($sheet) use ($sheetName) {
                 return $sheet->name === $sheetName;
             });
-    }
-
-    private function readTemplate(string $jsonTemplate)
-    {
-        $this->template = json_decode($jsonTemplate);
     }
 }

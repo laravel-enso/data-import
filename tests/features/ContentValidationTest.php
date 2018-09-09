@@ -26,7 +26,7 @@ class ContentValidationTest extends TestCase
         $this->seed()
             ->signIn(User::first());
 
-        config(['enso.imports.owners' => [
+        config(['enso.imports.configs.owners' => [
                 'label' => 'Owners',
                 'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
             ]
@@ -69,12 +69,10 @@ class ContentValidationTest extends TestCase
         $this->cleanUp();
     }
 
-    /** @test */ // needs refactor with custom template
-
     public function stops_on_content_issues()
     {
         config()->set(
-            'enso.imports.owners.template',
+            'enso.imports.configs.owners.template',
             'vendor/laravel-enso/dataimport/src/resources/testing/ownersStops.json'
         );
 

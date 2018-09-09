@@ -25,6 +25,12 @@ class ImportTemplateTest extends TestCase
 
         $this->seed()
             ->signIn(User::first());
+
+        config(['enso.imports.configs.owners' => [
+                'label' => 'Owners',
+                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
+            ]
+        ]);
     }
 
     /** @test */

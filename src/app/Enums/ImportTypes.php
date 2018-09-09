@@ -12,10 +12,10 @@ class ImportTypes extends Enum
     {
         try {
             $data = array_combine(
-                array_keys(config('enso.imports')),
-                array_column(config('enso.imports'), 'label')
+                array_keys(config('enso.imports.configs')),
+                array_column(config('enso.imports.configs'), 'label')
             );
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             throw new ConfigException(__('Imports config file is not readable'));
         }
 

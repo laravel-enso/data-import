@@ -25,6 +25,12 @@ class DataImportTest extends TestCase
 
         $this->seed()
             ->signIn(User::first());
+
+        config(['enso.imports.configs.owners' => [
+                'label' => 'Owners',
+                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
+            ]
+        ]);
     }
 
     /** @test */
@@ -123,8 +129,6 @@ class DataImportTest extends TestCase
         $this->post(route('import.run', ['owners'], false), [
             'import' => $uploadedFile
         ]);
-
-        return $uploadedFile;
     }
 
     private function getOwnersImportUploadedFile()
