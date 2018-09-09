@@ -21,7 +21,7 @@ class ContentValidationTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $this->seed()
             ->signIn(User::first());
