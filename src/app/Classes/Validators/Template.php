@@ -3,8 +3,8 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use LaravelEnso\DataImport\app\Classes\Attributes\Sheet;
-use LaravelEnso\DataImport\app\Classes\Attributes\Column as ColumnAttributes;
 use LaravelEnso\DataImport\app\Exceptions\ConfigException;
+use LaravelEnso\DataImport\app\Classes\Attributes\Column as ColumnAttributes;
 use LaravelEnso\DataImport\app\Classes\Attributes\Template as TemplateAttributes;
 
 class Template

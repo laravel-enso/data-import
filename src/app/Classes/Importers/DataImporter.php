@@ -6,8 +6,8 @@ use Illuminate\Http\UploadedFile;
 use LaravelEnso\DataImport\app\Classes\Summary;
 use LaravelEnso\Helpers\app\Classes\JsonParser;
 use LaravelEnso\DataImport\app\Classes\Template;
-use LaravelEnso\DataImport\app\Classes\Validator as ImportValidator;
 use LaravelEnso\DataImport\app\Classes\Reader\XLSXReader;
+use LaravelEnso\DataImport\app\Classes\Validator as ImportValidator;
 use LaravelEnso\DataImport\app\Classes\Validators\Template as TemplateValidator;
 
 final class DataImporter
