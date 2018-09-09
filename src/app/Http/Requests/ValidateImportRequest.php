@@ -14,7 +14,7 @@ class ValidateImportRequest extends FormRequest
     public function rules()
     {
         return [
-            'import' => 'required|file|mimes:xls,xlsx',
+            'import' => 'required|file',
         ];
     }
 }
