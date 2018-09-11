@@ -8,9 +8,10 @@ use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\ActivityLog\app\Traits\LogActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
+use LaravelEnso\FileManager\app\Contracts\VisibleFile;
 use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
 
-class DataImport extends Model implements Attachable
+class DataImport extends Model implements Attachable, VisibleFile
 {
     use HasFile, CreatedBy, LogActivity;
 
@@ -66,5 +67,10 @@ class DataImport extends Model implements Attachable
     public function folder()
     {
         return config('enso.config.paths.imports');
+    }
+
+    public function isDeletable()
+    {
+        return true;
     }
 }
