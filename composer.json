@@ -33,7 +33,7 @@
         "laravel-enso/structuremanager": "2.2.*",
         "laravel-enso/trackwho": "1.5.*",
         "laravel-enso/vuedatatable": "1.5.*",
-        "laravel-enso/vuecomponents": "2.4.*",
+        "laravel-enso/vuecomponents": "2.5.*",
         "laravel-enso/select": "2.6.*",
         "box/spout": "2.7.*"
     },
