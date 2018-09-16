@@ -1,6 +1,6 @@
 <?php
 
-use App\User;
+use LaravelEnso\Core\app\Models\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\TestHelper\app\Traits\SignIn;
