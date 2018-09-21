@@ -34,7 +34,7 @@ class ImportTemplateTest extends TestCase
     }
 
     /** @test */
-    public function getTemplate()
+    public function get_template()
     {
         $this->uploadTemplateFile();
 
@@ -43,7 +43,7 @@ class ImportTemplateTest extends TestCase
     }
 
     /** @test */
-    public function uploadTemplate()
+    public function upload_template()
     {
         $this->post(
             route('import.uploadTemplate', ['owners'], false),
@@ -51,7 +51,9 @@ class ImportTemplateTest extends TestCase
         )->assertStatus(201);
 
         $importTemplate = ImportTemplate::with('file')
-            ->whereName(self::TemplateTestFile)
+            ->whereHas('file', function ($query) {
+                $query->whereOriginalName(self::TemplateTestFile);
+            })
             ->first();
 
         \Storage::assertExists(
@@ -64,7 +66,7 @@ class ImportTemplateTest extends TestCase
     }
 
     /** @test */
-    public function downloadTemplate()
+    public function download_template()
     {
         $importTemplate = $this->uploadTemplateFile();
 
@@ -79,7 +81,7 @@ class ImportTemplateTest extends TestCase
     }
 
     /** @test */
-    public function deleteTemplate()
+    public function delete_template()
     {
         $importTemplate = $this->uploadTemplateFile();
 
@@ -95,7 +97,7 @@ class ImportTemplateTest extends TestCase
         $this->assertNull($importTemplate->fresh());
 
         \Storage::assertMissing(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->name
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
         );
 
         $this->cleanUp();
@@ -108,7 +110,10 @@ class ImportTemplateTest extends TestCase
             ['template' => $this->getTemplateUploadedFile()]
         );
 
-        return ImportTemplate::whereName(self::TemplateTestFile)
+        return ImportTemplate::with('file')
+            ->whereHas('file', function ($query) {
+                $query->whereOriginalName(self::TemplateTestFile);
+            })
             ->first();
     }
 
