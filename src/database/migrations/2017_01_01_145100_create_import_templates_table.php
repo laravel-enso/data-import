@@ -12,7 +12,6 @@ class CreateImportTemplatesTable extends Migration
             $table->increments('id');
 
             $table->string('type');
-            $table->string('name');
 
             $table->timestamps();
         });

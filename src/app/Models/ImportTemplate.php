@@ -13,7 +13,7 @@ class ImportTemplate extends Model implements Attachable
 
     protected $extensions = ['xlsx'];
 
-    protected $fillable = ['type', 'name'];
+    protected $fillable = ['type'];
 
     public function store(UploadedFile $file, $type)
     {
@@ -21,7 +21,6 @@ class ImportTemplate extends Model implements Attachable
 
         \DB::transaction(function () use (&$template, $file, $type) {
             $template = $this->create([
-                'name' => $file->getClientOriginalName(),
                 'type' => $type,
             ]);
 
