@@ -2,13 +2,16 @@
 
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use LaravelEnso\DataImport\app\Http\Requests\ValidateImportRequest;
 
 class DataImportController extends Controller
 {
+    use ValidatesRequests;
+
     public function index()
     {
         $types = new ImportTypes();

@@ -2,12 +2,15 @@
 
 namespace LaravelEnso\DataImport\App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use LaravelEnso\DataImport\app\Http\Requests\ValidateTemplateRequest;
 
 class ImportTemplateController extends Controller
 {
+    use ValidatesRequests;
+
     public function template(string $type)
     {
         return ImportTemplate::whereType($type)
