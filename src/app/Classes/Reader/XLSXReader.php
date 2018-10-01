@@ -49,10 +49,14 @@ class XLSXReader
     {
         $rowCollection = $this->rowCollection($sheet);
 
-        $header = $rowCollection->splice(0, 1)->first()
+        $header = optional($rowCollection->first())
             ->map(function ($key) {
                 return $this->normalize($key);
             });
+
+        if (!$header) {
+            throw new FileException(__('Please remove any empty sheets from the import file'));
+        }
 
         $headerLength = $header->count();
 
