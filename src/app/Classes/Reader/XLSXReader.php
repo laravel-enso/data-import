@@ -49,7 +49,7 @@ class XLSXReader
     {
         $rowCollection = $this->rowCollection($sheet);
 
-        $header = optional($rowCollection->first())
+        $header = optional($rowCollection->splice(0, 1)->first())
             ->map(function ($key) {
                 return $this->normalize($key);
             });
