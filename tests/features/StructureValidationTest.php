@@ -1,25 +1,27 @@
 <?php
 
-use LaravelEnso\Core\app\Models\User;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
-use LaravelEnso\TestHelper\app\Traits\SignIn;
-use LaravelEnso\FileManager\app\Classes\FileManager;
+use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StructureValidationTest extends TestCase
 {
-    use RefreshDatabase, SignIn;
+    use RefreshDatabase;
 
-    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
-        .'testFiles'.DIRECTORY_SEPARATOR;
-    const InvalidSheetsFile = 'invalid_sheets_file.xlsx';
-    const InvalidSheetsTestFile = 'invalid_sheets_test_file.xlsx';
-    const InvalidColumnsFile = 'invalid_columns_file.xlsx';
-    const InvalidColumnsTestFile = 'invalid_columns_test_file.xlsx';
-    const TwoEntriesFile = 'owners_import_file.xlsx';
-    const TwoEntriesTestFile = 'owners_import_test_file.xlsx';
+    private const ImportType = 'userGroups';
+    private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'
+        .DIRECTORY_SEPARATOR.'userGroups.json';
+    private const LimitTemplate = __DIR__.DIRECTORY_SEPARATOR.'templates'
+        .DIRECTORY_SEPARATOR.'userGroupsLimit.json';
+    private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    private const ContentIssuesFile = 'content_issues.xlsx';
+    private const InvalidSheetsFile = 'invalid_sheets.xlsx';
+    private const InvalidColumnsFile = 'invalid_columns.xlsx';
+    private const TwoEntriesFile = 'userGroups_import.xlsx';
+    private const TestFile = 'test.xlsx';
 
     protected function setUp()
     {
@@ -28,128 +30,97 @@ class StructureValidationTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $this->seed()
-            ->signIn(User::first());
+            ->actingAs(User::first());
+    }
 
-        config(['enso.imports.configs.owners' => [
-                'label' => 'Owners',
-                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
-            ]
-        ]);
+    public function tearDown()
+    {
+        $this->cleanUp();
+        parent::tearDown();
     }
 
     /** @test */
     public function stops_on_invalid_sheets()
     {
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(base_path(), '', self::Template),
+        ]]);
+
         $this->post(
-            route('import.run', ['owners'], false),
-            ['import' => $this->getInvalidSheetsUploadedFile()]
-        )
-            ->assertStatus(200)
-            ->assertJsonFragment([
-                'issues' => 2,
-                'successful' => 0,
-            ])->assertJsonStructure([
-                'structureIssues',
-            ]);
+            route('import.run', [self::ImportType], false),
+            ['import' => $this->file(self::InvalidSheetsFile)]
+        )->assertStatus(200)
+        ->assertJsonFragment([
+            'issues' => 2,
+            'successful' => 0,
+        ])->assertJsonStructure([
+            'structureIssues',
+        ]);
 
         $this->assertNull(
-            DataImport::whereName(self::InvalidSheetsTestFile)
+            DataImport::whereName(self::TestFile)
                 ->first()
         );
-
-        $this->cleanUp();
     }
 
     /** @test */
     public function stops_on_invalid_columns()
     {
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(base_path(), '', self::Template),
+        ]]);
+
         $this->post(
-            route('import.run', ['owners'], false),
-            ['import' => $this->getInvalidColumnsUploadedFile()]
+            route('import.run', [self::ImportType], false),
+            ['import' => $this->file(self::InvalidColumnsFile)]
         )
             ->assertStatus(200)
             ->assertJsonFragment([
-                'issues' => 2,
+                'issues' => 1,
+                'successful' => 0,
             ]);
 
         $this->assertNull(
-            DataImport::whereName(self::InvalidColumnsTestFile)
+            DataImport::whereName(self::TestFile)
                 ->first()
         );
-
-        $this->cleanUp();
     }
 
     /** @test */
     public function stops_if_exceeds_entries_limit()
     {
-        config()->set(
-            'enso.imports.configs.owners.template',
-            'vendor/laravel-enso/dataimport/src/resources/testing/ownersLimit.json'
-        );
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(base_path(), '', self::LimitTemplate),
+        ]]);
 
         $this->post(
-            route('import.run', ['owners'], false),
-            ['import' => $this->getTwoEntriesUploadedFile()]
-        )
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'structureIssues',
-                'issues',
-            ]);
+            route('import.run', [self::ImportType], false),
+            ['import' => $this->file(self::TwoEntriesFile)]
+        )->assertStatus(200)
+        ->assertJsonStructure([
+            'structureIssues',
+            'issues',
+        ]);
 
         $this->assertNull(
-            DataImport::whereName(self::TwoEntriesTestFile)
+            DataImport::whereName(self::TestFile)
                 ->first()
         );
-
-        $this->cleanUp();
     }
 
-    private function getInvalidSheetsUploadedFile()
+    private function file($file)
     {
         \File::copy(
-            self::Path.self::InvalidSheetsFile,
-            self::Path.self::InvalidSheetsTestFile
+            self::Path.$file,
+            self::Path.self::TestFile
         );
 
         return new UploadedFile(
-            self::Path.self::InvalidSheetsTestFile,
-            self::InvalidSheetsTestFile,
-            null,
-            null,
-            null,
-            true
-        );
-    }
-
-    private function getInvalidColumnsUploadedFile()
-    {
-        \File::copy(
-            self::Path.self::InvalidColumnsFile,
-            self::Path.self::InvalidColumnsTestFile
-        );
-
-        return new UploadedFile(
-            self::Path.self::InvalidColumnsTestFile,
-            self::InvalidColumnsTestFile,
-            null,
-            null,
-            null,
-            true
-        );
-    }
-
-    private function getTwoEntriesUploadedFile()
-    {
-        \File::copy(
-            self::Path.self::TwoEntriesFile,
-            self::Path.self::TwoEntriesTestFile
-        );
-
-        return new UploadedFile(
-            self::Path.self::TwoEntriesTestFile,
-            self::TwoEntriesTestFile,
+            self::Path.self::TestFile,
+            self::TestFile,
             null,
             null,
             null,
@@ -159,6 +130,6 @@ class StructureValidationTest extends TestCase
 
     private function cleanUp()
     {
-        \Storage::deleteDirectory(FileManager::TestingFolder);
+        \File::delete(self::Path.self::TestFile);
     }
 }

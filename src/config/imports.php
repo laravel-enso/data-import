@@ -23,9 +23,9 @@ return [
     */
 
     'configs' => [
-        'example' => [
-            'label' => 'Example import',
-            'template' => 'app/Imports/Templates/exampleTemplate.json',
+        'userGroups' => [
+            'label' => 'UserGroup',
+            'template' => 'vendor/laravel-enso/examples/src/app/Imports/Templates/userGroups.json',
         ],
     ],
 ];

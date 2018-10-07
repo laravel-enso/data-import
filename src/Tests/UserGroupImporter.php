@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelEnso\DataImport\resources\testing;
+namespace LaravelEnso\DataImport\Tests;
 
-use LaravelEnso\Core\app\Models\Owner;
+use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Classes\Importers\Importer;
 
-class OwnerImporter extends Importer
+class UserGroupImporter extends Importer
 {
     public function run()
     {
         \DB::transaction(function () {
-            $this->rowsFromSheet('owners')
+            $this->rowsFromSheet('groups')
                 ->each(function ($row) {
                     $this->importRow($row);
                 });
@@ -19,7 +19,7 @@ class OwnerImporter extends Importer
 
     private function importRow($row)
     {
-        Owner::create($row->toArray());
+        UserGroup::create($row->toArray());
 
         $this->incSuccess();
     }

@@ -1,19 +1,16 @@
 {
-    "importerClass": "LaravelEnso\\DataImport\\resources\\testing\\OwnerImporter",
+    "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
     "entryLimit": 5000,
     "stopsOnIssues": true,
     "sheets": [{
-        "name": "owners",
+        "name": "groups",
         "columns": [{
             "name": "name",
-            "laravelValidations": "string|required|unique:owners,name",
+            "laravelValidations": "string|required|unique:user_groups,name",
             "complexValidations": "unique_in_column"
         }, {
             "name": "description",
             "laravelValidations": "string|nullable"
-        }, {
-            "name": "is_active",
-            "laravelValidations": "required|boolean"
         }]
     }]
 }

@@ -1,21 +1,20 @@
 <?php
 
-use LaravelEnso\Core\app\Models\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
-use LaravelEnso\TestHelper\app\Traits\SignIn;
-use LaravelEnso\FileManager\app\Classes\FileManager;
+use LaravelEnso\Core\app\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class ImportTemplateTest extends TestCase
 {
-    use RefreshDatabase, SignIn;
+    use RefreshDatabase;
 
-    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
-        .'testFiles'.DIRECTORY_SEPARATOR;
-    const TemplateFile = 'owners_import_file.xlsx';
-    const TemplateTestFile = 'owners_import_test_file.xlsx';
+    private const ImportType = 'userGroups';
+    private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    const TemplateFile = 'userGroups_import.xlsx';
+    const TemplateTestFile = 'userGroups_import_test.xlsx';
 
     protected function setUp()
     {
@@ -24,13 +23,13 @@ class ImportTemplateTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $this->seed()
-            ->signIn(User::first());
+            ->actingAs(User::first());
+    }
 
-        config(['enso.imports.configs.owners' => [
-                'label' => 'Owners',
-                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
-            ]
-        ]);
+    public function tearDown()
+    {
+        $this->cleanUp();
+        parent::tearDown();
     }
 
     /** @test */
@@ -38,7 +37,7 @@ class ImportTemplateTest extends TestCase
     {
         $this->uploadTemplateFile();
 
-        $this->get(route('import.getTemplate', ['owners'], false))
+        $this->get(route('import.getTemplate', [self::ImportType], false))
             ->assertStatus(200);
     }
 
@@ -46,8 +45,8 @@ class ImportTemplateTest extends TestCase
     public function upload_template()
     {
         $this->post(
-            route('import.uploadTemplate', ['owners'], false),
-            ['template' => $this->getTemplateUploadedFile()]
+            route('import.uploadTemplate', [self::ImportType], false),
+            ['template' => $this->templateImportFile()]
         )->assertStatus(201);
 
         $importTemplate = ImportTemplate::with('file')
@@ -57,12 +56,10 @@ class ImportTemplateTest extends TestCase
             ->first();
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
         );
 
         $this->assertNotNull($importTemplate);
-
-        $this->cleanUp();
     }
 
     /** @test */
@@ -76,8 +73,6 @@ class ImportTemplateTest extends TestCase
                 'content-disposition',
                 'attachment; filename='.self::TemplateTestFile
             );
-
-        $this->cleanUp();
     }
 
     /** @test */
@@ -99,15 +94,13 @@ class ImportTemplateTest extends TestCase
         \Storage::assertMissing(
             FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
         );
-
-        $this->cleanUp();
     }
 
     private function uploadTemplateFile()
     {
         $this->post(
-            route('import.uploadTemplate', ['owners'], false),
-            ['template' => $this->getTemplateUploadedFile()]
+            route('import.uploadTemplate', [self::ImportType], false),
+            ['template' => $this->templateImportFile()]
         );
 
         return ImportTemplate::with('file')
@@ -117,7 +110,7 @@ class ImportTemplateTest extends TestCase
             ->first();
     }
 
-    private function getTemplateUploadedFile()
+    private function templateImportFile()
     {
         \File::copy(
             self::Path.self::TemplateFile,
@@ -136,6 +129,6 @@ class ImportTemplateTest extends TestCase
 
     private function cleanUp()
     {
-        \Storage::deleteDirectory(FileManager::TestingFolder);
+        \File::delete(self::Path.self::TemplateTestFile);
     }
 }

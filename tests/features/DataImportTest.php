@@ -1,21 +1,23 @@
 <?php
 
-use LaravelEnso\Core\app\Models\User;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
-use LaravelEnso\TestHelper\app\Traits\SignIn;
-use LaravelEnso\FileManager\app\Classes\FileManager;
+use LaravelEnso\Core\app\Models\User;
+use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use LaravelEnso\FileManager\app\Classes\FileManager;
 
 class DataImportTest extends TestCase
 {
-    use RefreshDatabase, SignIn;
+    use RefreshDatabase;
 
-    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
-        .'testFiles'.DIRECTORY_SEPARATOR;
-    const ImportFile = 'owners_import_file.xlsx';
-    const ImportTestFile = 'owners_import_test_file.xlsx';
+    private const ImportType = 'userGroups';
+    private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
+    private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    private const ImportFile = 'userGroups_import.xlsx';
+    private const ImportTestFile = 'userGroups_import_test.xlsx';
 
     protected function setUp()
     {
@@ -24,13 +26,18 @@ class DataImportTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $this->seed()
-            ->signIn(User::first());
+            ->actingAs(User::first());
 
-        config(['enso.imports.configs.owners' => [
-                'label' => 'Owners',
-                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
-            ]
-        ]);
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groupss',
+            'template' => Str::replaceFirst(base_path(), '', self::Template),
+        ]]);
+    }
+
+    public function tearDown()
+    {
+        $this->cleanUp();
+        parent::tearDown();
     }
 
     /** @test */
@@ -43,7 +50,7 @@ class DataImportTest extends TestCase
     /** @test */
     public function getSummary()
     {
-        $this->importOwnersFile();
+        $this->importUserGroups();
 
         $dataImport = DataImport::whereName(self::ImportTestFile)
                         ->first();
@@ -55,12 +62,10 @@ class DataImportTest extends TestCase
     /** @test */
     public function can_import()
     {
-        $uploadedFile = $this->getOwnersImportUploadedFile();
-
-        $this->post(route('import.run', ['owners'], false), [
-                'import' => $uploadedFile
-            ])->assertStatus(200)
-            ->assertJsonFragment(['successful' => 2]);
+        $this->post(route('import.run', [self::ImportType], false), [
+            'import' => $this->userGroupsImportFile()
+        ])->assertStatus(200)
+        ->assertJsonFragment(['successful' => 2]);
 
         $dataImport = DataImport::with('file')
                         ->whereName(self::ImportTestFile)
@@ -69,21 +74,19 @@ class DataImportTest extends TestCase
         $this->assertNotNull($dataImport);
 
         $this->assertNotNull(
-            config('enso.config.ownerModel')::whereName('ImportTestName')
+            UserGroup::whereName('ImportTestName')
                 ->first()
         );
 
         \Storage::assertExists(
             FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name
         );
-
-        $this->cleanUp();
     }
 
     /** @test */
     public function download()
     {
-        $this->importOwnersFile();
+        $this->importUserGroups();
 
         $dataImport = DataImport::whereName(self::ImportTestFile)
                         ->first();
@@ -94,20 +97,19 @@ class DataImportTest extends TestCase
                 'content-disposition',
                 'attachment; filename='.self::ImportTestFile
             );
-
-        $this->cleanUp();
     }
 
     /** @test */
     public function destroy()
     {
-        $this->importOwnersFile();
+        $this->importUserGroups();
 
         $dataImport = DataImport::with('file')
                         ->whereName(self::ImportTestFile)
                         ->first();
 
         $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name;
+
         \Storage::assertExists($filename);
 
         $this->assertNotNull($dataImport);
@@ -118,20 +120,18 @@ class DataImportTest extends TestCase
         $this->assertNull($dataImport->fresh());
 
         \Storage::assertMissing($filename);
-
-        $this->cleanUp();
     }
 
-    private function importOwnersFile()
+    private function importUserGroups()
     {
-        $uploadedFile = $this->getOwnersImportUploadedFile();
+        $uploadedFile = $this->userGroupsImportFile();
 
-        $this->post(route('import.run', ['owners'], false), [
+        $this->post(route('import.run', [self::ImportType], false), [
             'import' => $uploadedFile
         ]);
     }
 
-    private function getOwnersImportUploadedFile()
+    private function userGroupsImportFile()
     {
         \File::copy(
             self::Path.self::ImportFile,
@@ -150,6 +150,6 @@ class DataImportTest extends TestCase
 
     private function cleanUp()
     {
-        \Storage::deleteDirectory(FileManager::TestingFolder);
+        \File::delete(self::Path.self::ImportTestFile);
     }
 }

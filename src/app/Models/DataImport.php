@@ -6,14 +6,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 use LaravelEnso\FileManager\app\Traits\HasFile;
-use LaravelEnso\ActivityLog\app\Traits\LogActivity;
+use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
 use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
 
 class DataImport extends Model implements Attachable, VisibleFile
 {
-    use HasFile, CreatedBy, LogActivity;
+    use HasFile, CreatedBy, LogsActivity;
 
     protected $extensions = ['xlsx'];
 

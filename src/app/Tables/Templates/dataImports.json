@@ -41,8 +41,8 @@
         },
         {
             "label": "Imported By",
-            "name": "created_by",
-            "data": "data_imports.created_by",
+            "name": "createdBy",
+            "data": "data_imports.createdBy",
             "meta": ["searchable", "sortable"]
         },
         {

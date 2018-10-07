@@ -1,21 +1,22 @@
 <?php
 
-use LaravelEnso\Core\app\Models\User;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
-use LaravelEnso\TestHelper\app\Traits\SignIn;
-use LaravelEnso\FileManager\app\Classes\FileManager;
+use LaravelEnso\Core\app\Models\User;
+use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ContentValidationTest extends TestCase
 {
-    use RefreshDatabase, SignIn;
+    use RefreshDatabase;
 
-    const Path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR
-        .'testFiles'.DIRECTORY_SEPARATOR;
-    const ContentIssueOriginalFile = 'content_issues_file.xlsx';
-    const ContentIssueTestFile = 'content_issues_test_file.xlsx';
+    private const ImportType = 'userGroups';
+    private const TemplatePath = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
+    private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    private const ContentIssuesFile = 'content_issues.xlsx';
+    private const TestFile = 'content_issues_test.xlsx';
 
     protected function setUp()
     {
@@ -24,87 +25,89 @@ class ContentValidationTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $this->seed()
-            ->signIn(User::first());
+            ->actingAs(User::first());
+    }
 
-        config(['enso.imports.configs.owners' => [
-                'label' => 'Owners',
-                'template' => 'vendor/laravel-enso/dataimport/src/resources/testing/owners.json',
-            ]
-        ]);
+    public function tearDown()
+    {
+        $this->cleanUp();
+        parent::tearDown();
     }
 
     /** @test */
     public function skips_entries_with_issues()
     {
-        $this->post(
-            route('import.run', ['owners'], false),
-            ['import' => $this->getContentErrorsUploadedFile()]
-        )
-            ->assertStatus(200)
-            ->assertJsonFragment([
-                'issues' => 3,
-                'successful' => 2,
-                'rowNumber' => 4,
-                'value' => 'NotUniqueName',
-                'column' => 'is_active',
-                'value' => 'notBoolean',
-            ]);
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(
+                base_path(),
+                '',
+                self::TemplatePath.'userGroups.json'
+            ),
+        ]]);
+
+        $this->post(route('import.run', [self::ImportType], false), [
+            'import' => $this->contentErrorsImportFile()
+        ])->assertStatus(200)
+        ->assertJsonFragment([
+            'issues' => 3,
+            'successful' => 2,
+            'rowNumber' => 4,
+            'value' => 'NotUniqueName'
+        ]);
 
         $this->assertNull(
-            config('enso.config.ownerModel')
-                ::whereName('BooleanTest')->first()
+            UserGroup::whereName('MissingDescription')->first()
         );
 
         $this->assertNotNull(
-            config('enso.config.ownerModel')
-                ::whereName('TestName')->first()
+            UserGroup::whereName('TestName')->first()
         );
 
         $this->assertNotNull(
             DataImport::whereName(
-                self::ContentIssueTestFile
+                self::TestFile
             )->first()
         );
-
-        $this->cleanUp();
     }
 
     public function stops_on_content_issues()
     {
-        config()->set(
-            'enso.imports.configs.owners.template',
-            'vendor/laravel-enso/dataimport/src/resources/testing/ownersStops.json'
-        );
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(
+                base_path(),
+                '',
+                self::TemplatePath.'userGroupsStops.json'
+            ),
+        ]]);
 
         $this->post(
-            route('import.run', ['owners'], false),
-            ['import' => $this->getContentErrorsUploadedFile()]
-        )
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'contentIssues',
-            ]);
+            route('import.run', [self::ImportType], false),
+            ['import' => $this->contentErrorsImportFile()]
+        )->assertStatus(200)
+        ->assertJsonStructure([
+            'contentIssues',
+        ]);
 
-        $this->assertNull(config('enso.config.ownerModel')::whereName('TestName')->first());
+        $this->assertNull(UserGroup::whereName('TestName')->first());
 
         $this->assertNull(
-            DataImport::whereOriginalName(self::ContentIssueTestFile)
+            DataImport::whereOriginalName(self::TestFile)
                 ->first()
         );
-
-        $this->cleanUp();
     }
 
-    private function getContentErrorsUploadedFile()
+    private function contentErrorsImportFile()
     {
         \File::copy(
-            self::Path.self::ContentIssueOriginalFile,
-            self::Path.self::ContentIssueTestFile
+            self::Path.self::ContentIssuesFile,
+            self::Path.self::TestFile
         );
 
         return new UploadedFile(
-            self::Path.self::ContentIssueTestFile,
-            self::ContentIssueTestFile,
+            self::Path.self::TestFile,
+            self::Path.self::TestFile,
             null,
             null,
             null,
@@ -114,6 +117,6 @@ class ContentValidationTest extends TestCase
 
     private function cleanUp()
     {
-        \Storage::deleteDirectory(FileManager::TestingFolder);
+        \File::delete(self::Path.self::TestFile);
     }
 }
