@@ -10,10 +10,10 @@ class Structure extends Validator
     {
         $this->checkSheets();
 
-        if (!$this->fails()) {
+        if (! $this->fails()) {
             $this->checkColumns();
 
-            if (!$this->fails()) {
+            if (! $this->fails()) {
                 $this->checkEntryLimit();
             }
         }

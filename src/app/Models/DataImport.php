@@ -52,7 +52,7 @@ class DataImport extends Model implements Attachable, VisibleFile
         \DB::transaction(function () use ($importer, $file, $type) {
             $importer->handle();
 
-            if (!$importer->fails()) {
+            if (! $importer->fails()) {
                 $this->create([
                     'name' => $file->getClientOriginalName(),
                     'type' => $type,

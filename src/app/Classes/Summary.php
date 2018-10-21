@@ -25,7 +25,7 @@ class Summary extends Obj
 
     public function rowsWithIssues(string $sheetName)
     {
-        if (!property_exists($this->contentIssues, $sheetName)) {
+        if (! property_exists($this->contentIssues, $sheetName)) {
             return collect();
         }
 
@@ -96,7 +96,7 @@ class Summary extends Obj
 
     private function categoryContainer(Obj $container, string $category)
     {
-        if (!property_exists($container, $category)) {
+        if (! property_exists($container, $category)) {
             $container->set($category, collect());
         }
 
@@ -105,7 +105,7 @@ class Summary extends Obj
 
     private function sheetContainer(Obj $container, string $sheetName)
     {
-        if (!property_exists($container, $sheetName)) {
+        if (! property_exists($container, $sheetName)) {
             $container->set($sheetName, new Obj());
         }
 

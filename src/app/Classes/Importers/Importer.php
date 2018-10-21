@@ -30,7 +30,7 @@ abstract class Importer
 
             return $sheet->rows()
                 ->filter(function ($row, $index) use ($rows) {
-                    return !$rows->contains($index + 2);
+                    return ! $rows->contains($index + 2);
                 });
         }
 

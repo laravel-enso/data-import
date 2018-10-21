@@ -49,7 +49,7 @@ final class DataImporter
 
     private function canImport()
     {
-        return !$this->cannotImport();
+        return ! $this->cannotImport();
     }
 
     private function cannotImport()
