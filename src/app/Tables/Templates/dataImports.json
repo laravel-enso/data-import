@@ -1,6 +1,5 @@
 {
     "routePrefix": "import",
-    "readSuffix": "getTableData",
     "crtNo": true,
     "appends": ["successful", "issues"],
     "buttons": [

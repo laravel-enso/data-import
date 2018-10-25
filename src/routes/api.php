@@ -6,8 +6,8 @@ Route::middleware(['web', 'auth', 'core'])
     ->group(function () {
         Route::get('initTable', 'DataImportTableController@init')
             ->name('initTable');
-        Route::get('getTableData', 'DataImportTableController@data')
-            ->name('getTableData');
+        Route::get('tableData', 'DataImportTableController@data')
+            ->name('tableData');
         Route::get('exportExcel', 'DataImportTableController@excel')
             ->name('exportExcel');
 

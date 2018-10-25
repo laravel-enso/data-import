@@ -28,12 +28,12 @@
     "require": {
         "php": ">=7.1.0",
         "laravel-enso/activitylog": "1.1.*",
-        "laravel-enso/core": "3.1.*",
+        "laravel-enso/core": "3.2.*",
         "laravel-enso/filemanager": "2.5.*",
         "laravel-enso/helpers": "1.9.*",
-        "laravel-enso/structuremanager": "2.3.*",
+        "laravel-enso/structuremanager": "2.4.*",
         "laravel-enso/trackwho": "1.7.*",
-        "laravel-enso/vuedatatable": "1.6.*",
+        "laravel-enso/vuedatatable": "1.7.*",
         "laravel-enso/vuecomponents": "2.5.*",
         "laravel-enso/select": "2.7.*",
         "box/spout": "2.7.*"
