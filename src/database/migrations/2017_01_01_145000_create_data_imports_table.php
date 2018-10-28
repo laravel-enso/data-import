@@ -12,11 +12,8 @@ class CreateDataImportsTable extends Migration
             $table->increments('id');
 
             $table->string('type');
-            $table->string('name');
-            $table->json('summary');
 
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->foreign('created_by')->references('id')->on('users');
+            $table->json('summary');
 
             $table->timestamps();
         });
