@@ -52,8 +52,9 @@ class DataImportTest extends TestCase
     {
         $this->importUserGroups();
 
-        $dataImport = DataImport::whereName(self::ImportTestFile)
-                        ->first();
+        $dataImport = DataImport::whereHas('file', function ($query) {
+            $query->whereOriginalName(self::ImportTestFile);
+        })->first();
 
         $this->get(route('import.getSummary', [$dataImport->id], false))
             ->assertStatus(200);
@@ -67,9 +68,9 @@ class DataImportTest extends TestCase
         ])->assertStatus(200)
         ->assertJsonFragment(['successful' => 2]);
 
-        $dataImport = DataImport::with('file')
-                        ->whereName(self::ImportTestFile)
-                        ->first();
+        $dataImport = DataImport::whereHas('file', function ($query) {
+            $query->whereOriginalName(self::ImportTestFile);
+        })->first();
 
         $this->assertNotNull($dataImport);
 
@@ -88,8 +89,9 @@ class DataImportTest extends TestCase
     {
         $this->importUserGroups();
 
-        $dataImport = DataImport::whereName(self::ImportTestFile)
-                        ->first();
+        $dataImport = DataImport::whereHas('file', function ($query) {
+            $query->whereOriginalName(self::ImportTestFile);
+        })->first();
 
         $this->get(route('import.download', [$dataImport->id], false))
             ->assertStatus(200)
@@ -104,9 +106,9 @@ class DataImportTest extends TestCase
     {
         $this->importUserGroups();
 
-        $dataImport = DataImport::with('file')
-                        ->whereName(self::ImportTestFile)
-                        ->first();
+        $dataImport = DataImport::whereHas('file', function ($query) {
+            $query->whereOriginalName(self::ImportTestFile);
+        })->first();
 
         $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name;
 

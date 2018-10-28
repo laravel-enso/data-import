@@ -65,9 +65,9 @@ class ContentValidationTest extends TestCase
         );
 
         $this->assertNotNull(
-            DataImport::whereName(
-                self::TestFile
-            )->first()
+            DataImport::whereHas('file', function ($query) {
+                $query->whereOriginalName(self::TestFile);
+            })->first()
         );
     }
 
