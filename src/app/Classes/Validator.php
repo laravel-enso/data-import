@@ -24,13 +24,15 @@ class Validator
         $this->make(StructureValidator::class)->run();
 
         if ($this->summary->hasIssues()) {
-            return false;
+            return;
         }
 
         $this->make(ContentValidator::class)->run();
 
-        if ($customValidator = $this->template->validator()) {
-            $this->make($customValidator)->run();
+        if (! $this->summary->hasIssues()
+            && $this->template->validator()) {
+            $this->make($this->template->validator())
+                ->run();
         }
     }
 
