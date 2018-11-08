@@ -29,8 +29,7 @@ class Validator
 
         $this->make(ContentValidator::class)->run();
 
-        if (! $this->summary->hasIssues()
-            && $this->template->validator()) {
+        if ($this->template->validator()) {
             $this->make($this->template->validator())
                 ->run();
         }
