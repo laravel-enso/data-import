@@ -41,7 +41,6 @@ class DataImportService
     {
         $importer = null;
 
-
         $this->fileManager->startUpload($this->request->allFiles());
         $uploadedFile = $this->fileManager->getUploadedFiles()->first();
         $importer = new Importer($type, $uploadedFile);
