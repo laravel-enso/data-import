@@ -41,24 +41,23 @@ class DataImportService
     {
         $importer = null;
 
-        \DB::transaction(function () use (&$importer, $type) {
-            $this->fileManager->startUpload($this->request->allFiles());
-            $uploadedFile = $this->fileManager->getUploadedFiles()->first();
-            $importer = new Importer($type, $uploadedFile);
-            $importer->run();
 
-            if ($importer->fails() || $importer->getSummary()->successful === 0) {
-                $this->fileManager->deleteTempFiles();
+        $this->fileManager->startUpload($this->request->allFiles());
+        $uploadedFile = $this->fileManager->getUploadedFiles()->first();
+        $importer = new Importer($type, $uploadedFile);
+        $importer->run();
 
-                return $importer->getSummary();
-            }
+        if ($importer->fails() || $importer->getSummary()->successful === 0) {
+            $this->fileManager->deleteTempFiles();
 
-            $dataImport = new DataImport($uploadedFile);
-            $dataImport->type = $type;
-            $dataImport->summary = $importer->getSummary();
-            $dataImport->save();
-            $this->fileManager->commitUpload();
-        });
+            return $importer->getSummary();
+        }
+
+        $dataImport = new DataImport($uploadedFile);
+        $dataImport->type = $type;
+        $dataImport->summary = $importer->getSummary();
+        $dataImport->save();
+        $this->fileManager->commitUpload();
 
         return $importer->getSummary();
     }
