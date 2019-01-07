@@ -2,36 +2,37 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
+use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\DataImport\app\Contracts\Importer;
 use LaravelEnso\DataImport\app\Classes\Attributes\Sheet;
-use LaravelEnso\DataImport\app\Exceptions\ConfigException;
+use LaravelEnso\DataImport\app\Exceptions\TemplateException;
 use LaravelEnso\DataImport\app\Classes\Attributes\Column as ColumnAttributes;
 use LaravelEnso\DataImport\app\Classes\Attributes\Template as TemplateAttributes;
 
 class Template
 {
-    private $data;
+    private $template;
 
-    public function __construct(\stdClass $data)
+    public function __construct(Obj $template)
     {
-        $this->data = $data;
+        $this->template = $template;
     }
 
-    public function run()
+    public function handle()
     {
-        $this->checkMandatoryAttributes()
+        $this->checkRootAttributes()
             ->checkSheetAttributes()
-            ->checkColumnAttributes()
-            ->checkOptionalAttributes();
+            ->checkColumnAttributes();
     }
 
-    private function checkMandatoryAttributes()
+    private function checkRootAttributes()
     {
-        $diff = collect(TemplateAttributes::Mandatory)
-            ->diff(collect($this->data)->keys());
+        $diff = collect(TemplateAttributes::Attributes)
+            ->diff($this->template->keys());
 
         if ($diff->isNotEmpty()) {
-            throw new ConfigException(__(
-                'Mandatory Attribute(s) Missing in template: ":attr"',
+            throw new TemplateException(__(
+                'Attribute(s) Missing in template: ":attr"',
                 ['attr' => $diff->implode('", "')]
             ));
         }
@@ -41,25 +42,67 @@ class Template
 
     private function checkSheetAttributes()
     {
-        collect($this->data->sheets)
+        collect($this->template->get('sheets'))
             ->each(function ($sheet) {
-                $diff = collect(Sheet::Attributes)
-                    ->diff(collect($sheet)->keys());
-
-                if ($diff->isNotEmpty()) {
-                    throw new ConfigException(__(
-                        'Mandatory Attribute(s) Missing in sheet object: ":attr"',
-                        ['attr' => $diff->implode('", "')]
-                    ));
-                }
+                $this->checkSheetMandatory($sheet)
+                    ->checkSheetOptional($sheet);
             });
 
         return $this;
     }
 
+    private function checkSheetMandatory($sheet)
+    {
+        $diff = collect(Sheet::Mandatory)
+            ->diff(collect($sheet)->keys());
+
+        if ($diff->isNotEmpty()) {
+            throw new TemplateException(__(
+                'Mandatory Attribute(s) Missing in sheet object: ":attr"',
+                ['attr' => $diff->implode('", "')]
+            ));
+        }
+
+        $this->checkImporter($sheet);
+
+        return $this;
+    }
+
+    private function checkImporter($sheet)
+    {
+        if (! class_exists($sheet->importerClass)) {
+            throw new TemplateException(__(
+                'Importer class ":class" for sheet ":sheet" does not exist',
+                ['class' => $sheet->importerClass, 'sheet' => $sheet->name]
+            ));
+        }
+
+        if (! collect(class_implements($sheet->importerClass))
+                ->contains(Importer::class)) {
+            throw new TemplateException(__(
+                'Importer class ":class" for sheet ":sheet" must implement the ":contract" contract',
+                ['contract' => Importer::class]
+            ));
+        }
+    }
+
+    private function checkSheetOptional($sheet)
+    {
+        $diff = collect($sheet)->keys()
+            ->diff(Sheet::Mandatory)
+            ->diff(Sheet::Optional);
+
+        if ($diff->isNotEmpty()) {
+            throw new TemplateException(__(
+                'Unknown Optional Attribute(s) in sheet object: ":attr"',
+                ['attr' => $diff->implode('", "')]
+            ));
+        }
+    }
+
     private function checkColumnAttributes()
     {
-        collect($this->data->sheets)
+        collect($this->template->get('sheets'))
             ->pluck('columns')
             ->each(function ($columns) {
                 collect($columns)
@@ -68,8 +111,6 @@ class Template
                             ->checkColumnOptional($column);
                     });
             });
-
-        return $this;
     }
 
     private function checkColumnMandatory($column)
@@ -78,7 +119,7 @@ class Template
             ->diff(collect($column)->keys());
 
         if ($diff->isNotEmpty()) {
-            throw new ConfigException(__(
+            throw new TemplateException(__(
                 'Mandatory Attribute(s) Missing in column object: ":attr"',
                 ['attr' => $diff->implode('", "')]
             ));
@@ -90,37 +131,14 @@ class Template
     private function checkColumnOptional($column)
     {
         $diff = collect($column)->keys()
-            ->diff(
-                collect(ColumnAttributes::Mandatory)
-                    ->merge(ColumnAttributes::Optional)
-            );
+            ->diff(ColumnAttributes::Mandatory)
+            ->diff(ColumnAttributes::Optional);
 
         if ($diff->isNotEmpty()) {
-            throw new ConfigException(__(
+            throw new TemplateException(__(
                 'Unknown Attribute(s) found in column object: ":attr"',
                 ['attr' => $diff->implode('", "')]
             ));
         }
-
-        return $this;
-    }
-
-    private function checkOptionalAttributes()
-    {
-        $attributes = collect(TemplateAttributes::Mandatory)
-            ->merge(TemplateAttributes::Optional);
-
-        $diff = collect($this->data)
-            ->keys()
-            ->diff($attributes);
-
-        if ($diff->isNotEmpty()) {
-            throw new ConfigException(__(
-                'Unknown Attribute(s) Found in template: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
-        }
-
-        return $this;
     }
 }

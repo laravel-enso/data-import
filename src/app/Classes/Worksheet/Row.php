@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Classes\Reader;
+namespace LaravelEnso\DataImport\app\Classes\Worksheet;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
 

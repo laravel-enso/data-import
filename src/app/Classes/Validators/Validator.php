@@ -2,35 +2,31 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
-use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\app\Classes\Summary;
-use LaravelEnso\DataImport\app\Classes\Template;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 abstract class Validator
 {
-    protected $template;
-    protected $sheets;
-    protected $summary;
+    private $errors;
 
-    public function __construct(Template $template, Collection $sheets, Summary $summary)
+    public function __construct()
     {
-        $this->template = $template;
-        $this->sheets = $sheets;
-        $this->summary = $summary;
+        $this->errors = collect();
     }
 
-    abstract public function run();
+    abstract public function run(Obj $row);
 
-    protected function summary()
+    public function fails()
     {
-        return $this->summary;
+        return $this->errors->isNotEmpty();
     }
 
-    protected function sheet(string $sheetName)
+    public function message()
     {
-        return $this->sheets
-            ->first(function ($sheet) use ($sheetName) {
-                return $sheet->name() === $sheetName;
-            });
+        return $this->errors->implode(' | ');
+    }
+
+    public function addError(string $error)
+    {
+        $this->errors->push($error);
     }
 }

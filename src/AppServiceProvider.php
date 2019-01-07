@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\DataImport\app\Commands\Upgrade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
 
     private function loadDependencies()
     {
+        $this->commands([
+            Upgrade::class,
+        ]);
+
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
         $this->loadRoutesFrom(__DIR__.'/routes/api.php');

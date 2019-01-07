@@ -14,9 +14,14 @@ class ImportTemplateController extends Controller
             ->first();
     }
 
-    public function store(ValidateTemplateRequest $request, string $type, ImportTemplate $template)
+    public function store(ValidateTemplateRequest $request, ImportTemplate $template)
     {
-        return $template->store($request->file('template'), $type);
+        $template->type = $request->get('type');
+
+        tap($template)->save()
+            ->upload($request->file('template'));
+
+        return $template;
     }
 
     public function show(ImportTemplate $template)

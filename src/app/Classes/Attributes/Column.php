@@ -6,5 +6,5 @@ class Column
 {
     const Mandatory = ['name'];
 
-    const Optional = ['laravelValidations', 'complexValidations'];
+    const Optional = ['validations'];
 }

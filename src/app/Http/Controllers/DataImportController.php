@@ -13,20 +13,20 @@ class DataImportController extends Controller
     {
         $types = new ImportTypes();
 
-        return ['importTypes' => $types::select()];
+        return [
+            'importTypes' => $types::select(),
+            'inProgress' => [] //TODO
+        ];
     }
 
-    public function summary(DataImport $dataImport)
+    public function store(ValidateImportRequest $request, DataImport $dataImport)
     {
-        return $dataImport->summary();
+        $dataImport->type = $request->get('type');
+
+        return $dataImport->run($request->file('import'));
     }
 
-    public function store(ValidateImportRequest $request, string $type, DataImport $import)
-    {
-        return $import->store($request->file('import'), $type);
-    }
-
-    public function download(DataImport $dataImport)
+    public function show(DataImport $dataImport)
     {
         return $dataImport->download();
     }

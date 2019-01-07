@@ -13,7 +13,10 @@ class CreateDataImportsTable extends Migration
 
             $table->string('type');
 
-            $table->json('summary');
+            $table->integer('successful')->nullable();
+            $table->integer('failed')->nullable();
+
+            $table->tinyInteger('status');
 
             $table->timestamps();
         });

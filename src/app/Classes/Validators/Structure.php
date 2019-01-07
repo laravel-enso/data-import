@@ -3,19 +3,29 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use Illuminate\Support\Collection;
+use LaravelEnso\DataImport\app\Classes\Summary;
+use LaravelEnso\DataImport\app\Classes\Template;
+use LaravelEnso\DataImport\app\Classes\Worksheet\Worksheet;
 
-class Structure extends Validator
+class Structure
 {
+    protected $template;
+    protected $worksheet;
+    protected $summary;
+
+    public function __construct(Template $template, Worksheet $worksheet, Summary $summary)
+    {
+        $this->template = $template;
+        $this->worksheet = $worksheet;
+        $this->summary = $summary;
+    }
+
     public function run()
     {
         $this->checkSheets();
 
         if (! $this->fails()) {
             $this->checkColumns();
-
-            if (! $this->fails()) {
-                $this->checkEntryLimit();
-            }
         }
 
         return $this;
@@ -26,99 +36,78 @@ class Structure extends Validator
         return $this->summary->hasIssues();
     }
 
+    public function summary()
+    {
+        return $this->summary;
+    }
+
     private function checkSheets()
     {
         $templateSheets = $this->template->sheetNames();
-        $xlsxSheets = $this->xlsxSheetNames();
-        $this->setExtraSheets($templateSheets, $xlsxSheets);
-        $this->setMissingSheets($templateSheets, $xlsxSheets);
+        $fileSheets = $this->worksheet->sheetNames();
+
+        $this->setMissingSheets($templateSheets, $fileSheets)
+            ->setExtraSheets($templateSheets, $fileSheets);
     }
 
-    private function setExtraSheets(Collection $templateSheets, Collection $xlsxSheets)
+    private function setMissingSheets(Collection $templateSheets, Collection $fileSheets)
     {
-        $extraSheets = $xlsxSheets->diff($templateSheets);
+        $templateSheets->diff($fileSheets)
+            ->each(function ($sheetName) {
+                $this->summary->addIssue(__('Missing Sheets'), $sheetName);
+            });
 
-        $extraSheets->each(function ($sheet) {
-            $this->addIssue(__('Extra Sheets'), $sheet);
-        });
+        return $this;
     }
 
-    private function setMissingSheets(Collection $templateSheets, Collection $xlsxSheets)
+    private function setExtraSheets(Collection $templateSheets, Collection $fileSheets)
     {
-        $missingSheets = $templateSheets->diff($xlsxSheets);
-
-        $missingSheets->each(function ($sheet) {
-            $this->addIssue(__('Missing Sheets'), $sheet);
-        });
+        $fileSheets->diff($templateSheets)
+            ->each(function ($sheetName) {
+                $this->summary->addIssue(__('Extra Sheets'), $sheetName);
+            });
     }
 
     private function checkColumns()
     {
-        $this->sheets->each(function ($sheet) {
-            if ($sheet->rows()->count()) {
-                $xlsxColumns = collect($sheet->rows()->first()->keys());
-                $templateColumns = $this->template->columns($sheet->name());
-                $this->setMissingColumns($sheet->name(), $xlsxColumns, $templateColumns);
-                $this->setExtraColumns($sheet->name(), $xlsxColumns, $templateColumns);
-            }
+        $this->worksheet->sheets()->each(function ($sheet) {
+            $templateHeader = $this->template->header($sheet->name());
+
+            $this->setMissingColumns(
+                    $sheet->name(), $sheet->header(), $templateHeader
+                )->setExtraColumns(
+                    $sheet->name(), $sheet->header(), $templateHeader
+                );
         });
     }
 
-    private function setMissingColumns(string $sheetName, Collection $xlsxColumns, Collection $templateColumns)
+    private function setMissingColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
-        $templateColumns->diff($xlsxColumns)
+        $templateHeader->diff($fileHeader)
             ->each(function ($column) use ($sheetName) {
-                $message = __(
-                    'Sheet ":sheet", column ":column"',
-                    ['sheet' => $sheetName, 'column' => $column]
+                $this->summary->addIssue(
+                    __('Missing Columns'),
+                    __(
+                        'Sheet ":sheet", column ":column"',
+                        ['sheet' => $sheetName, 'column' => $column]
+                    )
                 );
-
-                $this->addIssue(__('Missing Columns'), $message);
             });
+
+        return $this;
     }
 
-    private function setExtraColumns(string $sheetName, Collection $xlsxColumns, Collection $templateColumns)
+    private function setExtraColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
-        $xlsxColumns->diff($templateColumns)
+        $fileHeader->diff($templateHeader)
             ->each(function ($column) use ($sheetName) {
-                $message = __(
-                    'Sheet ":sheet", column ":column"',
-                    ['sheet' => $sheetName, 'column' => $column]
+                $this->summary->addIssue(
+                    __('Extra Columns'),
+                    __(
+                        'Sheet ":sheet", column ":column"',
+                        ['sheet' => $sheetName, 'column' => $column]
+                    )
                 );
-
-                $this->addIssue(__('Extra Columns'), $message);
             });
-    }
-
-    private function checkEntryLimit()
-    {
-        $this->sheets->each(function ($sheet) {
-            if ($sheet->rows()->count() > $this->template->entryLimit()) {
-                $category = __(
-                    'Exceeded the entries limit of: :limit',
-                    ['limit' => $this->template->entryLimit()]
-                );
-
-                $message = __(
-                    'Sheet ":sheet", count :count',
-                    ['sheet' => $sheet->name(), 'count' => $sheet->rows()->count()]
-                );
-
-                $this->addIssue($category, $message);
-            }
-        });
-    }
-
-    private function xlsxSheetNames()
-    {
-        return $this->sheets
-            ->map(function ($sheet) {
-                return $sheet->name();
-            });
-    }
-
-    private function addIssue(string $category, string $value)
-    {
-        $this->summary->addStructureIssue(...func_get_args());
     }
 }

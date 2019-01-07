@@ -3,129 +3,97 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\DataImport\app\Classes\Validators\Template as Validator;
 
 class Template
 {
-    private const MaxExecutionTime = 60;
-    private const EntryLimit = 5000;
-    private const stopsOnIssues = false;
+    private const DefaultChunk = 1000;
 
     private $template;
 
     public function __construct(\stdClass $template)
     {
-        $this->template = $template;
-    }
+        $this->template = new Obj($template);
 
-    public function maxExecutionTime()
-    {
-        return $this->template->maxExecutionTime
-            ?? self::MaxExecutionTime;
-    }
-
-    public function importer()
-    {
-        return $this->template->importerClass;
-    }
-
-    public function validator()
-    {
-        return $this->template->validatorClass
-            ?? null;
-    }
-
-    public function entryLimit()
-    {
-        return $this->template->entryLimit
-            ?? self::EntryLimit;
-    }
-
-    public function stopsOnIssues()
-    {
-        return $this->template->stopsOnIssues
-            ?? self::stopsOnIssues;
+        if ($this->shouldValidate()) {
+            $this->validate();
+        }
     }
 
     public function sheetNames()
     {
-        return collect($this->template->sheets)
-            ->pluck('name');
+        return $this->sheets()->pluck('name');
     }
 
-    public function columns(string $sheetName)
+    public function header(string $sheetName)
     {
-        return collect($this->sheet($sheetName)->columns)
-            ->pluck('name');
+        return $this->columns($sheetName)->pluck('name');
     }
 
-    public function laravelValidations(string $sheetName)
+    public function validationRules(string $sheetName)
     {
-        return collect($this->sheet($sheetName)->columns)
+        return $this->columns($sheetName)
             ->reduce(function ($rules, $column) {
-                if (property_exists($column, 'laravelValidations')) {
-                    $rules[$column->name] = $column->laravelValidations;
+                if (property_exists($column, 'validations')) {
+                    $rules[$column->name] = $column->validations;
                 }
 
                 return $rules;
             }, []);
     }
 
-    public function uniqueValueColumns(string $sheetName)
+    public function chunkSize($sheetName)
     {
-        return $this->columnsWithComplexValidation($sheetName, 'unique_in_column')
-            ->pluck('name');
+        return $this->sheet($sheetName)->get('chunkSize')
+            ?? config('enso.imports.chunkSize');
     }
 
-    public function existsInSheetColumns(string $sheetName)
+    public function importer($sheetName)
     {
-        return $this->columnsWithComplexValidation($sheetName, 'exists_in_sheet')
-            ->map(function ($column) {
-                return $this->buildExistsInSheetValidationObject($column);
-            });
+        $importerClass = $this->sheet($sheetName)->get('importerClass');
+
+        return new $importerClass;
     }
 
-    private function columnsWithComplexValidation(string $sheetName, string $type)
+    public function validator($sheetName)
     {
-        return collect($this->sheet($sheetName)->columns)
-            ->reduce(function ($columns, $column) use ($type) {
-                if ($this->hasComplexValidation($column, $type)) {
-                    $columns->push($column);
-                }
+        if (! $this->sheet($sheetName)->has('validatorClass')) {
+            return null;
+        }
 
-                return $columns;
-            }, collect());
+        $validatorClass = $this->sheet($sheetName)->get('validatorClass');
+
+        return new $validatorClass;
     }
 
-    private function hasComplexValidation(\stdClass $column, string $type)
+    private function columns(string $sheetName)
     {
-        return property_exists($column, 'complexValidations')
-            && collect(explode('|', $column->complexValidations))
-                ->first(function ($validation) use ($type) {
-                    return strpos($validation, $type) >= 0;
-                });
-    }
-
-    private function buildExistsInSheetValidationObject(\stdClass $column)
-    {
-        return collect(explode('|', $column->complexValidations))
-            ->filter(function ($validation) {
-                return strpos($validation, 'exists_in_sheet') === 0;
-            })->values()->map(function ($validation) use ($column) {
-                $args = explode(',', collect(explode(':', $validation))->last());
-
-                return new Obj([
-                    'column' => $column->name,
-                    'matchingSheet' => $args[0],
-                    'matchingColumn' => $args[1],
-                ]);
-            });
+        return collect($this->sheet($sheetName)->get('columns'));
     }
 
     private function sheet(string $sheetName)
     {
-        return collect($this->template->sheets)
-            ->first(function ($sheet) use ($sheetName) {
-                return $sheet->name === $sheetName;
-            });
+        $sheet = $this->sheets()->first(function ($sheet) use ($sheetName) {
+            return $sheet->name === $sheetName;
+        });
+
+        return new Obj($sheet);
+    }
+
+    private function sheets()
+    {
+        return collect($this->template->get('sheets'));
+    }
+
+    private function validate()
+    {
+        (new Validator($this->template))
+            ->handle();
+    }
+
+    private function shouldValidate()
+    {
+        return ! app()->environment('production')
+            || config('enso.imports.validations') === 'always';
     }
 }

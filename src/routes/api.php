@@ -15,16 +15,16 @@ Route::middleware(['web', 'auth', 'core'])
             ->name('index');
         Route::delete('{dataImport}', 'DataImportController@destroy')
             ->name('destroy');
-        Route::post('run/{type}', 'DataImportController@store')
-            ->name('run');
-        Route::get('download/{dataImport}', 'DataImportController@download')
+        Route::post('store', 'DataImportController@store')
+            ->name('store');
+        Route::get('download/{dataImport}', 'DataImportController@show')
             ->name('download');
-        Route::get('getSummary/{dataImport}', 'DataImportController@summary')
-            ->name('getSummary');
+        Route::get('downloadRejected/{rejectedImport}', 'RejectedImportController')
+            ->name('downloadRejected');
 
-        Route::get('getTemplate/{type}', 'ImportTemplateController@template')
-            ->name('getTemplate');
-        Route::post('uploadTemplate/{type}', 'ImportTemplateController@store')
+        Route::get('template/{type}', 'ImportTemplateController@template')
+            ->name('template');
+        Route::post('uploadTemplate', 'ImportTemplateController@store')
             ->name('uploadTemplate');
         Route::delete('deleteTemplate/{template}', 'ImportTemplateController@destroy')
             ->name('deleteTemplate');

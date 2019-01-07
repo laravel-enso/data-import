@@ -4,11 +4,13 @@ namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\DataImport\app\Enums\Statuses;
+use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\FileManager\app\Traits\HasFile;
+use LaravelEnso\DataImport\app\Classes\Structure;
 use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
-use LaravelEnso\DataImport\app\Classes\Importers\DataImporter;
 
 class DataImport extends Model implements Attachable, VisibleFile
 {
@@ -16,50 +18,52 @@ class DataImport extends Model implements Attachable, VisibleFile
 
     protected $extensions = ['xlsx'];
 
-    protected $fillable = ['type', 'summary'];
-
-    protected $casts = ['summary' => 'object'];
+    protected $fillable = ['type', 'successful', 'failed', 'status'];
 
     protected $loggableLabel = 'type';
 
     protected $loggable = [];
 
-    public function getSuccessfulAttribute()
+    private $importFile;
+
+    protected static function boot()
     {
-        $import = self::find($this->id);
+        parent::boot();
 
-        return $import->summary->successful;
-    }
-
-    public function getIssuesAttribute()
-    {
-        $import = self::find($this->id);
-
-        return collect($import->summary->contentIssues)
-            ->count();
-    }
-
-    public function summary()
-    {
-        return json_encode($this->summary);
-    }
-
-    public function store(UploadedFile $file, $type)
-    {
-        $importer = new DataImporter($file, $type);
-
-        \DB::transaction(function () use ($importer, $file, $type) {
-            $importer->handle();
-
-            if (! $importer->fails()) {
-                $this->create([
-                    'type' => $type,
-                    'summary' => $importer->summary(),
-                ])->upload($file);
-            }
+        self::deleting(function ($model) {
+            \Storage::deleteDirectory($model->rejectedFolder());
         });
+    }
 
-        return $importer->summary();
+    public function rejected()
+    {
+        return $this->hasOne(RejectedImport::class);
+    }
+
+    public function run(UploadedFile $file)
+    {
+        $structure = new Structure($this, $file);
+
+        if ($structure->validates()) {
+            $this->status = Statuses::Waiting;
+
+            tap($this)->save()
+                ->upload($file);
+
+            ImportJob::dispatch($this, $structure->template());
+        }
+
+        return $structure->summary();
+    }
+
+    public function getEntriesAttribute()
+    {
+        return $this->entries();
+    }
+
+    public function entries()
+    {
+        return $this->successful + $this->failed;
     }
 
     public function folder()
@@ -70,5 +74,12 @@ class DataImport extends Model implements Attachable, VisibleFile
     public function isDeletable()
     {
         return true;
+    }
+
+    public function rejectedFolder()
+    {
+        return config('enso.config.paths.imports')
+            .DIRECTORY_SEPARATOR
+            .'rejected_'.$this->id;
     }
 }
