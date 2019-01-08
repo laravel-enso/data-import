@@ -22,17 +22,17 @@ class Import
     private $chunk;
     private $chunkIndex;
 
-    public function __construct(DataImport $import, Template $template)
+    public function __construct(DataImport $import)
     {
         $this->import = $import;
-        $this->template = $template;
+        $this->template = new Template($import);
         $this->worksheet = (new Reader($this->import->file->path()));
         $this->chunkIndex = 0;
     }
 
     public function run()
     {
-        // sleep(5);
+        // sleep(3);
         $this->initImport();
 
         $this->template->sheetNames()

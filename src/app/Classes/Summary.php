@@ -7,28 +7,28 @@ use LaravelEnso\Helpers\app\Classes\Obj;
 class Summary extends Obj
 {
     public $filename;
-    public $issues;
+    public $errors;
 
     public function __construct(string $filename)
     {
         $this->filename = $filename;
-        $this->issues = new Obj();
+        $this->errors = new Obj();
     }
 
-    public function addIssue(string $category, string $value)
+    public function addError(string $category, string $value)
     {
-        $this->categoryContainer($this->issues, $category)
+        $this->categoryContainer($this->errors, $category)
             ->push($value);
     }
 
-    public function issues()
+    public function errors()
     {
-        return $this->issues;
+        return $this->errors;
     }
 
-    public function hasIssues()
+    public function hasErrors()
     {
-        return collect($this->issues)->isNotEmpty();
+        return collect($this->errors)->isNotEmpty();
     }
 
     private function categoryContainer(Obj $container, string $category)

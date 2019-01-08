@@ -9,6 +9,7 @@ use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Notifications\ImportDone;
 
 class Rejected
 {
@@ -29,13 +30,17 @@ class Rejected
 
     public function run()
     {
-        $this->init();
+        if ($this->dumps->isNotEmpty()) {
+            $this->init();
 
-        $this->dumps->each(function ($file) {
-            $this->export($this->content($file));
-        });
+            $this->dumps->each(function ($file) {
+                $this->export($this->content($file));
+            });
 
-        $this->store();
+            $this->store();
+        }
+
+        $this->notify();
     }
 
     private function init()
@@ -99,6 +104,13 @@ class Rejected
         $this->import->update(['status' => Statuses::Finalized]);
     }
 
+    private function notify()
+    {
+        optional($this->user())->notify(
+            new ImportDone($this->import)
+        );
+    }
+
     private function content(string $file)
     {
         return collect(json_decode(\Storage::get($file), true));
@@ -135,5 +147,10 @@ class Rejected
         return tap(collect(explode('.', $this->import->file->original_name)))
             ->pop()
             ->implode('.').'_rejected.xlsx';
+    }
+
+    private function user()
+    {
+        return optional($this->import->file)->createdBy;
     }
 }

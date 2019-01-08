@@ -15,7 +15,10 @@
                     :params="{ type: importType }"
                     file-key="template"
                     @upload-start="loadingTemplate=true"
-                    @upload-successful="template = $event;loadingTemplate = false"
+                    @upload-successful="
+                        template = $event;
+                        loadingTemplate = false
+                    "
                     @upload-error="loadingTemplate = false"
                     v-if="!template">
                     <a slot="upload-button"
@@ -56,16 +59,13 @@
                         file-key="import"
                         @upload-start="importing = true"
                         @upload-error="importing = false;importType = null"
-                        @upload-successful="
-                            summary = $event;
-                            importing = false;
-                            $refs.imports.fetch()
-                        " v-if="importType">
+                        @upload-successful="onImportUploaded"
+                        v-if="importType">
                         <a slot="upload-button"
                             slot-scope="{ openFileBrowser }"
                             :class="['button is-success', { 'is-loading': importing }]"
                             @click="openFileBrowser"
-                            v-if="!hasIssues">
+                            v-if="!hasErrors">
                             <span>{{ __('Upload file for import') }}</span>
                             <span class="icon is-small">
                                 <fa icon="upload"/>
@@ -79,7 +79,7 @@
             :path="path"
             id="imports"
             @download-rejected="downloadRejected"
-            v-if="!hasIssues"
+            v-if="!hasErrors"
             ref="imports">
             <b slot="entries"
                 slot-scope="{ row }"
@@ -110,26 +110,26 @@
             </span>
         </vue-table>
         <div class="columns is-centered"
-            v-if="hasIssues">
+            v-if="hasErrors">
             <div class="column is-two-thirds-tablet is-three-quarters-fullhd">
                 <div class="box has-background-light raises-on-hover animated bounceInRight">
                     <a class="delete is-pulled-right"
                         @click="summary = null"/>
                     <p class="title is-4 has-text-centered">
                         <fa icon="exclamation-triangle"/>
-                        {{ __('Structure Issues') }}
+                        {{ __('Structure Errors') }}
                     </p>
                     <tabs custom
                         class="has-padding-medium">
                         <tab class="has-padding-large"
                             :key="category"
                             :id="category"
-                            v-for="(issues, category) in summary.issues">
+                            v-for="(errors, category) in summary.errors">
                             <div class="columns is-multiline">
                                 <div class="column is-one-third-fullhd is-half"
-                                    v-for="(issue, index) in issues"
+                                    v-for="(error, index) in errors"
                                     :key="index">
-                                    <strong class="has-text-danger">{{ issue }}</strong>
+                                    <strong class="has-text-danger">{{ error }}</strong>
                                 </div>
                             </div>
                         </tab>
@@ -195,10 +195,10 @@ export default {
             return this.importType
                 && route('import.store');
         },
-        hasIssues() {
+        hasErrors() {
             return this.summary
-                && this.summary.issues
-                && Object.keys(this.summary.issues).length;
+                && this.summary.errors
+                && Object.keys(this.summary.errors).length;
         },
     },
 
@@ -248,25 +248,15 @@ export default {
 
             window.location.href = route('import.downloadRejected', rejectedId);
         },
+        onImportUploaded($event) {
+            this.summary = $event;
+            this.importing = false;
+            this.$refs.imports.fetch();
+            if (!this.hasErrors) {
+                this.$root.$emit('io-started');
+            }
+        },
     },
 };
 
 </script>
-
-<style lang="scss" scoped>
-
-    ul.issues {
-        list-style-type: square;
-
-        li {
-            cursor: pointer;
-            width: fit-content;
-            padding: 0.2em;
-
-            &:hover {
-                background: lightgray;
-            }
-        }
-    }
-
-</style>

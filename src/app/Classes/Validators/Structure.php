@@ -33,7 +33,7 @@ class Structure
 
     public function fails()
     {
-        return $this->summary->hasIssues();
+        return $this->summary->hasErrors();
     }
 
     public function summary()
@@ -54,7 +54,7 @@ class Structure
     {
         $templateSheets->diff($fileSheets)
             ->each(function ($sheetName) {
-                $this->summary->addIssue(__('Missing Sheets'), $sheetName);
+                $this->summary->addError(__('Missing Sheets'), $sheetName);
             });
 
         return $this;
@@ -64,7 +64,7 @@ class Structure
     {
         $fileSheets->diff($templateSheets)
             ->each(function ($sheetName) {
-                $this->summary->addIssue(__('Extra Sheets'), $sheetName);
+                $this->summary->addError(__('Extra Sheets'), $sheetName);
             });
     }
 
@@ -85,7 +85,7 @@ class Structure
     {
         $templateHeader->diff($fileHeader)
             ->each(function ($column) use ($sheetName) {
-                $this->summary->addIssue(
+                $this->summary->addError(
                     __('Missing Columns'),
                     __(
                         'Sheet ":sheet", column ":column"',
@@ -101,7 +101,7 @@ class Structure
     {
         $fileHeader->diff($templateHeader)
             ->each(function ($column) use ($sheetName) {
-                $this->summary->addIssue(
+                $this->summary->addError(
                     __('Extra Columns'),
                     __(
                         'Sheet ":sheet", column ":column"',

@@ -3,21 +3,28 @@
 namespace LaravelEnso\DataImport\app\Classes;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\Helpers\app\Classes\JsonParser;
+use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Classes\Validators\Template as Validator;
 
 class Template
 {
-    private const DefaultChunk = 1000;
-
     private $template;
 
-    public function __construct(\stdClass $template)
+    public function __construct(DataImport $import)
     {
-        $this->template = new Obj($template);
+        $this->template = new Obj($this->template($import));
 
         if ($this->shouldValidate()) {
             $this->validate();
         }
+    }
+
+    public function timeout()
+    {
+        return $this->template->has('timeout')
+            ? $this->template->get('timeout')
+            : config('enso.imports.timeout');
     }
 
     public function sheetNames()
@@ -44,8 +51,9 @@ class Template
 
     public function chunkSize($sheetName)
     {
-        return $this->sheet($sheetName)->get('chunkSize')
-            ?? config('enso.imports.chunkSize');
+        return $this->sheet($sheetName)->has('chunkSize')
+            ? $this->sheet($sheetName)->get('chunkSize')
+            : config('enso.imports.chunkSize');
     }
 
     public function importer($sheetName)
@@ -95,5 +103,15 @@ class Template
     {
         return ! app()->environment('production')
             || config('enso.imports.validations') === 'always';
+    }
+
+    private function template(DataImport $import)
+    {
+        $path = base_path(config(
+            'enso.imports.configs.'.$import->type.'.template'
+        ));
+
+        return (new JsonParser($path))
+            ->object();
     }
 }

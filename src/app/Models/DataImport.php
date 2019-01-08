@@ -50,7 +50,7 @@ class DataImport extends Model implements Attachable, VisibleFile
             tap($this)->save()
                 ->upload($file);
 
-            ImportJob::dispatch($this, $structure->template());
+            ImportJob::dispatch($this);
         }
 
         return $structure->summary();
