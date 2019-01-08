@@ -20,6 +20,7 @@ class RejectedExportJob implements ShouldQueue
     {
         $this->import = $import;
         $this->timeout = config('enso.imports.timeout');
+        $this->queue = config('enso.imports.queues.rejected');
     }
 
     public function handle()

@@ -11,7 +11,8 @@ class Import extends JsonResource
         return [
             'id' => $this->id,
             'entries' => $this->entries(),
-            'name' => $this->whenLoaded('file', $this->file->original_name)
+            'name' => $this->whenLoaded('file', $this->file->original_name),
+            'since' => $this->created_at,
         ];
     }
 }

@@ -17,6 +17,7 @@ class ImportDone extends Notification
     public function __construct(DataImport $import)
     {
         $this->import = $import;
+        $this->queue = config('enso.imports.queues.notifications');
     }
 
     public function via($notifiable)

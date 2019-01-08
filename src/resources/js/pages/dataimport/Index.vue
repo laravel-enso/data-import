@@ -52,27 +52,25 @@
             </div>
             <div class="column has-text-centered"
                 v-if="importType">
-                <div class="">
-                    <file-uploader :url="importLink"
-                        :file-size-limit="100000000"
-                        :params="{ type: importType }"
-                        file-key="import"
-                        @upload-start="importing = true"
-                        @upload-error="importing = false;importType = null"
-                        @upload-successful="onImportUploaded"
-                        v-if="importType">
-                        <a slot="upload-button"
-                            slot-scope="{ openFileBrowser }"
-                            :class="['button is-success', { 'is-loading': importing }]"
-                            @click="openFileBrowser"
-                            v-if="!hasErrors">
-                            <span>{{ __('Upload file for import') }}</span>
-                            <span class="icon is-small">
-                                <fa icon="upload"/>
-                            </span>
-                        </a>
-                    </file-uploader>
-                </div>
+                <file-uploader :url="importLink"
+                    :file-size-limit="100000000"
+                    :params="{ type: importType }"
+                    file-key="import"
+                    @upload-start="importing = true"
+                    @upload-error="importing = false;importType = null"
+                    @upload-successful="onImportUploaded"
+                    v-if="importType">
+                    <a slot="upload-button"
+                        slot-scope="{ openFileBrowser }"
+                        :class="['button is-success', { 'is-loading': importing }]"
+                        @click="openFileBrowser"
+                        v-if="!hasErrors">
+                        <span>{{ __('Upload file for import') }}</span>
+                        <span class="icon is-small">
+                            <fa icon="upload"/>
+                        </span>
+                    </a>
+                </file-uploader>
             </div>
         </div>
         <vue-table class="box is-paddingless raises-on-hover is-rounded animated fadeIn"

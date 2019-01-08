@@ -20,6 +20,7 @@ class ImportJob implements ShouldQueue
     {
         $this->import = $import;
         $this->timeout = config('enso.imports.timeout');
+        $this->queue = config('enso.imports.queues.splitting');
     }
 
     public function handle()
