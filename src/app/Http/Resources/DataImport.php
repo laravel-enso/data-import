@@ -3,16 +3,18 @@
 namespace LaravelEnso\DataImport\app\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use LaravelEnso\DataImport\app\Enums\ImportTypes;
 
-class Import extends JsonResource
+class DataImport extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
             'entries' => $this->entries(),
-            'name' => $this->whenLoaded('file', $this->file->original_name),
+            'type' => ImportTypes::get($this->type),
             'since' => $this->created_at,
+            'status' => $this->status,
         ];
     }
 }

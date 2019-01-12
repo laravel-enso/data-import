@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\FileManager\app\Traits\HasFile;
+use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Classes\Structure;
 use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
+use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, VisibleFile
 {
@@ -20,29 +22,23 @@ class DataImport extends Model implements Attachable, VisibleFile
 
     protected $fillable = ['type', 'successful', 'failed', 'status'];
 
+    protected $casts = ['status' => 'integer'];
+
     protected $loggableLabel = 'type';
 
     protected $loggable = [];
 
     private $importFile;
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::deleting(function ($model) {
-            \Storage::deleteDirectory($model->rejectedFolder());
-        });
-    }
-
     public function rejected()
     {
         return $this->hasOne(RejectedImport::class);
     }
 
-    public function run(UploadedFile $file)
+    public function run(UploadedFile $file, array $params = [])
     {
-        $structure = new Structure($this, $file);
+        $template = new Template($this);
+        $structure = new Structure($this, $template, $file);
 
         if ($structure->validates()) {
             $this->status = Statuses::Waiting;
@@ -50,7 +46,7 @@ class DataImport extends Model implements Attachable, VisibleFile
             tap($this)->save()
                 ->upload($file);
 
-            ImportJob::dispatch($this);
+            ImportJob::dispatch($this, $template, $params);
         }
 
         return $structure->summary();
@@ -81,5 +77,18 @@ class DataImport extends Model implements Attachable, VisibleFile
         return config('enso.config.paths.imports')
             .DIRECTORY_SEPARATOR
             .'rejected_'.$this->id;
+    }
+
+    public function delete()
+    {
+        if ($this->status !== Statuses::Finalized) {
+            throw new ProcessingInProgress(
+                __('The import is currently running and cannot be deleted')
+            );
+        }
+
+        \Storage::deleteDirectory($this->rejectedFolder());
+
+        parent::delete();
     }
 }

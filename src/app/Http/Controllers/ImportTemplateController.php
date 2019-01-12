@@ -14,24 +14,22 @@ class ImportTemplateController extends Controller
             ->first();
     }
 
-    public function store(ValidateTemplateRequest $request, ImportTemplate $template)
+    public function store(ValidateTemplateRequest $request, ImportTemplate $importTemplate)
     {
-        $template->type = $request->get('type');
+        $importTemplate->type = $request->get('type');
+        $importTemplate->store($request->file('template'));
 
-        tap($template)->save()
-            ->upload($request->file('template'));
-
-        return $template;
+        return $importTemplate;
     }
 
-    public function show(ImportTemplate $template)
+    public function show(ImportTemplate $importTemplate)
     {
-        return $template->download();
+        return $importTemplate->download();
     }
 
-    public function destroy(ImportTemplate $template)
+    public function destroy(ImportTemplate $importTemplate)
     {
-        $template->delete();
+        $importTemplate->delete();
 
         return [
             'message' => __('The template was successfully deleted'),

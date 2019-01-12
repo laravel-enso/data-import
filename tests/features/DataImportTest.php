@@ -5,19 +5,26 @@ use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Core\app\Models\UserGroup;
+use LaravelEnso\DataImport\app\Enums\Statuses;
+use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelEnso\FileManager\app\Classes\FileManager;
+use LaravelEnso\VueDatatable\app\Traits\Tests\Datatable;
 
 class DataImportTest extends TestCase
 {
-    use RefreshDatabase;
+    use Datatable, RefreshDatabase;
 
     private const ImportType = 'userGroups';
     private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
     private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     private const ImportFile = 'userGroups_import.xlsx';
+    private const ContentErrorsFile = 'content_errors.xlsx';
     private const ImportTestFile = 'userGroups_import_test.xlsx';
+
+    private $permissionGroup = 'import';
+    private $model;
 
     protected function setUp()
     {
@@ -41,38 +48,22 @@ class DataImportTest extends TestCase
     }
 
     /** @test */
-    public function index()
-    {
-        $this->get(route('import.index', [], false))
-            ->assertStatus(200);
-    }
-
-    /** @test */
-    public function getSummary()
-    {
-        $this->importUserGroups();
-
-        $dataImport = DataImport::whereHas('file', function ($query) {
-            $query->whereOriginalName(self::ImportTestFile);
-        })->first();
-
-        $this->get(route('import.getSummary', [$dataImport->id], false))
-            ->assertStatus(200);
-    }
-
-    /** @test */
     public function can_import()
     {
-        $this->post(route('import.run', [self::ImportType], false), [
-            'import' => $this->userGroupsImportFile()
+        $this->post(route('import.store', [], false), [
+            'import' => $this->importFile(self::ImportFile),
+            'type' => self::ImportType,
         ])->assertStatus(200)
-        ->assertJsonFragment(['successful' => 2]);
+        ->assertJsonFragment([
+            'errors' => [],
+            'filename' => self::ImportTestFile
+        ]);
 
-        $dataImport = DataImport::whereHas('file', function ($query) {
+        $this->model = DataImport::whereHas('file', function ($query) {
             $query->whereOriginalName(self::ImportTestFile);
         })->first();
 
-        $this->assertNotNull($dataImport);
+        $this->assertNotNull($this->model);
 
         $this->assertNotNull(
             UserGroup::whereName('ImportTestName')
@@ -80,20 +71,32 @@ class DataImportTest extends TestCase
         );
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
+    }
+
+    /** @test */
+    public function generates_rejected()
+    {
+        $this->createImport(self::ContentErrorsFile);
+        $this->assertNotNull($this->model->rejected);
+    }
+
+    /** @test */
+    public function can_download_rejected()
+    {
+        $this->createImport(self::ContentErrorsFile);
+
+        $this->get(route('import.downloadRejected', [$this->model->rejected->id], false))
+            ->assertStatus(200);
     }
 
     /** @test */
     public function download()
     {
-        $this->importUserGroups();
+        $this->createImport(self::ImportFile);
 
-        $dataImport = DataImport::whereHas('file', function ($query) {
-            $query->whereOriginalName(self::ImportTestFile);
-        })->first();
-
-        $this->get(route('import.download', [$dataImport->id], false))
+        $this->get(route('import.download', [$this->model->id], false))
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',
@@ -102,41 +105,50 @@ class DataImportTest extends TestCase
     }
 
     /** @test */
+    public function cant_destroy_while_running()
+    {
+        $this->createImport();
+
+        $this->delete(route('import.destroy', [$this->model->id], false))
+            ->assertStatus(555);
+
+        $this->model->update(['status' => Statuses::Finalized]);
+    }
+
+    /** @test */
     public function destroy()
     {
-        $this->importUserGroups();
+        $this->createImport(self::ImportFile);
 
-        $dataImport = DataImport::whereHas('file', function ($query) {
-            $query->whereOriginalName(self::ImportTestFile);
-        })->first();
-
-        $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$dataImport->file->saved_name;
+        $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name;
 
         \Storage::assertExists($filename);
 
-        $this->assertNotNull($dataImport);
-
-        $this->delete(route('import.destroy', [$dataImport->id], false))
+        $this->delete(route('import.destroy', [$this->model->id], false))
             ->assertStatus(200);
 
-        $this->assertNull($dataImport->fresh());
+        $this->assertNull($this->model->fresh());
 
         \Storage::assertMissing($filename);
     }
 
-    private function importUserGroups()
+    private function createImport($file = null)
     {
-        $uploadedFile = $this->userGroupsImportFile();
-
-        $this->post(route('import.run', [self::ImportType], false), [
-            'import' => $uploadedFile
+        $this->model = DataImport::create([
+            'type' => self::ImportType,
+            'status' => Statuses::Waiting,
         ]);
+
+        if ($file) {
+            $this->model->run($this->importFile($file));
+            $this->model->fresh();
+        }
     }
 
-    private function userGroupsImportFile()
+    private function importFile($file)
     {
         \File::copy(
-            self::Path.self::ImportFile,
+            self::Path.$file,
             self::Path.self::ImportTestFile
         );
 
@@ -152,6 +164,7 @@ class DataImportTest extends TestCase
 
     private function cleanUp()
     {
+        optional($this->model)->delete();
         \File::delete(self::Path.self::ImportTestFile);
     }
 }

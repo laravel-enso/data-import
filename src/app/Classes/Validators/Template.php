@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
-use LaravelEnso\DataImport\app\Contracts\Importer;
+use LaravelEnso\DataImport\app\Contracts\Importable;
 use LaravelEnso\DataImport\app\Classes\Attributes\Sheet;
 use LaravelEnso\DataImport\app\Exceptions\TemplateException;
 use LaravelEnso\DataImport\app\Classes\Attributes\Column as ColumnAttributes;
@@ -20,12 +20,12 @@ class Template
 
     public function handle()
     {
-        $this->checkRootAttributes()
-            ->checkSheetAttributes()
-            ->checkColumnAttributes();
+        $this->rootAttributes()
+            ->sheetAttributes()
+            ->columnAttributes();
     }
 
-    private function checkRootAttributes()
+    private function rootAttributes()
     {
         $diff = collect(TemplateAttributes::Attributes)
             ->diff($this->template->keys());
@@ -40,18 +40,18 @@ class Template
         return $this;
     }
 
-    private function checkSheetAttributes()
+    private function sheetAttributes()
     {
         collect($this->template->get('sheets'))
             ->each(function ($sheet) {
-                $this->checkSheetMandatory($sheet)
-                    ->checkSheetOptional($sheet);
+                $this->sheetMandatory($sheet)
+                    ->sheetOptional($sheet);
             });
 
         return $this;
     }
 
-    private function checkSheetMandatory($sheet)
+    private function sheetMandatory($sheet)
     {
         $diff = collect(Sheet::Mandatory)
             ->diff(collect($sheet)->keys());
@@ -78,15 +78,15 @@ class Template
         }
 
         if (! collect(class_implements($sheet->importerClass))
-                ->contains(Importer::class)) {
+            ->contains(Importable::class)) {
             throw new TemplateException(__(
                 'Importer class ":class" for sheet ":sheet" must implement the ":contract" contract',
-                ['contract' => Importer::class]
+                ['class' => $sheet->importerClass, 'contract' => Importable::class]
             ));
         }
     }
 
-    private function checkSheetOptional($sheet)
+    private function sheetOptional($sheet)
     {
         $diff = collect($sheet)->keys()
             ->diff(Sheet::Mandatory)
@@ -100,20 +100,18 @@ class Template
         }
     }
 
-    private function checkColumnAttributes()
+    private function columnAttributes()
     {
         collect($this->template->get('sheets'))
-            ->pluck('columns')
-            ->each(function ($columns) {
-                collect($columns)
-                    ->each(function ($column) {
-                        $this->checkColumnMandatory($column)
-                            ->checkColumnOptional($column);
-                    });
+            ->pluck('columns')->each(function ($columns) {
+                collect($columns)->each(function ($column) {
+                    $this->columnMandatory($column)
+                        ->columnOptional($column);
+                });
             });
     }
 
-    private function checkColumnMandatory($column)
+    private function columnMandatory($column)
     {
         $diff = collect(ColumnAttributes::Mandatory)
             ->diff(collect($column)->keys());
@@ -128,7 +126,7 @@ class Template
         return $this;
     }
 
-    private function checkColumnOptional($column)
+    private function columnOptional($column)
     {
         $diff = collect($column)->keys()
             ->diff(ColumnAttributes::Mandatory)

@@ -20,7 +20,9 @@ class RejectedImport extends Model implements Attachable, VisibleFile
 
     public function folder()
     {
-        return config('enso.config.paths.imports').DIRECTORY_SEPARATOR.'rejected_'.$this->data_import_id;
+        return config('enso.config.paths.imports')
+            .DIRECTORY_SEPARATOR
+            .'rejected_'.$this->data_import_id;
     }
 
     public function isDeletable()

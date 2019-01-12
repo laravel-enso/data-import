@@ -9,7 +9,7 @@ class CustomValidator extends Validator
 {
     public function run(Obj $row)
     {
-        //do custom validation logic
-        //for registering errors use $this->addError(string $error) as many times as you need
+        // do custom validation logic
+        // $this->addError(string $error) to register errors as many times as you need
     }
 }

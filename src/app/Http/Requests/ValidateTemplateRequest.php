@@ -15,12 +15,7 @@ class ValidateTemplateRequest extends FormRequest
     {
         return [
             'template' => 'required|file',
-            'type' => 'string|in:'.$this->types()
+            'type' => 'string|in:'.ImportTypes::keys()->implode(','),
         ];
-    }
-
-    private function types()
-    {
-        return implode(',', array_keys(config('enso.imports.configs')));
     }
 }

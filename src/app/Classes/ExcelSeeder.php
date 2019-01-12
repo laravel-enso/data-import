@@ -1,7 +1,5 @@
 <?php
 
-//TODO update!
-
 namespace LaravelEnso\DataImport\app\Classes;
 
 use Illuminate\Database\Seeder;
@@ -11,30 +9,27 @@ use LaravelEnso\DataImport\app\Models\DataImport;
 class ExcelSeeder extends Seeder
 {
     protected $type;
+    protected $filename;
 
     public function run()
     {
-        auth()->loginUsingId(1);
+        // DataImport::reguard(); //TODO test!
 
-        DataImport::reguard();
-
-        (new DataImport)->store($this->importFile(), $this->type);
+        DataImport::create([
+            'type' => $this->type,
+            'status' => Statuses::Waiting,
+        ])->run($this->importFile());
     }
 
     private function importFile()
     {
         return new UploadedFile(
-            storage_path('app/seeds/'.$this->filename()),
-            $this->filename(),
+            storage_path('app/seeds/'.$this->filename,
+            $this->filename,
             null,
             null,
             null,
             true
         );
-    }
-
-    private function filename()
-    {
-        return $this->type.'.xlsx';
     }
 }

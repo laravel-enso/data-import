@@ -2,19 +2,23 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Importers;
 
+use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Contracts\AfterHook;
 use LaravelEnso\DataImport\app\Jobs\ChunkImportJob;
+use LaravelEnso\DataImport\app\Contracts\BeforeHook;
 use LaravelEnso\DataImport\app\Classes\Worksheet\Row;
 use LaravelEnso\DataImport\app\Jobs\RejectedExportJob;
 use LaravelEnso\DataImport\app\Classes\Reader\Content as Reader;
 
 class Import
 {
-    private $import;
+    private $dataImport;
+    private $params;
     private $template;
-    private $worksheet;
+    private $reader;
     private $rowIterator;
     private $sheetName;
     private $header;
@@ -22,62 +26,85 @@ class Import
     private $chunk;
     private $chunkIndex;
 
-    public function __construct(DataImport $import)
+    public function __construct(DataImport $dataImport, Template $template, array $params)
     {
-        $this->import = $import;
-        $this->template = new Template($import);
-        $this->worksheet = (new Reader($this->import->file->path()));
+        $this->dataImport = $dataImport;
+        $this->params = new Obj($params);
+        $this->template = $template;
         $this->chunkIndex = 0;
     }
 
     public function run()
     {
-        // sleep(3);
-        $this->initImport();
+        $this->openReader()
+            ->start();
 
         $this->template->sheetNames()
             ->each(function ($sheetName) {
-                $this->initParams($sheetName)
+                $this->sheetName = $sheetName;
+
+                $this->beforeHook()
+                    ->prepareSheet()
                     ->queueChunks();
             });
 
-        $this->close();
+        $this->closeReader()
+            ->finalize();
     }
 
-    private function initImport()
+    private function openReader()
     {
-        $this->import->update([
+        $this->reader = new Reader(
+            $this->dataImport->file->path()
+        );
+
+        $this->reader->open();
+
+        return $this;
+    }
+
+    private function start()
+    {
+        $this->dataImport->update([
             'successful' => 0,
             'failed' => 0,
             'status' => Statuses::Processing
         ]);
     }
 
-    private function initParams(string $sheetName)
+    private function beforeHook()
     {
-        $this->sheetName = $sheetName;
-        $this->rowIterator = $this->worksheet->rowIterator($sheetName);
-        $this->header = $this->template->header($sheetName);
-        $this->chunkSize = $this->template->chunkSize($sheetName);
+        $importer = $this->template->importer($this->sheetName);
+
+        if ($importer instanceof BeforeHook) {
+            $importer->before($this->params);
+        }
+
+        return $this;
+    }
+
+    private function prepareSheet()
+    {
+        $this->rowIterator = $this->reader->rowIterator($this->sheetName);
+        $this->header = $this->template->header($this->sheetName);
+        $this->chunkSize = $this->template->chunkSize($this->sheetName);
 
         return $this;
     }
 
     private function queueChunks()
     {
-        // sleep(5);
-
-        while (! $this->reachedFileEnd()) {
-            $this->incChunks()
+        while (! $this->hasFinished()) {
+            $this->incChunk()
                 ->prepareChunk()
                 ->dispatch();
         }
     }
 
-    private function incChunks()
+    private function incChunk()
     {
         $this->chunkIndex++;
-        $this->import->update(['chunks' => $this->chunkIndex]);
+        $this->dataImport->update(['chunks' => $this->chunkIndex]);
 
         return $this;
     }
@@ -86,7 +113,7 @@ class Import
     {
         $this->chunk = collect();
 
-        while (! $this->reachedFileEnd() && $this->chunkIncomplete()) {
+        while (! $this->hasFinished() && $this->chunkIsIncomplete()) {
             $this->chunk->push($this->row());
             $this->rowIterator->next();
         }
@@ -107,12 +134,13 @@ class Import
     private function dispatch()
     {
         ChunkImportJob::dispatch(
-            $this->import,
+            $this->dataImport,
+            $this->params,
             $this->template,
             $this->sheetName,
             $this->chunk,
             $this->chunkIndex,
-            $this->reachedFileEnd()
+            $this->hasFinished()
         );
     }
 
@@ -121,29 +149,44 @@ class Import
         return collect($this->rowIterator->current())
             ->map(function ($cell) {
                 return ! is_string($cell)
-                ? $cell
-                : trim($cell) ?? null;
+                    ? $cell
+                    : trim($cell) ?? null;
             });
     }
 
-    private function chunkIncomplete()
+    private function chunkIsIncomplete()
     {
         return $this->chunk->count() < $this->chunkSize;
     }
 
-    private function reachedFileEnd()
+    private function hasFinished()
     {
         return ! $this->rowIterator->valid();
     }
 
-    private function close()
+    private function closeReader()
     {
-        $this->worksheet->close();
+        $this->reader->close();
+        unset($this->reader);
 
+        return $this;
+    }
+
+    private function finalize()
+    {
         if (config('queue.default') === 'sync') {
-            $this->import->update(['status' => Statuses::Processed]);
-            // sleep(5);
-            RejectedExportJob::dispatch($this->import);
+            $this->afterHook();
+            $this->dataImport->update(['status' => Statuses::Processed]);
+            RejectedExportJob::dispatch($this->dataImport);
+        }
+    }
+
+    private function afterHook()
+    {
+        $importer = $this->template->importer($this->sheetName);
+
+        if ($importer instanceof AfterHook) {
+            $importer->after($this->params);
         }
     }
 }

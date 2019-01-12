@@ -16,6 +16,8 @@ class ImportTemplateTest extends TestCase
     const TemplateFile = 'userGroups_import.xlsx';
     const TemplateTestFile = 'userGroups_import_test.xlsx';
 
+    private $model;
+
     protected function setUp()
     {
         parent::setUp();
@@ -33,41 +35,40 @@ class ImportTemplateTest extends TestCase
     }
 
     /** @test */
-    public function get_template()
+    public function can_upload_template()
     {
-        $this->uploadTemplateFile();
+        $this->post(route('import.uploadTemplate', [], false), [
+            'template' => $this->templateFile(),
+            'type' => self::ImportType,
+        ])->assertStatus(201);
 
-        $this->get(route('import.getTemplate', [self::ImportType], false))
-            ->assertStatus(200);
+        $this->model = ImportTemplate::with('file')
+            ->whereHas('file', function ($query) {
+                $query->whereOriginalName(self::TemplateTestFile);
+            })->first();
+
+        \Storage::assertExists(
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
+        );
+
+        $this->assertNotNull($this->model);
     }
 
     /** @test */
-    public function upload_template()
+    public function can_get_template()
     {
-        $this->post(
-            route('import.uploadTemplate', [self::ImportType], false),
-            ['template' => $this->templateImportFile()]
-        )->assertStatus(201);
+        $this->createModel();
 
-        $importTemplate = ImportTemplate::with('file')
-            ->whereHas('file', function ($query) {
-                $query->whereOriginalName(self::TemplateTestFile);
-            })
-            ->first();
-
-        \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
-        );
-
-        $this->assertNotNull($importTemplate);
+        $this->get(route('import.template', [self::ImportType], false))
+            ->assertStatus(200);
     }
 
     /** @test */
     public function download_template()
     {
-        $importTemplate = $this->uploadTemplateFile();
+        $this->createModel();
 
-        $this->get(route('import.downloadTemplate', [$importTemplate->id], false))
+        $this->get(route('import.downloadTemplate', [$this->model->id], false))
             ->assertStatus(200)
             ->assertHeader(
                 'content-disposition',
@@ -78,39 +79,34 @@ class ImportTemplateTest extends TestCase
     /** @test */
     public function delete_template()
     {
-        $importTemplate = $this->uploadTemplateFile();
+        $this->createModel();
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
 
-        $this->assertNotNull($importTemplate);
+        $this->assertNotNull($this->model);
 
-        $this->delete(route('import.deleteTemplate', [$importTemplate->id], false))
+        $this->delete(route('import.deleteTemplate', [$this->model->id], false))
             ->assertStatus(200);
 
-        $this->assertNull($importTemplate->fresh());
+        $this->assertNull($this->model->fresh());
 
         \Storage::assertMissing(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$importTemplate->file->saved_name
+            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
     }
 
-    private function uploadTemplateFile()
+    private function createModel()
     {
-        $this->post(
-            route('import.uploadTemplate', [self::ImportType], false),
-            ['template' => $this->templateImportFile()]
-        );
+        $this->model = ImportTemplate::create([
+            'type' => self::ImportType,
+        ]);
 
-        return ImportTemplate::with('file')
-            ->whereHas('file', function ($query) {
-                $query->whereOriginalName(self::TemplateTestFile);
-            })
-            ->first();
+        $this->model->upload($this->templateFile());
     }
 
-    private function templateImportFile()
+    private function templateFile()
     {
         \File::copy(
             self::Path.self::TemplateFile,
@@ -129,6 +125,7 @@ class ImportTemplateTest extends TestCase
 
     private function cleanUp()
     {
+        $this->model->delete();
         \File::delete(self::Path.self::TemplateTestFile);
     }
 }

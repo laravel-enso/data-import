@@ -9,8 +9,6 @@ class UserGroupImporter implements Importer
 {
     public function run(Obj $row)
     {
-        UserGroup::create($row->toArray());
-
-        $this->incSuccess();
+        UserGroup::create($row->all());
     }
 }

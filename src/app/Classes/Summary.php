@@ -17,7 +17,7 @@ class Summary extends Obj
 
     public function addError(string $category, string $value)
     {
-        $this->categoryContainer($this->errors, $category)
+        $this->category($this->errors, $category)
             ->push($value);
     }
 
@@ -28,15 +28,15 @@ class Summary extends Obj
 
     public function hasErrors()
     {
-        return collect($this->errors)->isNotEmpty();
+        return $this->errors->isNotEmpty();
     }
 
-    private function categoryContainer(Obj $container, string $category)
+    private function category(Obj $container, string $category)
     {
-        if (! property_exists($container, $category)) {
+        if (! $container->has($category)) {
             $container->set($category, collect());
         }
 
-        return $container->$category;
+        return $container->get($category);
     }
 }

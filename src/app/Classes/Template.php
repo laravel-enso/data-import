@@ -11,9 +11,9 @@ class Template
 {
     private $template;
 
-    public function __construct(DataImport $import)
+    public function __construct(DataImport $dataImport)
     {
-        $this->template = new Obj($this->template($import));
+        $this->template = $this->template($dataImport);
 
         if ($this->shouldValidate()) {
             $this->validate();
@@ -63,7 +63,7 @@ class Template
         return new $importerClass;
     }
 
-    public function validator($sheetName)
+    public function customValidator($sheetName)
     {
         if (! $this->sheet($sheetName)->has('validatorClass')) {
             return null;
@@ -81,11 +81,10 @@ class Template
 
     private function sheet(string $sheetName)
     {
-        $sheet = $this->sheets()->first(function ($sheet) use ($sheetName) {
-            return $sheet->name === $sheetName;
-        });
-
-        return new Obj($sheet);
+        return $this->sheets()
+            ->first(function ($sheet) use ($sheetName) {
+                return $sheet->name === $sheetName;
+            });
     }
 
     private function sheets()
@@ -105,13 +104,15 @@ class Template
             || config('enso.imports.validations') === 'always';
     }
 
-    private function template(DataImport $import)
+    private function template(DataImport $dataImport)
     {
         $path = base_path(config(
-            'enso.imports.configs.'.$import->type.'.template'
+            'enso.imports.configs.'.$dataImport->type.'.template'
         ));
 
-        return (new JsonParser($path))
+        $template = (new JsonParser($path))
             ->object();
+
+        return new Obj($template);
     }
 }

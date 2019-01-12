@@ -19,13 +19,14 @@ class Row extends Validator
 
     private function addErrors()
     {
-        foreach (array_keys($this->rules) as $column) {
+        collect($this->rules)->keys()->each(function ($column) {
             if ($this->validator->errors()->has($column)) {
-                foreach ($this->validator->errors()->get($column) as $error) {
-                    $this->addError($error);
-                }
+                collect($this->validator->errors()->get($column))
+                    ->each(function ($error) {
+                        $this->addError($error);
+                    });
             }
-        }
+        });
     }
 
     public function rules(array $rules)

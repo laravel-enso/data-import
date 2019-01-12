@@ -47,15 +47,16 @@ class StructureValidationTest extends TestCase
             'template' => Str::replaceFirst(base_path(), '', self::Template),
         ]]);
 
-        $this->post(
-            route('import.run', [self::ImportType], false),
-            ['import' => $this->file(self::InvalidSheetsFile)]
-        )->assertStatus(200)
+        $this->post(route('import.store', [], false), [
+            'import' => $this->file(self::InvalidSheetsFile),
+            'type' => self::ImportType,
+        ])->assertStatus(200)
         ->assertJsonFragment([
-            'issues' => 2,
-            'successful' => 0,
-        ])->assertJsonStructure([
-            'structureIssues',
+            'errors' => [
+                'Extra Sheets' => ['invalidSheet'],
+                'Missing Sheets' => ['groups']
+            ],
+            'filename' => self::TestFile,
         ]);
 
         $this->assertNull(
@@ -72,37 +73,16 @@ class StructureValidationTest extends TestCase
             'template' => Str::replaceFirst(base_path(), '', self::Template),
         ]]);
 
-        $this->post(
-            route('import.run', [self::ImportType], false),
-            ['import' => $this->file(self::InvalidColumnsFile)]
-        )
-            ->assertStatus(200)
-            ->assertJsonFragment([
-                'issues' => 1,
-                'successful' => 0,
-            ]);
-
-        $this->assertNull(
-            DataImport::whereName(self::TestFile)
-                ->first()
-        );
-    }
-
-    /** @test */
-    public function stops_if_exceeds_entries_limit()
-    {
-        config(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groups',
-            'template' => Str::replaceFirst(base_path(), '', self::LimitTemplate),
-        ]]);
-
-        $this->post(
-            route('import.run', [self::ImportType], false),
-            ['import' => $this->file(self::TwoEntriesFile)]
-        )->assertStatus(200)
-        ->assertJsonStructure([
-            'structureIssues',
-            'issues',
+        $this->post(route('import.store', [], false), [
+            'import' => $this->file(self::InvalidColumnsFile),
+            'type' => self::ImportType,
+        ])->assertStatus(200)
+        ->assertJsonFragment([
+            'errors' => [
+                'Extra Columns' => ['Sheet "groups", column "invalid_column"'],
+                'Missing Columns' => ['Sheet "groups", column "description"']
+            ],
+            'filename' => self::TestFile,
         ]);
 
         $this->assertNull(

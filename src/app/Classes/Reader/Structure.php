@@ -10,16 +10,11 @@ class Structure extends XLSX
 {
     private $worksheet;
 
-    public function __construct()
-    {
-        parent::__construct(...func_get_args());
-
-        $this->worksheet = new Worksheet();
-    }
-
     public function get()
     {
-        $this->read()
+        $this->worksheet = new Worksheet();
+
+        $this->open()
             ->build()
             ->close();
 

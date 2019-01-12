@@ -26,8 +26,8 @@ Route::middleware(['web', 'auth', 'core'])
             ->name('template');
         Route::post('uploadTemplate', 'ImportTemplateController@store')
             ->name('uploadTemplate');
-        Route::delete('deleteTemplate/{template}', 'ImportTemplateController@destroy')
+        Route::delete('deleteTemplate/{importTemplate}', 'ImportTemplateController@destroy')
             ->name('deleteTemplate');
-        Route::get('downloadTemplate/{template}', 'ImportTemplateController@show')
+        Route::get('downloadTemplate/{importTemplate}', 'ImportTemplateController@show')
             ->name('downloadTemplate');
     });

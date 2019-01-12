@@ -18,7 +18,7 @@ class XLSX
         $this->reader = ReaderFactory::create(Type::XLSX);
     }
 
-    protected function read()
+    public function open()
     {
         try {
             $this->reader->open($this->file);

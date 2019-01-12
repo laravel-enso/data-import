@@ -7,33 +7,42 @@ use LaravelEnso\DataImport\app\Models\DataImport;
 
 class RejectedDump
 {
-    private $import;
+    private $dataImport;
     private $sheetName;
     private $rejected;
     private $index;
     private $dump;
 
-    public function __construct(DataImport $import, string $sheetName, Collection $rejected, int $index)
+    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected, int $index)
     {
-        $this->import = $import;
+        $this->dataImport = $dataImport;
         $this->sheetName = $sheetName;
         $this->rejected = $rejected;
         $this->index = $index;
+        $this->dump = collect();
     }
 
     public function handle()
     {
-        \Storage::put($this->path(), $this->dump());
+        $this->prepare()
+            ->store();
     }
 
-    private function dump()
+    private function prepare()
     {
-        $this->dump = collect();
         $this->dump->push($this->sheetName);
         $this->dump->push($this->rejected->first()->keys());
         $this->dump = $this->dump->merge($this->rejectedValues());
 
-        return json_encode($this->dump);
+        return $this;
+        ;
+    }
+
+    private function store()
+    {
+        \Storage::put(
+            $this->path(), json_encode($this->dump)
+        );
     }
 
     private function rejectedValues()
@@ -45,7 +54,7 @@ class RejectedDump
 
     private function path()
     {
-        return $this->import->rejectedFolder()
+        return $this->dataImport->rejectedFolder()
             .DIRECTORY_SEPARATOR
             .'rejected_dump_'.$this->index.'.json';
     }

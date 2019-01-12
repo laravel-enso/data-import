@@ -50,16 +50,15 @@
                     </span>
                 </a>
             </div>
-            <div class="column has-text-centered"
+            <div class="column has-text-centered-touch has-text-right-desktop"
                 v-if="importType">
                 <file-uploader :url="importLink"
                     :file-size-limit="100000000"
-                    :params="{ type: importType }"
+                    :params="{ type: importType, test: 1 }"
                     file-key="import"
                     @upload-start="importing = true"
                     @upload-error="importing = false;importType = null"
-                    @upload-successful="onImportUploaded"
-                    v-if="importType">
+                    @upload-successful="onImportUploaded">
                     <a slot="upload-button"
                         slot-scope="{ openFileBrowser }"
                         :class="['button is-success', { 'is-loading': importing }]"

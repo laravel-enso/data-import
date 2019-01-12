@@ -1,0 +1,18 @@
+{
+	"timeout": 500,
+	"sheets": [
+		{
+			"name": "sheet1",
+			"importerClass": "App\\Imports\\Importers\\ExampleImporter",
+			"validatorClass": "App\\Imports\\Validators\\CustomValidator",
+			"chunkSize": 250,
+			"columns": [{
+				"name": "name",
+				"validations": "string|required|unique:user_groups,name"
+			}, {
+				"name": "description",
+				"validations": "string|nullable"
+			}]
+		}
+	]
+}

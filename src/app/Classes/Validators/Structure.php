@@ -46,11 +46,11 @@ class Structure
         $templateSheets = $this->template->sheetNames();
         $fileSheets = $this->worksheet->sheetNames();
 
-        $this->setMissingSheets($templateSheets, $fileSheets)
-            ->setExtraSheets($templateSheets, $fileSheets);
+        $this->missingSheets($templateSheets, $fileSheets)
+            ->extraSheets($templateSheets, $fileSheets);
     }
 
-    private function setMissingSheets(Collection $templateSheets, Collection $fileSheets)
+    private function missingSheets(Collection $templateSheets, Collection $fileSheets)
     {
         $templateSheets->diff($fileSheets)
             ->each(function ($sheetName) {
@@ -60,7 +60,7 @@ class Structure
         return $this;
     }
 
-    private function setExtraSheets(Collection $templateSheets, Collection $fileSheets)
+    private function extraSheets(Collection $templateSheets, Collection $fileSheets)
     {
         $fileSheets->diff($templateSheets)
             ->each(function ($sheetName) {
@@ -73,21 +73,20 @@ class Structure
         $this->worksheet->sheets()->each(function ($sheet) {
             $templateHeader = $this->template->header($sheet->name());
 
-            $this->setMissingColumns(
+            $this->missingColumns(
                     $sheet->name(), $sheet->header(), $templateHeader
-                )->setExtraColumns(
+                )->extraColumns(
                     $sheet->name(), $sheet->header(), $templateHeader
                 );
         });
     }
 
-    private function setMissingColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
+    private function missingColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
         $templateHeader->diff($fileHeader)
             ->each(function ($column) use ($sheetName) {
                 $this->summary->addError(
-                    __('Missing Columns'),
-                    __(
+                    __('Missing Columns'), __(
                         'Sheet ":sheet", column ":column"',
                         ['sheet' => $sheetName, 'column' => $column]
                     )
@@ -97,13 +96,12 @@ class Structure
         return $this;
     }
 
-    private function setExtraColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
+    private function extraColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
         $fileHeader->diff($templateHeader)
             ->each(function ($column) use ($sheetName) {
                 $this->summary->addError(
-                    __('Extra Columns'),
-                    __(
+                    __('Extra Columns'), __(
                         'Sheet ":sheet", column ":column"',
                         ['sheet' => $sheetName, 'column' => $column]
                     )

@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -12,11 +13,11 @@ class ImportDone extends Notification
 {
     use Queueable;
 
-    public $import;
+    public $dataImport;
 
-    public function __construct(DataImport $import)
+    public function __construct(DataImport $dataImport)
     {
-        $this->import = $import;
+        $this->dataImport = $dataImport;
         $this->queue = config('enso.imports.queues.notifications');
     }
 
@@ -29,7 +30,7 @@ class ImportDone extends Notification
     {
         return new BroadcastMessage([
             'level' => 'success',
-            'title' => __('Import Done'),
+            'title' => $this->broadcastBody(),
             'body' => $this->filename(),
             'icon' => 'file-excel',
         ]);
@@ -38,27 +39,52 @@ class ImportDone extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject(__(config('app.name')).': '.__('Import Done'))
+            ->subject($this->mailSubject())
             ->markdown('laravel-enso/dataimport::emails.import', [
                 'name' => $notifiable->person->appellative
                     ?: $notifiable->person->name,
                 'filename' => $this->filename(),
-                'successful' => $this->import->successful,
-                'failed' => $this->import->failed,
-                'entries' => $this->import->entries(),
+                'type' => $this->type(),
+                'successful' => $this->dataImport->successful,
+                'failed' => $this->dataImport->failed,
+                'entries' => $this->dataImport->entries(),
             ]);
     }
 
     public function toArray($notifiable)
     {
         return [
-            'body' => __('Import done').': '.$this->filename(),
+            'body' => $this->notificationBody(),
             'icon' => 'file-excel',
         ];
     }
 
+    private function notificationBody()
+    {
+        return $this->broadcastBody()
+            .': '
+            .$this->filename();
+    }
+
+    private function broadcastBody()
+    {
+        return __(':type import done', ['type' => $this->type()]);
+    }
+
+    private function mailSubject()
+    {
+        return __(config('app.name'))
+            .': '
+            .__(':type import done', ['type' => $this->type()]);
+    }
+
     private function filename()
     {
-        return $this->import->file->original_name;
+        return $this->dataImport->file->original_name;
+    }
+
+    private function type()
+    {
+        return ImportTypes::get($this->dataImport->type);
     }
 }

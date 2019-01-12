@@ -9,17 +9,17 @@ use LaravelEnso\DataImport\app\Classes\Validators\Structure as Validator;
 
 class Structure
 {
-    private $import;
+    private $dataImport;
     private $file;
     private $summary;
     private $template;
 
-    public function __construct(DataImport $import, UploadedFile $file)
+    public function __construct(DataImport $dataImport, Template $template, UploadedFile $file)
     {
-        $this->import = $import;
+        $this->dataImport = $dataImport;
+        $this->template = $template;
         $this->file = $file;
         $this->summary = new Summary($this->file->getClientOriginalName());
-        $this->template = new Template($import);
     }
 
     public function validates()

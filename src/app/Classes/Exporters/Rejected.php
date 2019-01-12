@@ -13,16 +13,16 @@ use LaravelEnso\DataImport\app\Notifications\ImportDone;
 
 class Rejected
 {
-    private $import;
-    private $header;
+    private $dataImport;
     private $writer;
     private $filename;
+    private $header;
     private $sheets;
     private $dumps;
 
-    public function __construct(DataImport $import)
+    public function __construct(DataImport $dataImport)
     {
-        $this->import = $import;
+        $this->dataImport = $dataImport;
         $this->filename = $this->filename();
         $this->sheets = collect();
         $this->dumps = $this->dumps();
@@ -31,32 +31,37 @@ class Rejected
     public function run()
     {
         if ($this->dumps->isNotEmpty()) {
-            $this->init();
+            $this->start()
+                ->initWriter();
 
             $this->dumps->each(function ($file) {
                 $this->export($this->content($file));
             });
 
-            $this->store();
+            $this->closeWriter()
+                ->storeRejected()
+                ->cleanUp();
         }
 
-        $this->notify();
+        $this->finalize()
+            ->notify();
     }
 
-    private function init()
+    private function start()
     {
-        $this->import->update(['status' => Statuses::ExportingRejected]);
-        // sleep(5);
-        $this->setWriter();
+        $this->dataImport->update(['status' => Statuses::ExportingRejected]);
+
+        return $this;
     }
 
     private function export(Collection $rejected)
     {
-        $this->prepareWorkingSheet($rejected);
+        $this->prepare($rejected);
+
         $this->writer->addRows($rejected->toArray());
     }
 
-    private function prepareWorkingSheet(Collection $rejected)
+    private function prepare(Collection $rejected)
     {
         $sheetName = $rejected->shift();
         $header = $rejected->shift();
@@ -69,18 +74,13 @@ class Rejected
             $this->writer->addNewSheetAndMakeItCurrent();
         }
 
-        $this->sheets->push($sheetName);
-        $this->setSheetName($sheetName);
+        $this->writer->getCurrentSheet()->setName($sheetName);
         $this->writer->addRow($header);
+
+        $this->sheets->push($sheetName);
     }
 
-    private function setSheetName($sheetName)
-    {
-        $this->writer->getCurrentSheet()
-            ->setName($sheetName);
-    }
-
-    private function setWriter()
+    private function initWriter()
     {
         $defaultStyle = (new StyleBuilder())
             ->setShouldWrapText(false)
@@ -92,22 +92,39 @@ class Rejected
             ->openToFile(\Storage::path($this->path()));
     }
 
-    private function store()
+    private function closeWriter()
     {
         $this->writer->close();
         unset($this->writer);
 
-        $this->import->rejected()
-            ->create(['data_import_id' => $this->import->id])
+        return $this;
+    }
+
+    private function storeRejected()
+    {
+        $this->dataImport->rejected()
+            ->create(['data_import_id' => $this->dataImport->id])
             ->upload($this->fileWrapper());
 
-        $this->import->update(['status' => Statuses::Finalized]);
+        return $this;
+    }
+
+    private function cleanUp()
+    {
+        \Storage::delete($this->path());
+    }
+
+    private function finalize()
+    {
+        $this->dataImport->update(['status' => Statuses::Finalized]);
+
+        return $this;
     }
 
     private function notify()
     {
         optional($this->user())->notify(
-            new ImportDone($this->import)
+            new ImportDone($this->dataImport)
         );
     }
 
@@ -131,26 +148,26 @@ class Rejected
     private function dumps()
     {
         return collect(\Storage::files(
-            $this->import->rejectedFolder()
+            $this->dataImport->rejectedFolder()
         ));
     }
 
     private function path()
     {
-        return $this->import->rejectedFolder()
+        return $this->dataImport->rejectedFolder()
             .DIRECTORY_SEPARATOR
             .$this->filename;
     }
 
     private function filename()
     {
-        return tap(collect(explode('.', $this->import->file->original_name)))
+        return tap(collect(explode('.', $this->dataImport->file->original_name)))
             ->pop()
             ->implode('.').'_rejected.xlsx';
     }
 
     private function user()
     {
-        return optional($this->import->file)->createdBy;
+        return optional($this->dataImport->file)->createdBy;
     }
 }

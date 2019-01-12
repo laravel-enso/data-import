@@ -1,16 +1,17 @@
 {
-    "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
-    "entryLimit": 5000,
-    "stopsOnIssues": false,
-    "sheets": [{
-        "name": "groups",
-        "columns": [{
-            "name": "name",
-            "laravelValidations": "string|required|unique:user_groups,name",
-            "complexValidations": "unique_in_column"
-        }, {
-            "name": "description",
-            "laravelValidations": "string|required"
-        }]
-    }]
+    "timeout": 500,
+    "sheets": [
+        {
+            "name": "groups",
+            "importerClass": "LaravelEnso\\Examples\\app\\Imports\\Importers\\UserGroupImporter",
+            "chunkSize": 250,
+            "columns": [{
+                "name": "name",
+                "validations": "string|required|unique:user_groups,name"
+            },{
+                "name": "description",
+                "validations": "string|nullable"
+            }]
+        }
+    ]
 }
