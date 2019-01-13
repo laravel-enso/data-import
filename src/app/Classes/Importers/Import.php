@@ -68,7 +68,7 @@ class Import
         $this->dataImport->update([
             'successful' => 0,
             'failed' => 0,
-            'status' => Statuses::Processing
+            'status' => Statuses::Processing,
         ]);
     }
 

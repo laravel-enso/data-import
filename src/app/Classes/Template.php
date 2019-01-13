@@ -66,7 +66,7 @@ class Template
     public function customValidator($sheetName)
     {
         if (! $this->sheet($sheetName)->has('validatorClass')) {
-            return null;
+            return;
         }
 
         $validatorClass = $this->sheet($sheetName)->get('validatorClass');

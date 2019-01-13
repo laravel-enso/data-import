@@ -35,7 +35,6 @@ class RejectedDump
         $this->dump = $this->dump->merge($this->rejectedValues());
 
         return $this;
-        ;
     }
 
     private function store()
