@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use LaravelEnso\DataImport\app\Enums\ImportTypes;
 
 class ValidateTemplateRequest extends FormRequest
 {

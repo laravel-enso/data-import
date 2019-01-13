@@ -79,6 +79,8 @@ class DataImportTest extends TestCase
     public function generates_rejected()
     {
         $this->createImport(self::ContentErrorsFile);
+        $this->updateStatus();
+
         $this->assertNotNull($this->model->rejected);
     }
 
@@ -86,6 +88,7 @@ class DataImportTest extends TestCase
     public function can_download_rejected()
     {
         $this->createImport(self::ContentErrorsFile);
+        $this->updateStatus();
 
         $this->get(route('import.downloadRejected', [$this->model->rejected->id], false))
             ->assertStatus(200);
@@ -95,6 +98,7 @@ class DataImportTest extends TestCase
     public function download()
     {
         $this->createImport(self::ImportFile);
+        $this->updateStatus();
 
         $this->get(route('import.download', [$this->model->id], false))
             ->assertStatus(200)
@@ -112,13 +116,14 @@ class DataImportTest extends TestCase
         $this->delete(route('import.destroy', [$this->model->id], false))
             ->assertStatus(555);
 
-        $this->model->update(['status' => Statuses::Finalized]);
+        $this->updateStatus();
     }
 
     /** @test */
     public function destroy()
     {
         $this->createImport(self::ImportFile);
+        $this->updateStatus();
 
         $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name;
 
@@ -143,6 +148,11 @@ class DataImportTest extends TestCase
             $this->model->run($this->importFile($file));
             $this->model->fresh();
         }
+    }
+
+    private function updateStatus()
+    {
+        $this->model->update(['status' => Statuses::Finalized]);
     }
 
     private function importFile($file)

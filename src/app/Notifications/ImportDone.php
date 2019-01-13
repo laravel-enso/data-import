@@ -28,12 +28,12 @@ class ImportDone extends Notification
 
     public function toBroadcast($notifiable)
     {
-        return new BroadcastMessage([
+        return (new BroadcastMessage([
             'level' => 'success',
             'title' => $this->broadcastBody(),
             'body' => $this->filename(),
             'icon' => 'file-excel',
-        ]);
+        ]))->onQueue(config('enso.imports.queues.notifications'));
     }
 
     public function toMail($notifiable)

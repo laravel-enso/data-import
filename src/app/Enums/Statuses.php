@@ -6,11 +6,11 @@ use LaravelEnso\Helpers\app\Classes\Enum;
 
 class Statuses extends Enum
 {
-    const Waiting = 1;
-    const Processing = 2;
-    const Processed = 3;
-    const ExportingRejected = 4;
-    const Finalized = 5;
+    const Waiting = 10;
+    const Processing = 20;
+    const Processed = 23;
+    const ExportingRejected = 26;
+    const Finalized = 30;
 
     protected static $data = [
         self::Waiting => 'Waiting',

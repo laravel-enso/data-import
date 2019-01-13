@@ -52,39 +52,22 @@
             </div>
             <div class="column has-text-centered-touch has-text-right-desktop"
                 v-if="importType">
-                <file-uploader :url="importLink"
-                    :file-size-limit="100000000"
+                <import-uploader :path="importLink"
                     :params="{ type: importType, test: 1 }"
-                    file-key="import"
-                    @upload-start="importing = true"
-                    @upload-error="importing = false;importType = null"
-                    @upload-successful="onImportUploaded">
-                    <a slot="upload-button"
-                        slot-scope="{ openFileBrowser }"
-                        :class="['button is-success', { 'is-loading': importing }]"
-                        @click="openFileBrowser"
-                        v-if="!hasErrors">
-                        <span>{{ __('Upload file for import') }}</span>
-                        <span class="icon is-small">
-                            <fa icon="upload"/>
-                        </span>
-                    </a>
-                </file-uploader>
+                    @upload-successful="$refs.imports.fetch()"/>
             </div>
         </div>
         <vue-table class="box is-paddingless raises-on-hover is-rounded animated fadeIn"
             :path="path"
             id="imports"
             @download-rejected="downloadRejected"
-            v-if="!hasErrors"
             ref="imports">
             <b slot="entries"
                 slot-scope="{ row }"
                 class="has-text-info">
                 {{ row.entries || '-' }}
             </b>
-            <b slot="successful"
-                slot-scope="{ row }"
+            <b slot="successful" slot-scope="{ row }"
                 class="has-text-success">
                 {{ row.successful === null ? '-' : row.successful }}
             </b>
@@ -97,43 +80,15 @@
                 slot-scope="{ row }"
                 :class="[
                     'tag is-table-tag',
-                    {'is-info': row.status === 1},
-                    {'is-warning': row.status === 2},
-                    {'is-primary': row.status === 3},
-                    {'is-danger': row.status === 4},
-                    {'is-success': row.status === 5}
+                    {'is-info': row.status === 10},
+                    {'is-warning': row.status === 20},
+                    {'is-primary': row.status === 30},
+                    {'is-danger': row.status === 40},
+                    {'is-success': row.status === 50}
                 ]">
                 {{ row.computedStatus }}
             </span>
         </vue-table>
-        <div class="columns is-centered"
-            v-if="hasErrors">
-            <div class="column is-two-thirds-tablet is-three-quarters-fullhd">
-                <div class="box has-background-light raises-on-hover animated bounceInRight">
-                    <a class="delete is-pulled-right"
-                        @click="summary = null"/>
-                    <p class="title is-4 has-text-centered">
-                        <fa icon="exclamation-triangle"/>
-                        {{ __('Structure Errors') }}
-                    </p>
-                    <tabs custom
-                        class="has-padding-medium">
-                        <tab class="has-padding-large"
-                            :key="category"
-                            :id="category"
-                            v-for="(errors, category) in summary.errors">
-                            <div class="columns is-multiline">
-                                <div class="column is-one-third-fullhd is-half"
-                                    v-for="(error, index) in errors"
-                                    :key="index">
-                                    <strong class="has-text-danger">{{ error }}</strong>
-                                </div>
-                            </div>
-                        </tab>
-                    </tabs>
-                </div>
-            </div>
-        </div>
         <modal :show="modal"
             @close="modal = false"
             :i18n="__"
@@ -150,18 +105,15 @@ import { faUpload, faDownload, faTrashAlt, faFileExcel } from '@fortawesome/free
 import VueSelect from '../../components/enso/select/VueSelect.vue';
 import VueTable from '../../components/enso/vuedatatable/VueTable.vue';
 import FileUploader from '../../components/enso/filemanager/FileUploader.vue';
+import ImportUploader from '../../components/enso/dataimport/ImportUploader.vue';
 import Modal from './Modal.vue';
 import Card from '../../components/enso/bulma/Card.vue';
-import Overlay from '../../components/enso/bulma/Overlay.vue';
-import Paginate from '../../components/enso/bulma/Paginate.vue';
-import Tabs from '../../components/enso/bulma/Tabs.vue';
-import Tab from '../../components/enso/bulma/Tab.vue';
 
 library.add(faUpload, faDownload, faTrashAlt, faFileExcel);
 
 export default {
     components: {
-        VueSelect, VueTable, FileUploader, Card, Modal, Overlay, Tabs, Tab, Paginate,
+        VueSelect, VueTable, FileUploader, ImportUploader, Card, Modal,
     },
 
     directives: { tooltip: VTooltip },
@@ -174,7 +126,6 @@ export default {
             template: null,
             modal: false,
             loadingTemplate: false,
-            importing: false,
             importTypes: [],
         };
     },
@@ -244,14 +195,6 @@ export default {
             }
 
             window.location.href = route('import.downloadRejected', rejectedId);
-        },
-        onImportUploaded($event) {
-            this.summary = $event;
-            this.importing = false;
-            this.$refs.imports.fetch();
-            if (!this.hasErrors) {
-                this.$root.$emit('io-started');
-            }
         },
     },
 };

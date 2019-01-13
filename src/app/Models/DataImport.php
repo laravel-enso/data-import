@@ -4,19 +4,23 @@ namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\Core\app\Enums\IOTypes;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
+use LaravelEnso\TrackWho\app\Traits\CreatedBy;
+use LaravelEnso\Core\app\Contracts\IOOperation;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Classes\Structure;
+use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
-class DataImport extends Model implements Attachable, VisibleFile
+class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 {
-    use HasFile, LogsActivity;
+    use CreatedBy, HasFile, LogsActivity;
 
     protected $extensions = ['xlsx'];
 
@@ -90,5 +94,15 @@ class DataImport extends Model implements Attachable, VisibleFile
         \Storage::deleteDirectory($this->rejectedFolder());
 
         parent::delete();
+    }
+
+    public function name()
+    {
+        return ImportTypes::get($this->type);
+    }
+
+    public function type()
+    {
+        return IOTypes::Import;
     }
 }

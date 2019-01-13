@@ -45,9 +45,9 @@ return [
      */
 
     'queues' => [
-        'splitting' => 'splitting',
-        'processing' => 'processing',
-        'rejected' => 'rejected',
+        'splitting' => 'heavy',
+        'processing' => 'light',
+        'rejected' => 'heavy',
         'notifications' => 'notifications',
     ],
 

@@ -18,6 +18,10 @@ class CreateDataImportsTable extends Migration
 
             $table->tinyInteger('status');
 
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->foreign('created_by')->references('id')
+                ->on('users');
+
             $table->timestamps();
         });
     }

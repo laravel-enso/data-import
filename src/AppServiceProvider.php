@@ -3,11 +3,15 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\Core\app\Observers\IOObserver;
+use LaravelEnso\DataImport\app\Models\DataImport;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        DataImport::observe(IOObserver::class);
+
         $this->loadDependencies()
             ->publishDependencies();
     }
@@ -37,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources' => app_path(),
-        ], 'dataimport-classes');
+        ], 'dataimport-examples');
 
         $this->publishes([
             __DIR__.'/resources/js' => resource_path('js'),
