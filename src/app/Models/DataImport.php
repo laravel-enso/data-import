@@ -103,4 +103,9 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
     {
         return IOTypes::Import;
     }
+
+    public function status()
+    {
+        return $this->status;
+    }
 }
