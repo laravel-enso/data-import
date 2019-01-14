@@ -32,8 +32,6 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 
     protected $loggable = [];
 
-    private $importFile;
-
     public function rejected()
     {
         return $this->hasOne(RejectedImport::class);

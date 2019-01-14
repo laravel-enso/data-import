@@ -6,7 +6,6 @@ class Row extends Validator
 {
     private $rules;
     private $validator;
-    private $errors;
 
     public function run($row)
     {

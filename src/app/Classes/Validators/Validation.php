@@ -11,7 +11,6 @@ class Validation
     private $rules;
     private $custom;
     private $errorColumn;
-    private $flag = false;
 
     public function __construct(Obj $row, array $rules, ?Validator $custom)
     {

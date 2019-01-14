@@ -16,7 +16,6 @@ class Rejected
     private $dataImport;
     private $writer;
     private $filename;
-    private $header;
     private $sheets;
     private $dumps;
 
