@@ -24,7 +24,7 @@ class ExcelSeeder extends Seeder
     private function importFile()
     {
         return new UploadedFile(
-            storage_path('app/seeds/'.$this->filename,
+            storage_path('app/seeds/'.$this->filename),
             $this->filename,
             null,
             null,
