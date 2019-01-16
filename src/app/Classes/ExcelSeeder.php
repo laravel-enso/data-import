@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Classes;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
+use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
 
 class ExcelSeeder extends Seeder

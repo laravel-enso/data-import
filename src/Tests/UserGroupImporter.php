@@ -3,9 +3,9 @@
 namespace LaravelEnso\DataImport\Tests;
 
 use LaravelEnso\Core\app\Models\UserGroup;
-use LaravelEnso\DataImport\app\Contracts\Importer;
+use LaravelEnso\DataImport\app\Contracts\Importable;
 
-class UserGroupImporter implements Importer
+class UserGroupImporter implements Importable
 {
     public function run(Obj $row)
     {
