@@ -36,13 +36,20 @@ class Structure extends XLSX
         $rowIterator->rewind();
 
         return new Sheet(
-            $this->normalize($sheet->getName()),
-            $rowIterator->current()
+            $this->normalizeSheet($sheet->getName()),
+            $this->normalizeHeader($rowIterator->current())
         );
     }
 
-    private function normalize($string)
+    private function normalizeSheet($string)
     {
         return Str::camel(Str::lower(($string)));
+    }
+
+    private function normalizeHeader($row)
+    {
+        return collect($row)->map(function ($cell) {
+            return Str::snake(Str::lower(($cell)));
+        })->toArray();
     }
 }
