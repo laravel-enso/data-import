@@ -34,7 +34,7 @@
         "laravel-enso/trackwho": "1.7.*",
         "laravel-enso/vuedatatable": "1.9.*",
         "laravel-enso/vuecomponents": "2.7.*",
-        "laravel-enso/select": "2.7.*",
+        "laravel-enso/select": "2.8.*",
         "box/spout": "2.7.*"
     },
     "autoload": {
