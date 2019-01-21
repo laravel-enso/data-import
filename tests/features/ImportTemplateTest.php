@@ -11,7 +11,6 @@ class ImportTemplateTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const ImportType = 'userGroups';
     private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     const TemplateFile = 'userGroups_import.xlsx';
     const TemplateTestFile = 'userGroups_import_test.xlsx';
@@ -22,7 +21,9 @@ class ImportTemplateTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        $this->importType = key(config('enso.imports.configs'));
+
+        //$this->withoutExceptionHandling();
 
         $this->seed()
             ->actingAs(User::first());
@@ -39,7 +40,7 @@ class ImportTemplateTest extends TestCase
     {
         $this->post(route('import.uploadTemplate', [], false), [
             'template' => $this->templateFile(),
-            'type' => self::ImportType,
+            'type' => $this->importType,
         ])->assertStatus(201);
 
         $this->model = ImportTemplate::with('file')
@@ -59,7 +60,7 @@ class ImportTemplateTest extends TestCase
     {
         $this->createModel();
 
-        $this->get(route('import.template', [self::ImportType], false))
+        $this->get(route('import.template', [$this->importType], false))
             ->assertStatus(200);
     }
 
@@ -100,7 +101,7 @@ class ImportTemplateTest extends TestCase
     private function createModel()
     {
         $this->model = ImportTemplate::create([
-            'type' => self::ImportType,
+            'type' => $this->importType,
         ]);
 
         $this->model->upload($this->templateFile());
