@@ -1,6 +1,7 @@
 <?php
 
 use Tests\TestCase;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\Core\app\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,7 @@ class ImportTemplateTest extends TestCase
 
     private const ImportType = 'userGroups';
     private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
+    private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
     const TemplateFile = 'userGroups_import.xlsx';
     const TemplateTestFile = 'userGroups_import_test.xlsx';
 
@@ -26,6 +28,11 @@ class ImportTemplateTest extends TestCase
 
         $this->seed()
             ->actingAs(User::first());
+        
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => Str::replaceFirst(base_path(), '', self::Template),
+        ]]);
     }
 
     public function tearDown()
