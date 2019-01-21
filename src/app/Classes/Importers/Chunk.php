@@ -78,7 +78,6 @@ class Chunk
         } catch (\Exception $exception) {
             $row->set($this->errorColumn, self::UndeterminedImportError);
             $this->rejected->push($row);
-            \Log::debug($exception->getMessage());
         }
     }
 
@@ -86,7 +85,10 @@ class Chunk
     {
         if ($this->rejected->isNotEmpty()) {
             (new RejectedDump(
-                $this->dataImport, $this->sheetName, $this->rejected, $this->index
+                $this->dataImport,
+                $this->sheetName,
+                $this->rejected,
+                $this->index
             ))->handle();
         }
 

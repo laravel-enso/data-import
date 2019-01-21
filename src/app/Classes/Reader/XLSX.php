@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Classes\Reader;
 
 use Exception;
 use Box\Spout\Common\Type;
+use Illuminate\Support\Str;
 use Box\Spout\Reader\ReaderFactory;
 use LaravelEnso\DataImport\app\Exceptions\XLSXException;
 
@@ -50,10 +51,22 @@ class XLSX
         $sheetIterator->rewind();
 
         while ($sheetIterator->valid()
-            && $sheetIterator->current()->getName() !== $sheetName) {
+            && $this->normalizeSheet($sheetIterator->current()->getName()) !== $sheetName) {
             $sheetIterator->next();
         }
 
         return $sheetIterator->current();
+    }
+
+    protected function normalizeSheet($string)
+    {
+        return Str::camel(Str::lower(($string)));
+    }
+
+    protected function normalizeHeader($row)
+    {
+        return collect($row)->map(function ($cell) {
+            return Str::snake(Str::lower(($cell)));
+        })->toArray();
     }
 }

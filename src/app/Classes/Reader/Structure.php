@@ -40,16 +40,4 @@ class Structure extends XLSX
             $this->normalizeHeader($rowIterator->current())
         );
     }
-
-    private function normalizeSheet($string)
-    {
-        return Str::camel(Str::lower(($string)));
-    }
-
-    private function normalizeHeader($row)
-    {
-        return collect($row)->map(function ($cell) {
-            return Str::snake(Str::lower(($cell)));
-        })->toArray();
-    }
 }

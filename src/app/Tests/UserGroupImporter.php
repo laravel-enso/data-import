@@ -1,7 +1,8 @@
 <?php
 
-namespace LaravelEnso\DataImport\Tests;
+namespace LaravelEnso\DataImport\app\Tests;
 
+use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Contracts\Importable;
 

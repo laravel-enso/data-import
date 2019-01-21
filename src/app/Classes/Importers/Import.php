@@ -2,6 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Importers;
 
+use DateTime;
+use Carbon\Carbon;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Classes\Template;
@@ -148,6 +150,10 @@ class Import
     {
         return collect($this->rowIterator->current())
             ->map(function ($cell) {
+                if ($cell instanceof DateTime) {
+                    return Carbon::instance($cell)->toDateTimeString();
+                }
+
                 return ! is_string($cell)
                     ? $cell
                     : trim($cell) ?? null;
