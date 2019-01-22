@@ -97,22 +97,14 @@ class Import
     private function queueChunks()
     {
         while (! $this->hasFinished()) {
-            $this->incChunk()
-                ->prepareChunk()
+            $this->prepareChunk()
                 ->dispatch();
         }
     }
 
-    private function incChunk()
-    {
-        $this->chunkIndex++;
-        $this->dataImport->update(['chunks' => $this->chunkIndex]);
-
-        return $this;
-    }
-
     private function prepareChunk()
     {
+        $this->chunkIndex++;
         $this->chunk = collect();
 
         while (! $this->hasFinished() && $this->chunkIsIncomplete()) {
