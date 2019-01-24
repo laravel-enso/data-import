@@ -6,5 +6,5 @@ use LaravelEnso\Helpers\app\Classes\Obj;
 
 interface Importable
 {
-    public function run(Obj $row);
+    public function run(Obj $row, Obj $params);
 }

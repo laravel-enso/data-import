@@ -74,10 +74,11 @@ class Chunk
         try {
             $this->template
                 ->importer($this->sheetName)
-                ->run($row);
+                ->run($row, $this->params);
         } catch (\Exception $exception) {
             $row->set($this->errorColumn, self::UndeterminedImportError);
             $this->rejected->push($row);
+            \Log::debug($exception->getMessage());
         }
     }
 
