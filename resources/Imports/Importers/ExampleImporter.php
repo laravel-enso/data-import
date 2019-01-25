@@ -14,7 +14,7 @@ class ExampleImporter implements Importable, BeforeHook, AfterHook
         // optional logic to be executed before the import is started
     }
 
-    public function run(Obj $row)
+    public function run(Obj $row, Obj $param)
     {
         // required import logic for each row
     }
