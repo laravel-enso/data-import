@@ -24,11 +24,11 @@ class ImportTemplateTest extends TestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $this->seed()
             ->actingAs(User::first());
-        
+
         config(['enso.imports.configs.userGroups' => [
             'label' => 'User Groups',
             'template' => Str::replaceFirst(base_path(), '', self::Template),
