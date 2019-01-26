@@ -2,12 +2,14 @@
 
 namespace LaravelEnso\DataImport\app\Classes\Validators;
 
+use LaravelEnso\Helpers\app\Classes\Obj;
+
 class Row extends Validator
 {
     private $rules;
     private $validator;
 
-    public function run($row)
+    public function run(Obj $row)
     {
         $this->validator = validator($row->all(), $this->rules);
 
