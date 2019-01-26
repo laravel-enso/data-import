@@ -26,6 +26,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Chunk Splitting Queue
+    |--------------------------------------------------------------------------
+    | Specifies the queue for the chunk splitting job. Can be set
+    | specifically for every import in its template
+    |
+     */
+
+    'splittingQueue' => 'split',
+
+    /*
+    |--------------------------------------------------------------------------
     | Queues
     |--------------------------------------------------------------------------
     | Specifies the queue for each type of job during the import process.
@@ -86,7 +97,7 @@ return [
     'configs' => [
         'userGroups' => [
             'label' => 'User Groups',
-            'template' => 'vendor/laravel-enso/examples/src/app/Imports/Templates/userGroups.json',
+            'template' => 'vendor/laravel-enso/dataimport/src/app/Tests/userGroups.json',
         ],
     ],
 ];
