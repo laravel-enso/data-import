@@ -87,8 +87,8 @@ class Import
 
     private function prepareSheet()
     {
+        $this->header = collect($this->reader->header($this->sheetName));
         $this->rowIterator = $this->reader->rowIterator($this->sheetName);
-        $this->header = $this->template->header($this->sheetName);
         $this->chunkSize = $this->template->chunkSize($this->sheetName);
 
         return $this;

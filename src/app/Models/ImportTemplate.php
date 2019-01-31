@@ -6,10 +6,11 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
+use LaravelEnso\Multitenancy\app\Traits\SystemConnection;
 
 class ImportTemplate extends Model implements Attachable
 {
-    use HasFile;
+    use HasFile, SystemConnection;
 
     protected $extensions = ['xlsx'];
 

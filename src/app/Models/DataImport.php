@@ -16,11 +16,12 @@ use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
+use LaravelEnso\Multitenancy\app\Traits\SystemConnection;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 {
-    use CreatedBy, HasFile, LogsActivity;
+    use CreatedBy, HasFile, LogsActivity, SystemConnection;
 
     protected $extensions = ['xlsx'];
 
