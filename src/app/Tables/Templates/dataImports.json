@@ -2,71 +2,60 @@
     "routePrefix": "import",
     "crtNo": true,
     "appends": ["entries"],
-    "buttons": [
-        {
+    "cache": true,
+    "buttons": [{
             "type": "row",
             "icon": "cloud-download-alt",
             "event": "download-rejected",
             "class": "is-row-button has-text-danger"
-        },
-        "download", "destroy"
+        }, "download", "destroy"
     ],
-    "columns": [
-        {
-            "label": "Type",
-            "name": "type",
-            "data": "data_imports.type",
-            "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
-            "meta": ["sortable"]
-        },
-        {
-            "label": "File name",
-            "name": "name",
-            "data": "files.original_name",
-            "meta": ["searchable", "sortable"]
-        },
-        {
-            "label": "Status",
-            "name": "computedStatus",
-            "data": "data_imports.status",
-            "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\Statuses",
-            "meta": ["sortable", "slot"]
-        },
-        {
-            "label": "Entries",
-            "name": "entries",
-            "data": "data_imports.entries",
-            "meta": ["slot"]
-        },
-        {
-            "label": "Successful",
-            "name": "successful",
-            "data": "data_imports.successful",
-            "meta": ["slot"]
-        },
-        {
-            "label": "Failed",
-            "name": "failed",
-            "data": "data_imports.failed",
-            "meta": ["slot"]
-        },
-        {
-            "label": "Imported By",
-            "name": "createdBy",
-            "data": "people.name",
-            "meta": ["searchable", "sortable"]
-        },
-        {
-            "label": "Imported At",
-            "name": "created_at",
-            "data": "data_imports.created_at",
-            "meta": ["searchable", "sortable", "date"]
-        },
-        {
-            "label": "",
-            "name": "summary_id",
-            "data": "summaries.summary_id",
-            "meta": ["rogue"]
-        }
-    ]
+    "columns": [{
+        "label": "Type",
+        "name": "type",
+        "data": "data_imports.type",
+        "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
+        "meta": ["sortable"]
+    }, {
+        "label": "File name",
+        "name": "name",
+        "data": "files.original_name",
+        "meta": ["searchable", "sortable"]
+    }, {
+        "label": "Status",
+        "name": "computedStatus",
+        "data": "data_imports.status",
+        "enum": "\\LaravelEnso\\DataImport\\app\\Enums\\Statuses",
+        "meta": ["sortable", "slot"]
+    }, {
+        "label": "Entries",
+        "name": "entries",
+        "data": "data_imports.entries",
+        "meta": ["slot"]
+    }, {
+        "label": "Successful",
+        "name": "successful",
+        "data": "data_imports.successful",
+        "meta": ["slot"]
+    }, {
+        "label": "Failed",
+        "name": "failed",
+        "data": "data_imports.failed",
+        "meta": ["slot"]
+    }, {
+        "label": "Imported By",
+        "name": "createdBy",
+        "data": "people.name",
+        "meta": ["searchable", "sortable"]
+    }, {
+        "label": "Imported At",
+        "name": "created_at",
+        "data": "data_imports.created_at",
+        "meta": ["searchable", "sortable", "date"]
+    }, {
+        "label": "",
+        "name": "summary_id",
+        "data": "summaries.summary_id",
+        "meta": ["rogue"]
+    }]
 }
