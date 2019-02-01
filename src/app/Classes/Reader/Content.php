@@ -14,6 +14,10 @@ class Content extends XLSX
 
     public function rowIterator($sheetName)
     {
-        return $this->sheet($sheetName)->getRowIterator();
+        $iterator = $this->sheet($sheetName)->getRowIterator();
+        $iterator->rewind();
+        $iterator->next();
+
+        return $iterator;
     }
 }
