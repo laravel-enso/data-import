@@ -3,12 +3,12 @@
 namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Http\UploadedFile;
+use LaravelEnso\IO\app\Enums\IOTypes;
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Core\app\Enums\IOTypes;
+use LaravelEnso\IO\app\Contracts\IOOperation;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
-use LaravelEnso\Core\app\Contracts\IOOperation;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Classes\Structure;

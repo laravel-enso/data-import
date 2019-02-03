@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelEnso\Core\app\Observers\IOObserver;
+use LaravelEnso\IO\app\Observers\IOObserver;
 use LaravelEnso\DataImport\app\Models\DataImport;
 
 class AppServiceProvider extends ServiceProvider

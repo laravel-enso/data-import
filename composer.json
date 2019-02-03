@@ -31,6 +31,7 @@
         "laravel-enso/core": "3.7.*",
         "laravel-enso/filemanager": "2.5.*",
         "laravel-enso/helpers": "1.10.*",
+        "laravel-enso/io": "1.0.*",
         "laravel-enso/structuremanager": "2.5.*",
         "laravel-enso/trackwho": "1.7.*",
         "laravel-enso/vuedatatable": "1.9.*",
