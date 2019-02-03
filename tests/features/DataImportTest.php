@@ -145,7 +145,7 @@ class DataImportTest extends TestCase
         ]);
 
         if ($file) {
-            $this->model->run($this->importFile($file));
+            $this->model->handle($this->importFile($file));
             $this->model->fresh();
         }
     }
