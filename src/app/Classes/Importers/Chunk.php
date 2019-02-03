@@ -114,7 +114,7 @@ class Chunk
     {
         $this->afterHook();
 
-        $this->dataImport->update(['status' => Statuses::Processed]);
+        $this->dataImport->setStatus(Statuses::Processed);
 
         RejectedExportJob::dispatch($this->dataImport);
     }

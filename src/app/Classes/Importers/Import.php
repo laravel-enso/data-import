@@ -70,8 +70,9 @@ class Import
         $this->dataImport->update([
             'successful' => 0,
             'failed' => 0,
-            'status' => Statuses::Processing,
         ]);
+
+        $this->dataImport->startProcessing();
     }
 
     private function beforeHook()
@@ -172,11 +173,15 @@ class Import
 
     private function finalize()
     {
-        if (config('queue.default') === 'sync') {
-            $this->afterHook();
-            $this->dataImport->update(['status' => Statuses::Processed]);
-            RejectedExportJob::dispatch($this->dataImport);
+        if (config('queue.default') !== 'sync') {
+            return;
         }
+
+        $this->afterHook();
+
+        $this->dataImport->setStatus(Statuses::Processed);
+
+        RejectedExportJob::dispatch($this->dataImport);
     }
 
     private function afterHook()

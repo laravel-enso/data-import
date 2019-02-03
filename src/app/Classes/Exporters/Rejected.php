@@ -48,7 +48,7 @@ class Rejected
 
     private function start()
     {
-        $this->dataImport->update(['status' => Statuses::ExportingRejected]);
+        $this->dataImport->setStatus(Statuses::ExportingRejected);
 
         return $this;
     }
@@ -115,7 +115,7 @@ class Rejected
 
     private function finalize()
     {
-        $this->dataImport->update(['status' => Statuses::Finalized]);
+        $this->dataImport->endOperation(Statuses::Finalized);
 
         return $this;
     }

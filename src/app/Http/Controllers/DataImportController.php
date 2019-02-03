@@ -18,7 +18,7 @@ class DataImportController extends Controller
     {
         $dataImport->type = $request->get('type');
 
-        return $dataImport->run(
+        return $dataImport->handle(
             $request->file('import'),
             $request->except(['import', 'type'])
         );

@@ -5,6 +5,7 @@ namespace LaravelEnso\DataImport\app\Models;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\IO\app\Enums\IOTypes;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\IO\app\Traits\HasIOStatuses;
 use LaravelEnso\IO\app\Contracts\IOOperation;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
@@ -22,7 +23,7 @@ use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 {
-    use CreatedBy, HasFile, LogsActivity, SystemConnection, TableCache;
+    use CreatedBy, HasIOStatuses, HasFile, LogsActivity, SystemConnection, TableCache;
 
     protected $extensions = ['xlsx'];
 
@@ -41,14 +42,12 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
         return $this->hasOne(RejectedImport::class);
     }
 
-    public function run(UploadedFile $file, array $params = [])
+    public function handle(UploadedFile $file, array $params = [])
     {
         $template = new Template($this);
         $structure = new Structure($this, $template, $file);
 
         if ($structure->validates()) {
-            $this->status = Statuses::Waiting;
-
             tap($this)->save()
                 ->upload($file);
 
@@ -106,10 +105,5 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
     public function type()
     {
         return IOTypes::Import;
-    }
-
-    public function status()
-    {
-        return $this->status;
     }
 }

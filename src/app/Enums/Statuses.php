@@ -2,15 +2,12 @@
 
 namespace LaravelEnso\DataImport\app\Enums;
 
-use LaravelEnso\Helpers\app\Classes\Enum;
+use LaravelEnso\IO\app\Enums\IOStatuses;
 
-class Statuses extends Enum
+class Statuses extends IOStatuses
 {
-    const Waiting = 10;
-    const Processing = 20;
     const Processed = 23;
     const ExportingRejected = 26;
-    const Finalized = 30;
 
     protected static $data = [
         self::Waiting => 'Waiting',
