@@ -19,7 +19,7 @@ class ExcelSeeder extends Seeder
         DataImport::create([
             'type' => $this->type,
             'status' => Statuses::Waiting,
-        ])->run($this->importFile());
+        ])->handle($this->importFile());
     }
 
     private function importFile()
