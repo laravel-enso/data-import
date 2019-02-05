@@ -27,6 +27,13 @@ class Template
             : config('enso.imports.timeout');
     }
 
+    public function queue()
+    {
+        return $this->template->has('queue')
+            ? $this->template->get('queue')
+            : config('enso.imports.queues.processing');
+    }
+
     public function sheetNames()
     {
         return $this->sheets()->pluck('name');

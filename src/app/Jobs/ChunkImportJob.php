@@ -34,7 +34,7 @@ class ChunkImportJob implements ShouldQueue
         $this->chunk = $chunk;
         $this->index = $index;
         $this->isLast = $isLast;
-        $this->queue = config('enso.imports.queues.processing');
+        $this->queue = $template->queue();
     }
 
     public function handle()
