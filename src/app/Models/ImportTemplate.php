@@ -6,11 +6,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
-use LaravelEnso\Multitenancy\app\Traits\SystemConnection;
+use LaravelEnso\Multitenancy\app\Traits\MixedConnection;
+use LaravelEnso\Multitenancy\app\Traits\ConnectionStoragePath;
 
 class ImportTemplate extends Model implements Attachable
 {
-    use HasFile, SystemConnection;
+    use ConnectionStoragePath, HasFile, MixedConnection;
 
     protected $extensions = ['xlsx'];
 
@@ -24,6 +25,6 @@ class ImportTemplate extends Model implements Attachable
 
     public function folder()
     {
-        return config('enso.config.paths.imports');
+        return $this->storagePath('imports');
     }
 }
