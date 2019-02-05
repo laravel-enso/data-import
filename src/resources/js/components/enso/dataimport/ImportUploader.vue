@@ -14,7 +14,7 @@
                 @click="openFileBrowser"
                 v-if="!hasErrors">
                 <slot>
-                    <span>{{ __('Select file for import') }}</span>
+                    <span>{{ __('Import File') }}</span>
                     <span class="icon is-small">
                         <fa icon="upload"/>
                     </span>
