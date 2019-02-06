@@ -7,7 +7,8 @@
             v-on="$listeners"
             @upload-start="running = true"
             @upload-error="running = false"
-            @upload-successful="uploaded">
+            @upload-successful="uploaded"
+            ref="uploader">
             <a slot="upload-button"
                 slot-scope="{ openFileBrowser }"
                 :class="['button is-success', { 'is-loading': running }]"
@@ -99,6 +100,9 @@ export default {
             this.summary = $event;
             this.running = false;
             this.$emit('upload-successful');
+        },
+        openFileBrowser() {
+            this.uploader.openFileBrowser();
         },
     },
 };
