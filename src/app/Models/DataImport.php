@@ -18,14 +18,11 @@ use LaravelEnso\VueDatatable\app\Traits\TableCache;
 use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
-use LaravelEnso\Multitenancy\app\Traits\MixedConnection;
-use LaravelEnso\Multitenancy\app\Traits\ConnectionStoragePath;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 {
-    use ConnectionStoragePath, CreatedBy, HasIOStatuses, HasFile,
-        LogsActivity, MixedConnection, TableCache;
+    use CreatedBy, HasIOStatuses, HasFile, LogsActivity, TableCache;
 
     protected $extensions = ['xlsx'];
 
@@ -101,7 +98,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 
     public function folder()
     {
-        return $this->storagePath('imports');
+        return config('enso.config.paths.imports');
     }
 
     public function isDeletable()

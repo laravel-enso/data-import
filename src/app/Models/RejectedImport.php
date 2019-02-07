@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\FileManager\app\Traits\HasFile;
 use LaravelEnso\FileManager\app\Contracts\Attachable;
 use LaravelEnso\FileManager\app\Contracts\VisibleFile;
-use LaravelEnso\Multitenancy\app\Traits\MixedConnection;
-use LaravelEnso\Multitenancy\app\Traits\ConnectionStoragePath;
 
 class RejectedImport extends Model implements Attachable, VisibleFile
 {
-    use ConnectionStoragePath, HasFile, MixedConnection;
+    use HasFile;
 
     protected $fillable = ['data_import_id'];
 
