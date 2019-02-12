@@ -20,7 +20,7 @@ class RejectedImport extends Model implements Attachable, VisibleFile
 
     public function folder()
     {
-        return $this->storagePath('imports')
+        return config('enso.config.paths.imports')
             .DIRECTORY_SEPARATOR
             .'rejected_'.$this->data_import_id;
     }
