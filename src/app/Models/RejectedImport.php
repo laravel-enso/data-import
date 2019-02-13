@@ -15,7 +15,7 @@ class RejectedImport extends Model implements Attachable, VisibleFile
 
     public function dataImport()
     {
-        return $this->belogsTo(DataImport::class);
+        return $this->belongsTo(DataImport::class);
     }
 
     public function folder()
