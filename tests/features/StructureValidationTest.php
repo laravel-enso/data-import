@@ -23,7 +23,7 @@ class StructureValidationTest extends TestCase
     private const TwoEntriesFile = 'userGroups_import.xlsx';
     private const TestFile = 'test.xlsx';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class StructureValidationTest extends TestCase
             ->actingAs(User::first());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->cleanUp();
         parent::tearDown();
