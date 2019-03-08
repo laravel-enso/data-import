@@ -19,11 +19,8 @@ class AppServiceProvider extends ServiceProvider
     private function loadDependencies()
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-
         $this->loadRoutesFrom(__DIR__.'/routes/api.php');
-
         $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'imports');
-
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/dataimport');
 
         return $this;
@@ -42,14 +39,6 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources' => app_path(),
         ], 'dataimport-examples');
-
-        $this->publishes([
-            __DIR__.'/resources/js' => resource_path('js'),
-        ], 'import-assets');
-
-        $this->publishes([
-            __DIR__.'/resources/js' => resource_path('js'),
-        ], 'enso-assets');
 
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/dataimport'),
