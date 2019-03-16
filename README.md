@@ -37,7 +37,7 @@ with an extra column (on each sheet) that will describe all the validation error
 
 ### Configuration & Usage
 
-Be sure to check out the full documentation for this package available at [docs.laravel-enso.com](https://docs.laravel-enso.com/packages/data-import.html)
+Be sure to check out the full documentation for this package available at [docs.laravel-enso.com](https://docs.laravel-enso.com/backend/data-import.html)
 
 ### Contributions
 
