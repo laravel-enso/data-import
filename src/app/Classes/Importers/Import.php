@@ -97,7 +97,7 @@ class Import
 
     private function queueChunks()
     {
-        while (! $this->hasFinished()) {
+        while (! $this->sheetHasFinished()) {
             $this->prepareChunk()
                 ->dispatch();
         }
@@ -108,7 +108,7 @@ class Import
         $this->chunkIndex++;
         $this->chunk = collect();
 
-        while (! $this->hasFinished() && $this->chunkIsIncomplete()) {
+        while (! $this->sheetHasFinished() && $this->chunkIsIncomplete()) {
             $this->chunk->push($this->row());
             $this->rowIterator->next();
         }
@@ -135,7 +135,7 @@ class Import
             $this->sheetName,
             $this->chunk,
             $this->chunkIndex,
-            $this->hasFinished()
+            $this->fileHasFinished()
         );
     }
 
@@ -164,9 +164,15 @@ class Import
         return $this->chunk->count() < $this->chunkSize;
     }
 
-    private function hasFinished()
+    private function sheetHasFinished()
     {
         return ! $this->rowIterator->valid();
+    }
+
+    private function fileHasFinished()
+    {
+        return $this->sheetHasFinished()
+            && $this->sheetName === $this->template->sheetNames()->last();
     }
 
     private function closeReader()
