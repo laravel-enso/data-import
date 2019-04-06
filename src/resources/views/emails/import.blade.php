@@ -11,6 +11,7 @@
 | {{ __('Total') }}       | {{ $entries }}    |
 @endcomponent
 
-{{ __('Thank you') }},<br>
+{{ __('Thank you') }},
+<br>
 {{ __(config('app.name')) }}
 @endcomponent

@@ -38,6 +38,7 @@ class ImportTemplateTest extends TestCase
     public function tearDown(): void
     {
         $this->cleanUp();
+
         parent::tearDown();
     }
 

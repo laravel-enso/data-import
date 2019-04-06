@@ -10,8 +10,7 @@ class ImportTemplateController extends Controller
 {
     public function template(string $type)
     {
-        return ImportTemplate::whereType($type)
-            ->first();
+        return ImportTemplate::whereType($type)->first();
     }
 
     public function store(ValidateTemplateRequest $request, ImportTemplate $importTemplate)

@@ -22,6 +22,4 @@ class CreateStructureForDataImport extends StructureMigration
     protected $menu = [
         'name' => 'Data Import', 'icon' => 'cloud-upload-alt', 'route' => 'import.index', 'order_index' => 400, 'has_children' => false,
     ];
-
-    protected $parentMenu = '';
 }

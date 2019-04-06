@@ -19,7 +19,6 @@ class ImportDone extends Notification implements ShouldQueue
     public function __construct(DataImport $dataImport)
     {
         $this->dataImport = $dataImport;
-        $this->queue = config('enso.imports.queues.notifications');
     }
 
     public function via($notifiable)
@@ -34,7 +33,7 @@ class ImportDone extends Notification implements ShouldQueue
             'title' => $this->broadcastBody(),
             'body' => $this->filename(),
             'icon' => 'file-excel',
-        ]))->onQueue(config('enso.imports.queues.notifications'));
+        ]))->onQueue($this->queue);
     }
 
     public function toMail($notifiable)
