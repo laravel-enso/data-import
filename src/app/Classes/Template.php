@@ -10,6 +10,8 @@ use LaravelEnso\DataImport\app\Classes\Validators\Template as Validator;
 class Template
 {
     private $template;
+    private $importer;
+    private $validator;
 
     public function __construct(DataImport $dataImport)
     {
@@ -65,9 +67,12 @@ class Template
 
     public function importer($sheetName)
     {
-        $importerClass = $this->sheet($sheetName)->get('importerClass');
+        if (! isset($this->importer)) {
+            $class = $this->sheet($sheetName)->get('importerClass');
+            $this->importer = new $class;
+        }
 
-        return new $importerClass;
+        return $this->importer;
     }
 
     public function customValidator($sheetName)
@@ -76,9 +81,12 @@ class Template
             return;
         }
 
-        $validatorClass = $this->sheet($sheetName)->get('validatorClass');
+        if (! isset($this->validator)) {
+            $class = $this->sheet($sheetName)->get('validatorClass');
+            $this->validator = new $class;
+        }
 
-        return new $validatorClass;
+        return $this->validator;
     }
 
     private function columns(string $sheetName)
