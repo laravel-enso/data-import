@@ -70,7 +70,9 @@ class Chunk
             $this->rejected->push($row);
         }
 
-        $this->validator->emptyErrors();
+        if ($this->validator) {
+            $this->validator->emptyErrors();
+        }
 
         return ! $row->isRejected();
     }

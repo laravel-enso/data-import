@@ -72,9 +72,11 @@ class Template
 
     public function customValidator($sheetName)
     {
-        $class = $this->sheet($sheetName)->get('validatorClass');
+        if ($this->sheet($sheetName)->has('validatorClass')) {
+            $class = $this->sheet($sheetName)->get('validatorClass');
 
-        return new $class;
+            return new $class;
+        }
     }
 
     private function columns(string $sheetName)
