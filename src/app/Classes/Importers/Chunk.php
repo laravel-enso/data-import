@@ -24,6 +24,8 @@ class Chunk
     private $isLast;
     private $rejected;
     private $errorColumn;
+    private $validator;
+    private $importer;
 
     public function __construct(DataImport $dataImport, Obj $params, Template $template, string $sheetName, Collection $chunk, int $index, bool $isLast)
     {
@@ -36,6 +38,8 @@ class Chunk
         $this->isLast = $isLast;
         $this->rejected = collect();
         $this->errorColumn = config('enso.imports.errorColumn');
+        $this->importer = $this->template->importer($sheetName);
+        $this->validator = $this->template->customValidator($sheetName);
     }
 
     public function run()
@@ -59,12 +63,14 @@ class Chunk
         (new Validation(
             $row,
             $this->template->validationRules($this->sheetName),
-            $this->template->customValidator($this->sheetName)
+            $this->validator
         ))->run();
 
         if ($row->isRejected()) {
             $this->rejected->push($row);
         }
+
+        $this->validator->emptyErrors();
 
         return ! $row->isRejected();
     }
@@ -72,9 +78,7 @@ class Chunk
     private function import($row)
     {
         try {
-            $this->template
-                ->importer($this->sheetName)
-                ->run($row, $this->params);
+            $this->importer->run($row, $this->params);
         } catch (\Exception $exception) {
             $row->set($this->errorColumn, self::UndeterminedImportError);
             $this->rejected->push($row);
@@ -121,10 +125,8 @@ class Chunk
 
     private function afterHook()
     {
-        $importer = $this->template->importer($this->sheetName);
-
-        if ($importer instanceof AfterHook) {
-            $importer->after($this->params);
+        if ($this->importer instanceof AfterHook) {
+            $this->importer->after($this->params);
         }
     }
 
