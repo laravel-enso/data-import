@@ -86,6 +86,8 @@ class Template
             $this->validator = new $class;
         }
 
+        $this->validator->emptyErrors();
+
         return $this->validator;
     }
 

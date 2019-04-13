@@ -10,7 +10,7 @@ abstract class Validator
 
     public function __construct()
     {
-        $this->errors = collect();
+        $this->emptyErrors();
     }
 
     abstract public function run(Obj $row);
@@ -28,5 +28,10 @@ abstract class Validator
     public function addError(string $error)
     {
         $this->errors->push($error);
+    }
+
+    public function emptyErrors()
+    {
+        $this->errors = collect();
     }
 }
