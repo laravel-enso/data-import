@@ -24,6 +24,7 @@ class Import
     private $rowIterator;
     private $sheetName;
     private $header;
+    private $headerCount;
     private $chunkSize;
     private $chunk;
     private $chunkIndex;
@@ -89,6 +90,7 @@ class Import
     private function prepareSheet()
     {
         $this->header = collect($this->reader->header($this->sheetName));
+        $this->headerCount = $this->header->count();
         $this->rowIterator = $this->reader->rowIterator($this->sheetName);
         $this->chunkSize = $this->template->chunkSize($this->sheetName);
 
@@ -120,8 +122,7 @@ class Import
     {
         return new Row(
             $this->header->combine(
-                $this->sanitizedRow()
-                    ->pad($this->header->count(), null)
+                $this->sanitizeRow()
             )->toArray()
         );
     }
@@ -139,24 +140,28 @@ class Import
         );
     }
 
-    private function sanitizedRow()
+    private function sanitizeRow()
     {
         return collect($this->rowIterator->current())
             ->map(function ($cell) {
-                if ($cell instanceof DateTime) {
-                    return Carbon::instance($cell)->toDateTimeString();
-                }
+                return $this->sanitizeCell($cell);
+            })->slice(0, $this->headerCount)
+            ->pad($this->headerCount, null);
+    }
 
-                if (! is_string($cell)) {
-                    return $cell;
-                }
+    private function sanitizeCell($cell)
+    {
+        if ($cell instanceof DateTime) {
+            return Carbon::instance($cell)->toDateTimeString();
+        }
 
-                $cell = trim($cell);
+        if (! is_string($cell)) {
+            return $cell;
+        }
 
-                return empty($cell)
-                    ? null
-                    : $cell;
-            });
+        $cell = trim($cell);
+
+        return empty($cell) ? null : $cell;
     }
 
     private function chunkIsIncomplete()
