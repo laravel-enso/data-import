@@ -15,7 +15,7 @@ class DataImportTable extends Table
         return DataImport::select(\DB::raw('
             data_imports.id, data_imports.id as "dtRowId", data_imports.type, data_imports.status,
             data_imports.status as computedStatus, files.original_name as name,
-            data_imports.successful, data_imports.failed, data_imports.created_at as date,
+            data_imports.successful, data_imports.failed, data_imports.created_at,
             TIME_FORMAT(data_imports.created_at, "%h:%i") as time,
             people.name as createdBy, rejected_imports.id as rejectedId
         '))->join('files', function ($join) {
