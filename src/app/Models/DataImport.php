@@ -26,7 +26,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 
     protected $extensions = ['xlsx'];
 
-    protected $fillable = ['type', 'successful', 'failed', 'status'];
+    protected $fillable = ['type', 'successful', 'failed', 'status', 'created_by'];
 
     protected $casts = ['status' => 'integer'];
 
