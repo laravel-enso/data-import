@@ -21,71 +21,50 @@
             "name": "type",
             "data": "data_imports.type",
             "enum": "LaravelEnso\\DataImport\\app\\Enums\\ImportTypes",
-            "meta": [
-                "sortable"
-            ]
+            "meta": [ "sortable" ]
         },
         {
             "label": "File name",
             "name": "name",
             "data": "files.original_name",
-            "meta": [
-                "searchable",
-                "sortable"
-            ]
+            "meta": [ "searchable", "sortable" ]
         },
         {
             "label": "Status",
             "name": "computedStatus",
             "data": "data_imports.status",
             "enum": "LaravelEnso\\DataImport\\app\\Enums\\Statuses",
-            "meta": [
-                "sortable",
-                "slot"
-            ]
+            "meta": [ "sortable", "slot" ]
         },
         {
             "label": "Entries",
             "name": "entries",
             "data": "data_imports.entries",
-            "meta": [
-                "slot"
-            ]
+            "meta": [ "slot" ]
         },
         {
             "label": "Successful",
             "name": "successful",
             "data": "data_imports.successful",
-            "meta": [
-                "slot"
-            ]
+            "meta": [ "slot" ]
         },
         {
             "label": "Failed",
             "name": "failed",
             "data": "data_imports.failed",
-            "meta": [
-                "slot"
-            ]
+            "meta": [ "slot" ]
         },
         {
             "label": "Imported By",
             "name": "createdBy",
             "data": "people.name",
-            "meta": [
-                "searchable",
-                "sortable"
-            ]
+            "meta": [ "searchable", "sortable" ]
         },
         {
             "label": "Date",
             "name": "created_at",
             "data": "data_imports.created_at",
-            "meta": [
-                "searchable",
-                "sortable",
-                "date"
-            ]
+            "meta": [ "searchable", "sortable", "sort:DESC", "date" ]
         },
         {
             "label": "Time",
@@ -96,9 +75,7 @@
             "label": "",
             "name": "summary_id",
             "data": "summaries.summary_id",
-            "meta": [
-                "rogue"
-            ]
+            "meta": [ "rogue" ]
         }
     ]
 }

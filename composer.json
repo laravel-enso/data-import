@@ -28,7 +28,7 @@
     "require": {
         "php": ">=7.1.0",
         "laravel-enso/activitylog": "2.0.*",
-        "laravel-enso/core": "4.1.*",
+        "laravel-enso/core": "4.2.*",
         "laravel-enso/filemanager": "3.0.*",
         "laravel-enso/helpers": "1.10.*",
         "laravel-enso/io": "1.1.*",
