@@ -6,6 +6,7 @@
     ],
     "cache": true,
     "buttons": [
+        "excel",
         {
             "type": "row",
             "icon": "cloud-download-alt",
