@@ -14,13 +14,9 @@ class StructureValidationTest extends TestCase
     private const ImportType = 'userGroups';
     private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'
         .DIRECTORY_SEPARATOR.'userGroups.json';
-    private const LimitTemplate = __DIR__.DIRECTORY_SEPARATOR.'templates'
-        .DIRECTORY_SEPARATOR.'userGroupsLimit.json';
     private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
-    private const ContentIssuesFile = 'content_issues.xlsx';
     private const InvalidSheetsFile = 'invalid_sheets.xlsx';
     private const InvalidColumnsFile = 'invalid_columns.xlsx';
-    private const TwoEntriesFile = 'userGroups_import.xlsx';
     private const TestFile = 'test.xlsx';
 
     protected function setUp(): void

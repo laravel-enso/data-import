@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'imports');
 
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/dataimport');
+        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/data-import');
 
         return $this;
     }
@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),
-        ], 'dataimport-config');
+        ], 'data-import-config');
 
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),
@@ -41,14 +41,14 @@ class AppServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../resources' => app_path(),
-        ], 'dataimport-examples');
+        ], 'data-import-examples');
 
         $this->publishes([
-            __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/dataimport'),
-        ], 'dataimport-mail');
+            __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/data-import'),
+        ], 'data-import-mail');
 
         $this->publishes([
-            __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/dataimport'),
+            __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/data-import'),
         ], 'enso-mail');
     }
 }

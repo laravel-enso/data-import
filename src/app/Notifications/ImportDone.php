@@ -40,7 +40,7 @@ class ImportDone extends Notification implements ShouldQueue
     {
         return (new MailMessage())
             ->subject($this->mailSubject())
-            ->markdown('laravel-enso/dataimport::emails.import', [
+            ->markdown('laravel-enso/data-import::emails.import', [
                 'name' => $notifiable->person->appellative
                     ?: $notifiable->person->name,
                 'filename' => $this->filename(),

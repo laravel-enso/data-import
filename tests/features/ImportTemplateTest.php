@@ -3,10 +3,12 @@
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use LaravelEnso\Core\app\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use LaravelEnso\FileManager\app\Classes\FileManager;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use LaravelEnso\Files\app\Services\Files;
 
 class ImportTemplateTest extends TestCase
 {
@@ -56,7 +58,7 @@ class ImportTemplateTest extends TestCase
             })->first();
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
+            $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
 
         $this->assertNotNull($this->model);
@@ -90,7 +92,7 @@ class ImportTemplateTest extends TestCase
         $this->createModel();
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
+            $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
 
         $this->assertNotNull($this->model);
@@ -101,7 +103,7 @@ class ImportTemplateTest extends TestCase
         $this->assertNull($this->model->fresh());
 
         \Storage::assertMissing(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
+            $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
     }
 
@@ -134,6 +136,8 @@ class ImportTemplateTest extends TestCase
     private function cleanUp()
     {
         $this->model->delete();
-        \File::delete(self::Path.self::TemplateTestFile);
+
+        File::delete(self::Path.self::TemplateTestFile);
+        Storage::deleteDirectory(config('enso.files.paths.testing'));
     }
 }

@@ -7,9 +7,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Classes\Importers\Import;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\DataImport\app\Services\Importers\Import;
 
 class ImportJob implements ShouldQueue
 {

@@ -7,9 +7,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Classes\Exporters\Rejected;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\DataImport\app\Services\Exporters\Rejected;
 
 class RejectedExportJob implements ShouldQueue
 {
@@ -20,6 +20,7 @@ class RejectedExportJob implements ShouldQueue
     public function __construct(DataImport $dataImport)
     {
         $this->dataImport = $dataImport;
+
         $this->timeout = (new Template($dataImport))->timeout();
         $this->queue = config('enso.imports.queues.rejected');
     }

@@ -1,8 +1,8 @@
 <?php
 
-use LaravelEnso\StructureManager\app\Classes\StructureMigration;
+use LaravelEnso\Migrator\app\Database\Migration;
 
-class CreateStructureForDataImport extends StructureMigration
+class CreateStructureForDataImport extends Migration
 {
     protected $permissions = [
         ['name' => 'import.index', 'description' => 'Imports index', 'type' => 0, 'is_default' => false],

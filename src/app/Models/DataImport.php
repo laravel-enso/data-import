@@ -5,24 +5,23 @@ namespace LaravelEnso\DataImport\app\Models;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\IO\app\Enums\IOTypes;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\Files\app\Traits\HasFile;
 use LaravelEnso\IO\app\Traits\HasIOStatuses;
 use LaravelEnso\IO\app\Contracts\IOOperation;
+use LaravelEnso\Tables\app\Traits\TableCache;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
-use LaravelEnso\FileManager\app\Traits\HasFile;
-use LaravelEnso\DataImport\app\Classes\Template;
-use LaravelEnso\DataImport\app\Classes\Structure;
+use LaravelEnso\Files\app\Contracts\Attachable;
+use LaravelEnso\Files\app\Contracts\VisibleFile;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
-use LaravelEnso\VueDatatable\app\Traits\TableCache;
-use LaravelEnso\ActivityLog\app\Traits\LogsActivity;
-use LaravelEnso\FileManager\app\Contracts\Attachable;
-use LaravelEnso\FileManager\app\Contracts\VisibleFile;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\DataImport\app\Services\Structure;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 {
-    use CreatedBy, HasIOStatuses, HasFile, LogsActivity, TableCache;
+    use CreatedBy, HasIOStatuses, HasFile, TableCache;
 
     protected $extensions = ['xlsx'];
 
@@ -30,9 +29,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 
     protected $casts = ['status' => 'integer'];
 
-    protected $loggableLabel = 'type';
-
-    protected $loggable = [];
+    protected $folder = 'imports';
 
     public function rejected()
     {
@@ -66,7 +63,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
 
     public function rejectedFolder()
     {
-        return config('enso.config.paths.imports')
+        return $this->folder
             .DIRECTORY_SEPARATOR
             .'rejected_'.$this->id;
     }
@@ -94,12 +91,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
         return IOTypes::Import;
     }
 
-    public function folder()
-    {
-        return config('enso.config.paths.imports');
-    }
-
-    public function isDeletable()
+    public function isDeletable(): bool
     {
         return true;
     }

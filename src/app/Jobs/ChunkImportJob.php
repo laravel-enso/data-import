@@ -9,9 +9,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Classes\Importers\Chunk;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\DataImport\app\Services\Importers\Chunk;
 
 class ChunkImportJob implements ShouldQueue
 {

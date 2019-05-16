@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Tables\Builders;
 
-use LaravelEnso\VueDatatable\app\Classes\Table;
+use LaravelEnso\Tables\app\Services\Table;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Models\RejectedImportSummary;
 
@@ -12,13 +12,13 @@ class DataImportTable extends Table
 
     public function query()
     {
-        return DataImport::select(\DB::raw('
+        return DataImport::selectRaw('
             data_imports.id, data_imports.id as "dtRowId", data_imports.type, data_imports.status,
             data_imports.status as computedStatus, files.original_name as name,
             data_imports.successful, data_imports.failed, data_imports.created_at,
             TIME(data_imports.created_at) as time,
             people.name as createdBy, rejected_imports.id as rejectedId
-        '))->join('files', function ($join) {
+        ')->join('files', function ($join) {
             $join->on('files.attachable_id', 'data_imports.id')
                 ->where('files.attachable_type', DataImport::class);
         })->join('users', 'files.created_by', '=', 'users.id')

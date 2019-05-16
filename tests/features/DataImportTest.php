@@ -3,14 +3,14 @@
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Classes\Template;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Services\Template;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use LaravelEnso\FileManager\app\Classes\FileManager;
-use LaravelEnso\VueDatatable\app\Traits\Tests\Datatable;
+use LaravelEnso\Tables\app\Traits\Tests\Datatable;
 
 class DataImportTest extends TestCase
 {
@@ -58,7 +58,7 @@ class DataImportTest extends TestCase
             'errors' => [],
             'filename' => self::ImportTestFile
         ]);
-
+//
         $this->model = DataImport::whereHas('file', function ($query) {
             $query->whereOriginalName(self::ImportTestFile);
         })->first();
@@ -71,7 +71,7 @@ class DataImportTest extends TestCase
         );
 
         \Storage::assertExists(
-            FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name
+            $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
         );
     }
 
@@ -125,7 +125,7 @@ class DataImportTest extends TestCase
         $this->createImport(self::ImportFile);
         $this->updateStatus();
 
-        $filename = FileManager::TestingFolder.DIRECTORY_SEPARATOR.$this->model->file->saved_name;
+        $filename = $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name;
 
         \Storage::assertExists($filename);
 
@@ -175,6 +175,8 @@ class DataImportTest extends TestCase
     private function cleanUp()
     {
         optional($this->model)->delete();
-        \File::delete(self::Path.self::ImportTestFile);
+
+        File::delete(self::Path.self::ImportTestFile);
+        Storage::deleteDirectory(config('enso.files.paths.testing'));
     }
 }

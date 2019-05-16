@@ -3,11 +3,10 @@
 namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\FileManager\app\Traits\HasFile;
-use LaravelEnso\FileManager\app\Contracts\Attachable;
-use LaravelEnso\FileManager\app\Contracts\VisibleFile;
+use LaravelEnso\Files\app\Traits\HasFile;
+use LaravelEnso\Files\app\Contracts\Attachable;
 
-class RejectedImport extends Model implements Attachable, VisibleFile
+class RejectedImport extends Model implements Attachable
 {
     use HasFile;
 
@@ -18,15 +17,10 @@ class RejectedImport extends Model implements Attachable, VisibleFile
         return $this->belongsTo(DataImport::class);
     }
 
-    public function folder()
+    public function folder(): string
     {
-        return config('enso.config.paths.imports')
+        return 'imports'
             .DIRECTORY_SEPARATOR
             .'rejected_'.$this->data_import_id;
-    }
-
-    public function isDeletable()
-    {
-        return false;
     }
 }
