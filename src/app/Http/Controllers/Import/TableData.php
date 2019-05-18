@@ -3,13 +3,12 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
-use LaravelEnso\Tables\app\Traits\Excel;
-use LaravelEnso\Tables\app\Traits\Datatable;
+use LaravelEnso\Tables\app\Traits\Data;
 use LaravelEnso\DataImport\app\Tables\Builders\DataImportTable;
 
-class Table extends Controller
+class TableData extends Controller
 {
-    use Datatable, Excel;
+    use Data;
 
     protected $tableClass = DataImportTable::class;
 }
