@@ -4,15 +4,23 @@ namespace LaravelEnso\DataImport\app\Services;
 
 use LaravelEnso\Helpers\app\Classes\Obj;
 
-class Summary extends Obj
+class Summary
 {
-    public $filename;
-    public $errors;
+    private $filename;
+    private $errors;
 
     public function __construct(string $filename)
     {
         $this->filename = $filename;
         $this->errors = new Obj();
+    }
+
+    public function toArray()
+    {
+        return [
+            'filename' => $this->filename,
+            'errors' => $this->errors,
+        ];
     }
 
     public function addError(string $category, string $value)

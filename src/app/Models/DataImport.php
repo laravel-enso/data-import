@@ -48,7 +48,7 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
             ImportJob::dispatch($this, $template, $params);
         }
 
-        return $structure->summary();
+        return $structure->summary()->toArray();
     }
 
     public function getEntriesAttribute()
