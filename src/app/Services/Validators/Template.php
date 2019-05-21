@@ -42,7 +42,7 @@ class Template
 
     private function sheetAttributes()
     {
-        collect($this->template->get('sheets'))
+        $this->template->get('sheets')
             ->each(function ($sheet) {
                 $this->sheetMandatory($sheet)
                     ->sheetOptional($sheet);
@@ -54,7 +54,7 @@ class Template
     private function sheetMandatory($sheet)
     {
         $diff = collect(Sheet::Mandatory)
-            ->diff(collect($sheet)->keys());
+            ->diff($sheet->keys());
 
         if ($diff->isNotEmpty()) {
             throw new TemplateException(__(
@@ -70,25 +70,25 @@ class Template
 
     private function checkImporter($sheet)
     {
-        if (! class_exists($sheet->importerClass)) {
+        if (! class_exists($sheet->get('importerClass'))) {
             throw new TemplateException(__(
                 'Importer class ":class" for sheet ":sheet" does not exist',
-                ['class' => $sheet->importerClass, 'sheet' => $sheet->name]
+                ['class' => $sheet->get('importerClass'), 'sheet' => $sheet->get('name')]
             ));
         }
 
-        if (! collect(class_implements($sheet->importerClass))
+        if (! collect(class_implements($sheet->get('importerClass')))
             ->contains(Importable::class)) {
             throw new TemplateException(__(
                 'Importer class ":class" for sheet ":sheet" must implement the ":contract" contract',
-                ['class' => $sheet->importerClass, 'contract' => Importable::class]
+                ['class' => $sheet->get('importerClass'), 'contract' => Importable::class]
             ));
         }
     }
 
     private function sheetOptional($sheet)
     {
-        $diff = collect($sheet)->keys()
+        $diff = $sheet->keys()
             ->diff(Sheet::Mandatory)
             ->diff(Sheet::Optional);
 
@@ -102,9 +102,9 @@ class Template
 
     private function columnAttributes()
     {
-        collect($this->template->get('sheets'))
+        $this->template->get('sheets')
             ->pluck('columns')->each(function ($columns) {
-                collect($columns)->each(function ($column) {
+                $columns->each(function ($column) {
                     $this->columnMandatory($column)
                         ->columnOptional($column);
                 });
@@ -114,7 +114,7 @@ class Template
     private function columnMandatory($column)
     {
         $diff = collect(ColumnAttributes::Mandatory)
-            ->diff(collect($column)->keys());
+            ->diff($column->keys());
 
         if ($diff->isNotEmpty()) {
             throw new TemplateException(__(
@@ -128,7 +128,7 @@ class Template
 
     private function columnOptional($column)
     {
-        $diff = collect($column)->keys()
+        $diff = $column->keys()
             ->diff(ColumnAttributes::Mandatory)
             ->diff(ColumnAttributes::Optional);
 

@@ -49,7 +49,7 @@ class Template
         return $this->columns($sheetName)
             ->reduce(function ($rules, $column) {
                 if (property_exists($column, 'validations')) {
-                    $rules[$column->name] = $column->validations;
+                    $rules[$column->get('name')] = $column->get('validations');
                 }
 
                 return $rules;
@@ -81,20 +81,20 @@ class Template
 
     private function columns(string $sheetName)
     {
-        return collect($this->sheet($sheetName)->get('columns'));
+        return $this->sheet($sheetName)->get('columns');
     }
 
     private function sheet(string $sheetName)
     {
         return $this->sheets()
             ->first(function ($sheet) use ($sheetName) {
-                return $sheet->name === $sheetName;
+                return $sheet->get('name') === $sheetName;
             });
     }
 
     private function sheets()
     {
-        return collect($this->template->get('sheets'));
+        return $this->template->get('sheets');
     }
 
     private function validate()
@@ -115,9 +115,8 @@ class Template
             'enso.imports.configs.'.$dataImport->type.'.template'
         ));
 
-        $template = (new JsonParser($path))
-            ->object();
-
-        return new Obj($template);
+        return new Obj(
+            (new JsonParser($path))->array()
+        );
     }
 }
