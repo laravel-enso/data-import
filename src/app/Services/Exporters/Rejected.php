@@ -121,7 +121,7 @@ class Rejected
     private function notify()
     {
         optional($this->user())->notify(
-            (new ImportDone($this->dataImport))
+            (new ImportDone($this->dataImport->fresh()))
                 ->onQueue(config('enso.imports.queues.notifications'))
         );
     }
