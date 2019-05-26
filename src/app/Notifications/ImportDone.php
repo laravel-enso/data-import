@@ -30,7 +30,7 @@ class ImportDone extends Notification implements ShouldQueue
     {
         return (new BroadcastMessage([
             'level' => 'success',
-            'title' => $this->broadcastBody(),
+            'title' => $this->broadcastTitle(),
             'body' => $this->filename(),
             'icon' => 'file-excel',
         ]))->onQueue($this->queue);
@@ -40,7 +40,7 @@ class ImportDone extends Notification implements ShouldQueue
     {
         return (new MailMessage())
             ->subject($this->mailSubject())
-            ->markdown('laravel-enso/data-import::emails.import', [
+            ->markdown('laravel-enso/dataimport::emails.import', [
                 'name' => $notifiable->person->appellative
                     ?: $notifiable->person->name,
                 'filename' => $this->filename(),
@@ -61,12 +61,12 @@ class ImportDone extends Notification implements ShouldQueue
 
     private function notificationBody()
     {
-        return $this->broadcastBody()
+        return $this->broadcastTitle()
             .': '
             .$this->filename();
     }
 
-    private function broadcastBody()
+    private function broadcastTitle()
     {
         return __(':type import done', ['type' => $this->type()]);
     }
