@@ -60,7 +60,7 @@ class XLSX
 
     protected function normalizeSheet($string)
     {
-        return Str::camel(Str::lower(($string)));
+        return Str::snake(Str::lower(($string)));
     }
 
     protected function normalizeHeader($row)
