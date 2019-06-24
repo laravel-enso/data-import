@@ -48,7 +48,7 @@ class Template
     {
         return $this->columns($sheetName)
             ->reduce(function ($rules, $column) {
-                if (property_exists($column, 'validations')) {
+                if ($column->has('validations')) {
                     $rules[$column->get('name')] = $column->get('validations');
                 }
 
