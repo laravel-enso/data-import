@@ -49,7 +49,7 @@ class StructureValidationTest extends TestCase
         ])->assertStatus(200)
         ->assertJsonFragment([
             'errors' => [
-                'Extra Sheets' => ['invalidSheet'],
+                'Extra Sheets' => ['invalid_sheet'],
                 'Missing Sheets' => ['groups']
             ],
             'filename' => self::TestFile,
