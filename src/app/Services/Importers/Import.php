@@ -17,6 +17,7 @@ use LaravelEnso\DataImport\app\Services\Reader\Content as Reader;
 
 class Import
 {
+    private $row;
     private $dataImport;
     private $params;
     private $template;
@@ -111,7 +112,9 @@ class Import
         $this->chunk = collect();
 
         while (! $this->sheetHasFinished() && $this->chunkIsIncomplete()) {
-            $this->chunk->push($this->row());
+            if (! $this->row()->isEmpty()) {
+                $this->chunk->push($this->row);
+            }
             $this->rowIterator->next();
         }
 
@@ -120,11 +123,28 @@ class Import
 
     private function row()
     {
-        return new Row(
+        $this->row = new Row(
             $this->header->combine(
                 $this->sanitizeRow()
             )->toArray()
         );
+
+        return $this;
+    }
+
+    private function isEmpty()
+    {
+        $isEmpty = true;
+
+        $this->row->values()->each(function ($cell) use (&$isEmpty) {
+            if ($cell !== null) {
+                $isEmpty = false;
+
+                return false;
+            }
+        });
+
+        return $isEmpty;
     }
 
     private function dispatch()
