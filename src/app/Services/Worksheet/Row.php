@@ -17,8 +17,11 @@ class Row extends Obj
             return $cell !== null;
         });
 
-        return $validCell === null
-            ? true
-            : false;
+        return $validCell === null;
+    }
+
+    public function isNotEmpty()
+    {
+        return ! $this->isEmpty();
     }
 }
