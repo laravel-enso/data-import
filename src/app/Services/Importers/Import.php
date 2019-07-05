@@ -111,7 +111,12 @@ class Import
         $this->chunk = collect();
 
         while (! $this->sheetHasFinished() && $this->chunkIsIncomplete()) {
-            $this->chunk->push($this->row());
+            $row = $this->row();
+
+            if ($row->isNotEmpty()) {
+                $this->chunk->push($row);
+            }
+
             $this->rowIterator->next();
         }
 

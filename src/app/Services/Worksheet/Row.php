@@ -10,4 +10,11 @@ class Row extends Obj
     {
         return $this->has(config('enso.imports.errorColumn'));
     }
+
+    public function isNotEmpty()
+    {
+        return $this->values()->first(function ($cell) {
+            return $cell !== null;
+        }) !== null;
+    }
 }
