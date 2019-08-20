@@ -7,6 +7,7 @@ use LaravelEnso\Helpers\app\Classes\Obj;
 abstract class Validator
 {
     private $errors;
+    private $params;
 
     public function __construct()
     {
@@ -34,4 +35,17 @@ abstract class Validator
     {
         $this->errors = collect();
     }
+
+    public function params()
+    {
+        return $this->params;
+    }
+
+    public function setParams(?Obj $params)
+    {
+        $this->params = $params;
+
+        return $this;
+    }
+    
 }

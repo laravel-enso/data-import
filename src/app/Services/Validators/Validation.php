@@ -10,13 +10,15 @@ class Validation
     private $row;
     private $rules;
     private $custom;
+    private $params;
     private $errorColumn;
 
-    public function __construct(Obj $row, array $rules, ?Validator $custom)
+    public function __construct(Obj $row, array $rules, ?Validator $custom, ?Obj $params)
     {
         $this->row = $row;
         $this->rules = $rules;
         $this->custom = $custom;
+        $this->params = $params;
         $this->errorColumn = config('enso.imports.errorColumn');
     }
 
@@ -32,7 +34,7 @@ class Validation
             return $this;
         }
 
-        $validator->run($this->row);
+        $validator->setParams($this->params)->run($this->row);
 
         if ($validator->fails()) {
             $this->addErrors($validator->message());
@@ -43,8 +45,7 @@ class Validation
 
     private function implicit()
     {
-        return (new ImplicitValidator())
-            ->rules($this->rules);
+        return (new ImplicitValidator())->rules($this->rules);
     }
 
     private function addErrors($errors)

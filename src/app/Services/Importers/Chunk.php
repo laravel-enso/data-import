@@ -64,7 +64,8 @@ class Chunk
         (new Validation(
             $row,
             $this->template->validationRules($this->sheetName),
-            $this->validator
+            $this->validator,
+            $this->params
         ))->run();
 
         if ($row->isRejected()) {

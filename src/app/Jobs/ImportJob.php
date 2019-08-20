@@ -30,7 +30,8 @@ class ImportJob implements ShouldQueue
 
     public function handle()
     {
-        (new Import($this->dataImport, $this->template, $this->params))
-            ->run();
+        (new Import(
+            $this->dataImport, $this->template, $this->params
+        ))->run();
     }
 }
