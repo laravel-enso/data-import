@@ -9,6 +9,6 @@ class Index extends Controller
 {
     public function __invoke()
     {
-        return ['importTypes' => ImportTypes::select()];
+        return ['types' => ImportTypes::select()];
     }
 }
