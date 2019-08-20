@@ -47,5 +47,4 @@ abstract class Validator
 
         return $this;
     }
-    
 }
