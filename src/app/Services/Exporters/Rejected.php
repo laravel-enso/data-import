@@ -113,7 +113,7 @@ class Rejected
 
     private function finalize()
     {
-        $this->dataImport->endOperation(Statuses::Finalized);
+        $this->dataImport->endOperation();
 
         return $this;
     }
