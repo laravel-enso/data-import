@@ -3,9 +3,10 @@
 namespace LaravelEnso\DataImport\app\Services\Reader;
 
 use Exception;
-use Box\Spout\Common\Type;
 use Illuminate\Support\Str;
-use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use LaravelEnso\DataImport\app\Exceptions\XLSXException;
 
 class XLSX
@@ -16,7 +17,7 @@ class XLSX
     public function __construct($file)
     {
         $this->file = $file;
-        $this->reader = ReaderFactory::create(Type::XLSX);
+        $this->reader = ReaderEntityFactory::createXLSXReader();
     }
 
     public function open()
@@ -63,10 +64,11 @@ class XLSX
         return Str::snake(Str::lower(($string)));
     }
 
-    protected function normalizeHeader($row)
+    protected function normalizeHeader(Row $row)
     {
-        return collect($row)->map(function ($cell) {
-            return Str::snake(Str::lower(($cell)));
-        })->toArray();
+        return collect($row->getCells())
+            ->map(function (Cell $cell) {
+                return Str::snake(Str::lower($cell->getValue()));
+            })->toArray();
     }
 }

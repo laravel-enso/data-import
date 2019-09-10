@@ -13,8 +13,6 @@ class Row extends Obj
 
     public function isNotEmpty()
     {
-        return $this->values()->first(function ($cell) {
-            return $cell !== null;
-        }) !== null;
+        return $this->values()->filter()->count() > 0;
     }
 }
