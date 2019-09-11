@@ -11,8 +11,6 @@ class Destroy extends Controller
     {
         $dataImport->delete();
 
-        return [
-            'message' => __('The import record was successfully deleted'),
-        ];
+        return ['message' => __('The import record was successfully deleted')];
     }
 }

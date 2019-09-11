@@ -11,7 +11,7 @@ class CreateDataImportsTable extends Migration
         Schema::create('data_imports', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('type');
+            $table->string('type')->index();
 
             $table->integer('successful')->nullable();
             $table->integer('failed')->nullable();

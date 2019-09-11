@@ -12,11 +12,11 @@ class AppServiceProvider extends ServiceProvider
     {
         DataImport::observe(IOObserver::class);
 
-        $this->loadDependencies()
-            ->publishDependencies();
+        $this->load()
+            ->publish();
     }
 
-    private function loadDependencies()
+    private function load()
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         return $this;
     }
 
-    private function publishDependencies()
+    private function publish()
     {
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),

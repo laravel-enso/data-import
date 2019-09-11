@@ -11,7 +11,7 @@ class CreateImportTemplatesTable extends Migration
         Schema::create('import_templates', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('type');
+            $table->string('type')->index();
 
             $table->timestamps();
         });

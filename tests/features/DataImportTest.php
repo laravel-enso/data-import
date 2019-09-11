@@ -157,7 +157,7 @@ class DataImportTest extends TestCase
 
     private function importFile($file)
     {
-        \File::copy(
+        File::copy(
             self::Path.$file,
             self::Path.self::ImportTestFile
         );
