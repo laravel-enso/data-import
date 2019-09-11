@@ -8,7 +8,6 @@ use LaravelEnso\Core\app\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelEnso\DataImport\app\Models\ImportTemplate;
-use LaravelEnso\Files\app\Services\Files;
 
 class ImportTemplateTest extends TestCase
 {
@@ -118,7 +117,7 @@ class ImportTemplateTest extends TestCase
 
     private function templateFile()
     {
-        \File::copy(
+        File::copy(
             self::Path.self::TemplateFile,
             self::Path.self::TemplateTestFile
         );

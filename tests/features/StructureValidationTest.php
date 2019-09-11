@@ -3,6 +3,7 @@
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,7 +90,7 @@ class StructureValidationTest extends TestCase
 
     private function file($file)
     {
-        \File::copy(
+        File::copy(
             self::Path.$file,
             self::Path.self::TestFile
         );
@@ -106,6 +107,6 @@ class StructureValidationTest extends TestCase
 
     private function cleanUp()
     {
-        \File::delete(self::Path.self::TestFile);
+        File::delete(self::Path.self::TestFile);
     }
 }

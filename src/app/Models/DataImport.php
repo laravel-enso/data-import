@@ -13,15 +13,16 @@ use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 use LaravelEnso\Files\app\Contracts\Attachable;
-use LaravelEnso\Files\app\Contracts\VisibleFile;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\Files\app\Contracts\AuthorizesFileAcces;
+use LaravelEnso\Files\app\Traits\FilePolicies;
 use LaravelEnso\DataImport\app\Services\Structure;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
-class DataImport extends Model implements Attachable, VisibleFile, IOOperation
+class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAcces
 {
-    use CreatedBy, HasIOStatuses, HasFile, TableCache;
+    use CreatedBy, HasIOStatuses, HasFile, FilePolicies, TableCache;
 
     protected $extensions = ['xlsx'];
 
@@ -89,10 +90,5 @@ class DataImport extends Model implements Attachable, VisibleFile, IOOperation
     public function type()
     {
         return IOTypes::Import;
-    }
-
-    public function isDeletable(): bool
-    {
-        return true;
     }
 }

@@ -21,12 +21,12 @@ class ImportDone extends Notification implements ShouldQueue
         $this->dataImport = $dataImport;
     }
 
-    public function via($notifiable)
+    public function via()
     {
         return array_merge(['mail'], config('enso.imports.notifications'));
     }
 
-    public function toBroadcast($notifiable)
+    public function toBroadcast()
     {
         return (new BroadcastMessage([
             'level' => 'success',
@@ -51,7 +51,7 @@ class ImportDone extends Notification implements ShouldQueue
             ]);
     }
 
-    public function toArray($notifiable)
+    public function toArray()
     {
         return [
             'body' => $this->notificationBody(),

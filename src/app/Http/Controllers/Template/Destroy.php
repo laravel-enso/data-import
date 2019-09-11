@@ -11,8 +11,6 @@ class Destroy extends Controller
     {
         $importTemplate->delete();
 
-        return [
-            'message' => __('The template was successfully deleted'),
-        ];
+        return ['message' => __('The template was successfully deleted')];
     }
 }

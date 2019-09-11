@@ -27,14 +27,15 @@
     ],
     "require": {
         "box/spout": "2.7.*",
-        "laravel-enso/core": "4.3.*",
-        "laravel-enso/files": "3.1.*",
-        "laravel-enso/helpers": "1.11.*",
+        "laravel-enso/core": "4.4.*",
+        "laravel-enso/enums": "1.0.*",
+        "laravel-enso/files": "3.2.*",
+        "laravel-enso/helpers": "1.12.*",
         "laravel-enso/io": "1.2.*",
         "laravel-enso/migrator": "1.0.*",
         "laravel-enso/track-who": "1.8.*",
-        "laravel-enso/tables": "2.1.*",
-        "laravel-enso/select": "3.1.*"
+        "laravel-enso/tables": "2.2.*",
+        "laravel-enso/select": "3.2.*"
     },
     "autoload": {
         "psr-4": {
