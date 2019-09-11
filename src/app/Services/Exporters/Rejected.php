@@ -3,14 +3,13 @@
 namespace LaravelEnso\DataImport\app\Services\Exporters;
 
 use Illuminate\Http\File;
-use Box\Spout\Common\Type;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Box\Spout\Writer\WriterFactory;
 use Illuminate\Support\Facades\Storage;
-use Box\Spout\Writer\Style\StyleBuilder;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use LaravelEnso\DataImport\app\Notifications\ImportDone;
 
 class Rejected
@@ -58,7 +57,11 @@ class Rejected
     {
         $this->prepare($rejected);
 
-        $this->writer->addRows($rejected->toArray());
+        $rows = $rejected->map(function ($row) {
+            return $this->row($row);
+        });
+
+        $this->writer->addRows($rows->toArray());
     }
 
     private function prepare(Collection $rejected)
@@ -75,7 +78,7 @@ class Rejected
         }
 
         $this->writer->getCurrentSheet()->setName($sheetName);
-        $this->writer->addRow($header);
+        $this->writer->addRow($this->row($header));
 
         $this->sheets->push($sheetName);
     }
@@ -86,7 +89,7 @@ class Rejected
             ->setShouldWrapText(false)
             ->build();
 
-        $this->writer = WriterFactory::create(Type::XLSX);
+        $this->writer = WriterEntityFactory::createXLSXWriter();
 
         $this->writer->setDefaultRowStyle($defaultStyle)
             ->openToFile(Storage::path($this->path()));
@@ -163,5 +166,10 @@ class Rejected
     private function user()
     {
         return optional($this->dataImport->file)->createdBy;
+    }
+
+    private function row($row)
+    {
+        return WriterEntityFactory::createRowFromArray($row);
     }
 }
