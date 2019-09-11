@@ -11,13 +11,13 @@ use LaravelEnso\IO\app\Contracts\IOOperation;
 use LaravelEnso\Tables\app\Traits\TableCache;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
+use LaravelEnso\Files\app\Traits\FilePolicies;
 use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 use LaravelEnso\Files\app\Contracts\Attachable;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\Files\app\Contracts\AuthorizesFileAcces;
-use LaravelEnso\Files\app\Traits\FilePolicies;
 use LaravelEnso\DataImport\app\Services\Structure;
+use LaravelEnso\Files\app\Contracts\AuthorizesFileAcces;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAcces

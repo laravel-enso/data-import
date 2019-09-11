@@ -21,7 +21,7 @@ class Policy
     {
         return $this->ownsDataImport($user, $dataImport);
     }
-    
+
     public function share(User $user, DataImport $dataImport)
     {
         return $this->ownsDataImport($user, $dataImport);
