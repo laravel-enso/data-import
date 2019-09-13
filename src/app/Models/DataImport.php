@@ -17,10 +17,10 @@ use LaravelEnso\Files\app\Contracts\Attachable;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Services\Template;
 use LaravelEnso\DataImport\app\Services\Structure;
-use LaravelEnso\Files\app\Contracts\AuthorizesFileAcces;
+use LaravelEnso\Files\app\Contracts\AuthorizesFileAccess;
 use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
 
-class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAcces
+class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
     use CreatedBy, HasIOStatuses, HasFile, FilePolicies, TableCache;
 
