@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Collection;
+use LaravelEnso\Core\app\Models\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use LaravelEnso\Helpers\app\Classes\Obj;
@@ -18,18 +19,20 @@ class ChunkImportJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $dataImport;
-    private $params;
     private $template;
+    private $user;
+    private $params;
     private $sheetName;
     private $chunk;
     private $index;
     private $isLast;
 
-    public function __construct(DataImport $dataImport, Obj $params, Template $template, string $sheetName, Collection $chunk, int $index, bool $isLast)
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index, bool $isLast)
     {
         $this->dataImport = $dataImport;
-        $this->params = $params;
         $this->template = $template;
+        $this->user = $user;
+        $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
         $this->index = $index;
@@ -41,8 +44,9 @@ class ChunkImportJob implements ShouldQueue
     {
         (new Chunk(
             $this->dataImport,
-            $this->params,
             $this->template,
+            $this->user,
+            $this->params,
             $this->sheetName,
             $this->chunk,
             $this->index,

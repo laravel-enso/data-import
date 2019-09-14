@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\app\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,12 +19,14 @@ class ImportJob implements ShouldQueue
     private $dataImport;
     private $params;
     private $template;
+    private $user;
 
     public function __construct(DataImport $dataImport, Template $template, array $params = [])
     {
         $this->dataImport = $dataImport;
-        $this->params = $params;
         $this->template = $template;
+        $this->user = Auth::user();
+        $this->params = $params;
         $this->timeout = $template->timeout();
         $this->queue = config('enso.imports.queues.splitting');
     }
@@ -31,7 +34,10 @@ class ImportJob implements ShouldQueue
     public function handle()
     {
         (new Import(
-            $this->dataImport, $this->template, $this->params
+            $this->dataImport,
+            $this->template,
+            $this->user,
+            $this->params
         ))->run();
     }
 }

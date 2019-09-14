@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Services\Importers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
@@ -19,6 +20,8 @@ class Chunk
 
     private $dataImport;
     private $template;
+    private $user;
+    private $params;
     private $sheetName;
     private $chunk;
     private $index;
@@ -28,11 +31,12 @@ class Chunk
     private $validator;
     private $importer;
 
-    public function __construct(DataImport $dataImport, Obj $params, Template $template, string $sheetName, Collection $chunk, int $index, bool $isLast)
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index, bool $isLast)
     {
         $this->dataImport = $dataImport;
-        $this->params = $params;
         $this->template = $template;
+        $this->user = $user;
+        $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
         $this->index = $index;
@@ -82,7 +86,7 @@ class Chunk
     private function import($row)
     {
         try {
-            $this->importer->run($row, $this->params);
+            $this->importer->run($row, $this->user, $this->params);
         } catch (\Exception $exception) {
             $row->set($this->errorColumn, self::UndeterminedImportError);
             $this->rejected->push($row);

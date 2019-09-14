@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Services\Importers;
 
 use DateTime;
 use Carbon\Carbon;
+use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
@@ -20,6 +21,7 @@ class Import
     private $dataImport;
     private $params;
     private $template;
+    private $user;
     private $reader;
     private $rowIterator;
     private $sheetName;
@@ -29,11 +31,12 @@ class Import
     private $chunk;
     private $chunkIndex;
 
-    public function __construct(DataImport $dataImport, Template $template, array $params)
+    public function __construct(DataImport $dataImport, Template $template, User $user, array $params)
     {
         $this->dataImport = $dataImport;
-        $this->params = new Obj($params);
         $this->template = $template;
+        $this->user = $user;
+        $this->params = new Obj($params);
         $this->chunkIndex = 0;
     }
 
@@ -81,7 +84,7 @@ class Import
         $importer = $this->template->importer($this->sheetName);
 
         if ($importer instanceof BeforeHook) {
-            $importer->before($this->params);
+            $importer->before($this->user, $this->params);
         }
 
         return $this;
@@ -136,8 +139,9 @@ class Import
     {
         ChunkImportJob::dispatch(
             $this->dataImport,
-            $this->params,
             $this->template,
+            $this->user,
+            $this->params,
             $this->sheetName,
             $this->chunk,
             $this->chunkIndex,
@@ -211,7 +215,7 @@ class Import
         $importer = $this->template->importer($this->sheetName);
 
         if ($importer instanceof AfterHook) {
-            $importer->after($this->params);
+            $importer->after($this->user, $this->params);
         }
     }
 }
