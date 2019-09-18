@@ -14,7 +14,6 @@ class DataImportException extends EnsoException
     public static function deleteRunningImport()
     {
         return new static(__('The import is currently running and cannot be deleted'));
-
     }
 
     public function fileNotReadable()

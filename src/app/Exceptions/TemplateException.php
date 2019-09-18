@@ -15,7 +15,7 @@ class TemplateException extends EnsoException
             ['attrs' => $attrs]
         ));
     }
-    
+
     public static function missingSheetAttributes($attrs)
     {
         return new static(__(
@@ -31,7 +31,7 @@ class TemplateException extends EnsoException
             ['attrs' => $attrs]
         ));
     }
-    
+
     public static function missingColumnAttributes($attrs)
     {
         return new static(__(
@@ -39,7 +39,7 @@ class TemplateException extends EnsoException
             ['attrs' => $attrs]
         ));
     }
-    
+
     public static function unknownColumnAttributes($attrs)
     {
         return new static(__(
@@ -47,7 +47,7 @@ class TemplateException extends EnsoException
             ['attrs' => $attrs]
         ));
     }
-    
+
     public static function missingImporterClass(Obj $sheet)
     {
         return new static(__(
@@ -55,7 +55,7 @@ class TemplateException extends EnsoException
             ['class' => $sheet->get('validatorClass'), 'sheet' => $sheet->get('name')]
         ));
     }
-    
+
     public static function importerMissingContract(Obj $sheet)
     {
         return new static(__(
@@ -71,7 +71,7 @@ class TemplateException extends EnsoException
             ['class' => $sheet->get('validatorClass'), 'sheet' => $sheet->get('name')]
         ));
     }
-    
+
     public static function incorectValidator(Obj $sheet)
     {
         return new static(__(
