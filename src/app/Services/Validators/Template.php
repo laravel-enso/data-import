@@ -75,7 +75,7 @@ class Template
 
         return $this;
     }
-    
+
     private function validator($sheet)
     {
         if (! $sheet->has('validatorClass')) {
@@ -100,7 +100,7 @@ class Template
         if ($diff->isNotEmpty()) {
             throw TemplateException::unknownSheetAttributes($diff->implode('", "'));
         }
-        
+
         return $this;
     }
 
