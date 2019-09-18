@@ -18,7 +18,7 @@ use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Services\Template;
 use LaravelEnso\DataImport\app\Services\Structure;
 use LaravelEnso\Files\app\Contracts\AuthorizesFileAccess;
-use LaravelEnso\DataImport\app\Exceptions\ProcessingInProgress;
+use LaravelEnso\DataImport\app\Exceptions\DataImportException;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
@@ -72,9 +72,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function delete()
     {
         if ($this->status !== Statuses::Finalized) {
-            throw new ProcessingInProgress(
-                __('The import is currently running and cannot be deleted')
-            );
+            throw DataImportException::deleteRunningImport();
         }
 
         \Storage::deleteDirectory($this->rejectedFolder());

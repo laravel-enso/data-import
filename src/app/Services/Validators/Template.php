@@ -31,10 +31,7 @@ class Template
             ->diff($this->template->keys());
 
         if ($diff->isNotEmpty()) {
-            throw new TemplateException(__(
-                'Attribute(s) Missing in template: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
+            throw TemplateException::missingRootAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -45,7 +42,9 @@ class Template
         $this->template->get('sheets')
             ->each(function ($sheet) {
                 $this->sheetMandatory($sheet)
-                    ->sheetOptional($sheet);
+                    ->sheetOptional($sheet)
+                    ->importer($sheet)
+                    ->validator($sheet);
             });
 
         return $this;
@@ -57,32 +56,38 @@ class Template
             ->diff($sheet->keys());
 
         if ($diff->isNotEmpty()) {
-            throw new TemplateException(__(
-                'Mandatory Attribute(s) Missing in sheet object: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
+            throw TemplateException::missingSheetAttributes($diff->implode('", "'));
         }
-
-        $this->checkImporter($sheet);
 
         return $this;
     }
 
-    private function checkImporter($sheet)
+    private function importer($sheet)
     {
         if (! class_exists($sheet->get('importerClass'))) {
-            throw new TemplateException(__(
-                'Importer class ":class" for sheet ":sheet" does not exist',
-                ['class' => $sheet->get('importerClass'), 'sheet' => $sheet->get('name')]
-            ));
+            throw TemplateException::missingImporterClass($sheet);
         }
 
         if (! collect(class_implements($sheet->get('importerClass')))
             ->contains(Importable::class)) {
-            throw new TemplateException(__(
-                'Importer class ":class" for sheet ":sheet" must implement the ":contract" contract',
-                ['class' => $sheet->get('importerClass'), 'contract' => Importable::class]
-            ));
+            throw TemplateException::importerMissingContract($sheet);
+        }
+
+        return $this;
+    }
+    
+    private function validator($sheet)
+    {
+        if (! $sheet->has('validatorClass')) {
+            return;
+        }
+
+        if (! class_exists($sheet->get('validatorClass'))) {
+            throw TemplateException::missingValidatorClass($sheet);
+        }
+
+        if (! is_subclass_of($sheet->get('importerClass'), Validator::class)) {
+            throw TemplateException::incorectValidator($sheet);
         }
     }
 
@@ -93,11 +98,10 @@ class Template
             ->diff(Sheet::Optional);
 
         if ($diff->isNotEmpty()) {
-            throw new TemplateException(__(
-                'Unknown Optional Attribute(s) in sheet object: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
+            throw TemplateException::unknownSheetAttributes($diff->implode('", "'));
         }
+        
+        return $this;
     }
 
     private function columnAttributes()
@@ -117,10 +121,7 @@ class Template
             ->diff($column->keys());
 
         if ($diff->isNotEmpty()) {
-            throw new TemplateException(__(
-                'Mandatory Attribute(s) Missing in column object: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
+            throw TemplateException::missingColumnAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -133,10 +134,7 @@ class Template
             ->diff(ColumnAttributes::Optional);
 
         if ($diff->isNotEmpty()) {
-            throw new TemplateException(__(
-                'Unknown Attribute(s) found in column object: ":attr"',
-                ['attr' => $diff->implode('", "')]
-            ));
+            throw TemplateException::unknownColumnAttributes($diff->implode('", "'));
         }
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use LaravelEnso\DataImport\app\Exceptions\XLSXException;
+use LaravelEnso\DataImport\app\Exceptions\DataImportException;
 
 class XLSX
 {
@@ -25,7 +25,7 @@ class XLSX
         try {
             $this->reader->open($this->file);
         } catch (Exception $exception) {
-            throw new XLSXException(__('Unable to read file'));
+            throw DataImportException::fileNotReadable();
         }
 
         return $this;
