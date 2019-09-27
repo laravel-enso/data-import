@@ -38,6 +38,14 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),
         ], 'enso-config');
+        
+        $this->publishes([
+            __DIR__.'/database/factories' => database_path('factories'),
+        ], 'data-import-factory');
+        
+        $this->publishes([
+            __DIR__.'/database/factories' => database_path('factories'),
+        ], 'enso-factories');
 
         $this->publishes([
             __DIR__.'/../resources' => app_path(),

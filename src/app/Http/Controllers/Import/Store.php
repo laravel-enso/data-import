@@ -10,7 +10,8 @@ class Store extends Controller
 {
     public function __invoke(ValidateImportRequest $request, DataImport $dataImport)
     {
-        $dataImport->type = $request->get('type');
+        $dataImport = factory(DataImport::class)
+            ->make(['type' => $request->get('type')]);
 
         return $dataImport->handle(
             $request->file('import'),

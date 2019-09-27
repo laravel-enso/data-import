@@ -5,6 +5,7 @@ namespace LaravelEnso\DataImport\app\Models;
 use Illuminate\Http\UploadedFile;
 use LaravelEnso\IO\app\Enums\IOTypes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use LaravelEnso\Files\app\Traits\HasFile;
 use LaravelEnso\IO\app\Traits\HasIOStatuses;
 use LaravelEnso\IO\app\Contracts\IOOperation;
@@ -26,9 +27,12 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     protected $extensions = ['xlsx'];
 
-    protected $fillable = ['type', 'successful', 'failed', 'status', 'created_by'];
+    protected $fillable = [
+        'type', 'successful', 'failed', 'chunks', 'processed_chunks',
+        'file_parsed', 'status', 'created_by'
+    ];
 
-    protected $casts = ['status' => 'integer'];
+    protected $casts = ['status' => 'integer', 'file_parsed' => 'boolean'];
 
     protected $folder = 'imports';
 
@@ -37,7 +41,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return $this->hasOne(RejectedImport::class);
     }
 
-    public function handle(UploadedFile $file, array $params = [])
+    public function handle( UploadedFile $file, array $params = [])
     {
         $template = new Template($this);
         $structure = new Structure($this, $template, $file);
@@ -75,9 +79,15 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
             throw DataImportException::deleteRunningImport();
         }
 
-        \Storage::deleteDirectory($this->rejectedFolder());
+        Storage::deleteDirectory($this->rejectedFolder());
 
         parent::delete();
+    }
+
+    public function isFinalized()
+    {
+        return $this->file_parsed
+            && $this->chunks === $this->processed_chunks;
     }
 
     public function name()

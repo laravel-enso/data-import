@@ -8,7 +8,6 @@ use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Core\app\Models\UserGroup;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Template;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelEnso\Tables\app\Traits\Tests\Datatable;
 
@@ -139,9 +138,8 @@ class DataImportTest extends TestCase
 
     private function createImport($file = null)
     {
-        $this->model = DataImport::create([
+        $this->model = factory(DataImport::class)->create([
             'type' => self::ImportType,
-            'status' => Statuses::Waiting,
         ]);
 
         if ($file) {

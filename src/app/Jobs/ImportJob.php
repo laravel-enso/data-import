@@ -21,14 +21,18 @@ class ImportJob implements ShouldQueue
     private $template;
     private $user;
 
+    public $queue;
+    public $timeout;
+
     public function __construct(DataImport $dataImport, Template $template, array $params = [])
     {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = Auth::user();
         $this->params = $params;
-        $this->timeout = $template->timeout();
+
         $this->queue = config('enso.imports.queues.splitting');
+        $this->timeout = $template->timeout();
     }
 
     public function handle()

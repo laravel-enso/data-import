@@ -29,7 +29,6 @@ class Import
     private $headerCount;
     private $chunkSize;
     private $chunk;
-    private $chunkIndex;
 
     public function __construct(DataImport $dataImport, Template $template, User $user, array $params)
     {
@@ -37,7 +36,6 @@ class Import
         $this->template = $template;
         $this->user = $user;
         $this->params = new Obj($params);
-        $this->chunkIndex = 0;
     }
 
     public function run()
@@ -54,8 +52,7 @@ class Import
                     ->queueChunks();
             });
 
-        $this->closeReader()
-            ->finalize();
+        $this->closeReader();
     }
 
     private function openReader()
@@ -71,11 +68,6 @@ class Import
 
     private function start()
     {
-        $this->dataImport->update([
-            'successful' => 0,
-            'failed' => 0,
-        ]);
-
         $this->dataImport->startProcessing();
     }
 
@@ -110,10 +102,11 @@ class Import
 
     private function prepareChunk()
     {
-        $this->chunkIndex++;
+        $this->dataImport->update(['chunks' => $this->dataImport->chunks + 1]);
+
         $this->chunk = collect();
 
-        while (! $this->sheetHasFinished() && $this->chunkIsIncomplete()) {
+        while ($this->chunkIsIncomplete()) {
             $row = $this->row();
 
             if ($row->isNotEmpty()) {
@@ -121,6 +114,12 @@ class Import
             }
 
             $this->rowIterator->next();
+
+            if ($this->sheetHasFinished()) {
+                $this->dataImport->update(['file_parsed' => true]);
+
+                break;
+            }
         }
 
         return $this;
@@ -144,8 +143,6 @@ class Import
             $this->params,
             $this->sheetName,
             $this->chunk,
-            $this->chunkIndex,
-            $this->fileHasFinished()
         );
     }
 
@@ -195,19 +192,6 @@ class Import
         unset($this->reader);
 
         return $this;
-    }
-
-    private function finalize()
-    {
-        if (config('queue.default') !== 'sync') {
-            return;
-        }
-
-        $this->afterHook();
-
-        $this->dataImport->setStatus(Statuses::Processed);
-
-        RejectedExportJob::dispatch($this->dataImport);
     }
 
     private function afterHook()

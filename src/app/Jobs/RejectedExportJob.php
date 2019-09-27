@@ -17,12 +17,15 @@ class RejectedExportJob implements ShouldQueue
 
     private $dataImport;
 
+    public $queue;
+    public $timeout;
+
     public function __construct(DataImport $dataImport)
     {
         $this->dataImport = $dataImport;
 
-        $this->timeout = (new Template($dataImport))->timeout();
         $this->queue = config('enso.imports.queues.rejected');
+        $this->timeout = (new Template($dataImport))->timeout();
     }
 
     public function handle()

@@ -13,14 +13,18 @@ class CreateDataImportsTable extends Migration
 
             $table->string('type')->index();
 
-            $table->integer('successful')->nullable();
-            $table->integer('failed')->nullable();
+            $table->integer('successful');
+            $table->integer('failed');
+
+            $table->integer('chunks');
+            $table->integer('processed_chunks');
+
+            $table->boolean('file_parsed');
 
             $table->tinyInteger('status');
 
             $table->integer('created_by')->unsigned()->nullable();
-            $table->foreign('created_by')->references('id')
-                ->on('users');
+            $table->foreign('created_by')->references('id')->on('users');
 
             $table->timestamps();
         });

@@ -10,15 +10,13 @@ class RejectedDump
     private $dataImport;
     private $sheetName;
     private $rejected;
-    private $index;
     private $dump;
 
-    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected, int $index)
+    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected)
     {
         $this->dataImport = $dataImport;
         $this->sheetName = $sheetName;
         $this->rejected = $rejected;
-        $this->index = $index;
         $this->dump = collect();
     }
 
@@ -55,6 +53,6 @@ class RejectedDump
     {
         return $this->dataImport->rejectedFolder()
             .DIRECTORY_SEPARATOR
-            .'rejected_dump_'.$this->index.'.json';
+            .'rejected_dump_'.$this->dataImport->chunks.'.json';
     }
 }

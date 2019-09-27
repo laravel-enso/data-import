@@ -24,10 +24,10 @@ class ChunkImportJob implements ShouldQueue
     private $params;
     private $sheetName;
     private $chunk;
-    private $index;
-    private $isLast;
 
-    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index, bool $isLast)
+    public $queue;
+
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params,string $sheetName, Collection $chunk)
     {
         $this->dataImport = $dataImport;
         $this->template = $template;
@@ -35,8 +35,7 @@ class ChunkImportJob implements ShouldQueue
         $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
-        $this->index = $index;
-        $this->isLast = $isLast;
+
         $this->queue = $template->queue();
     }
 
@@ -48,9 +47,7 @@ class ChunkImportJob implements ShouldQueue
             $this->user,
             $this->params,
             $this->sheetName,
-            $this->chunk,
-            $this->index,
-            $this->isLast
+            $this->chunk
         ))->run();
     }
 }

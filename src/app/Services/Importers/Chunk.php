@@ -24,14 +24,12 @@ class Chunk
     private $params;
     private $sheetName;
     private $chunk;
-    private $index;
-    private $isLast;
     private $rejected;
     private $errorColumn;
     private $validator;
     private $importer;
 
-    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index, bool $isLast)
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk)
     {
         $this->dataImport = $dataImport;
         $this->template = $template;
@@ -39,8 +37,6 @@ class Chunk
         $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
-        $this->index = $index;
-        $this->isLast = $isLast;
         $this->rejected = collect();
         $this->errorColumn = config('enso.imports.errorColumn');
         $this->importer = $this->template->importer($sheetName);
@@ -58,7 +54,7 @@ class Chunk
         $this->dumpRejected()
             ->updateProgress();
 
-        if ($this->isLast()) {
+        if ($this->shouldEnd()) {
             $this->finalize();
         }
     }
@@ -100,8 +96,7 @@ class Chunk
             (new RejectedDump(
                 $this->dataImport,
                 $this->sheetName,
-                $this->rejected,
-                $this->index
+                $this->rejected
             ))->handle();
         }
 
@@ -118,6 +113,7 @@ class Chunk
             $this->dataImport->update([
                 'successful' => $this->dataImport->successful + $this->successful(),
                 'failed' => $this->dataImport->failed + $this->rejected->count(),
+                'processed_chunks' => $this->dataImport->processed_chunks + 1,
             ]);
         });
     }
@@ -134,7 +130,7 @@ class Chunk
     private function afterHook()
     {
         if ($this->importer instanceof AfterHook) {
-            $this->importer->after($this->params);
+            $this->importer->after($this->user, $this->params);
         }
     }
 
@@ -143,9 +139,8 @@ class Chunk
         return $this->chunk->count() - $this->rejected->count();
     }
 
-    private function isLast()
+    private function shouldEnd()
     {
-        return config('queue.default') !== 'sync'
-            && $this->isLast;
+        return $this->dataImport->fresh()->isFinalized();
     }
 }
