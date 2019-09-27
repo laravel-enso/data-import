@@ -86,7 +86,7 @@ class Template
             throw TemplateException::missingValidatorClass($sheet);
         }
 
-        if (! is_subclass_of($sheet->get('importerClass'), Validator::class)) {
+        if (! is_subclass_of($sheet->get('validatorClass'), Validator::class)) {
             throw TemplateException::incorectValidator($sheet);
         }
     }
