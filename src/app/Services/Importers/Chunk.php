@@ -11,6 +11,7 @@ use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Services\Template;
 use LaravelEnso\DataImport\app\Contracts\AfterHook;
 use LaravelEnso\DataImport\app\Jobs\RejectedExportJob;
+use LaravelEnso\DataImport\app\Contracts\Authenticates;
 use LaravelEnso\DataImport\app\Services\Writer\RejectedDump;
 use LaravelEnso\DataImport\app\Services\Validators\Validation;
 
@@ -45,6 +46,8 @@ class Chunk
 
     public function run()
     {
+        $this->auth();
+
         $this->chunk->each(function ($row) {
             if ($this->validates($row)) {
                 $this->import($row);
@@ -56,6 +59,13 @@ class Chunk
 
         if ($this->shouldEnd()) {
             $this->finalize();
+        }
+    }
+
+    private function auth()
+    {
+        if ($this->importer instanceOf Authenticates) {
+            Auth::onceUsingId($this->user->id);
         }
     }
 
