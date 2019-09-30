@@ -65,7 +65,7 @@ class Chunk
 
     private function auth()
     {
-        if ($this->importer instanceOf Authenticates) {
+        if ($this->importer instanceof Authenticates) {
             Auth::onceUsingId($this->user->id);
         }
     }
