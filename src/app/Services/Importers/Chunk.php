@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\app\Services\Importers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Enums\Statuses;
