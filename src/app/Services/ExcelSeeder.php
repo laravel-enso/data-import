@@ -17,7 +17,7 @@ class ExcelSeeder extends Seeder
     {
         // DataImport::reguard(); //TODO test!
 
-        DataImport::create([
+        factory(DataImport::class)->create([
             'type' => $this->type,
             'status' => Statuses::Waiting,
         ])->handle($this->importFile());
