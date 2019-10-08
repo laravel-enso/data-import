@@ -1,7 +1,7 @@
 <?php
 
 Route::middleware(['web', 'auth', 'core'])
-    ->namespace('LaravelEnso\DataImport\app\Http\Controllers')
+    ->namespace('LaravelEnso\DataImport\App\Http\Controllers')
     ->prefix('api/import')->as('import.')
     ->group(function () {
         Route::namespace('Import')
