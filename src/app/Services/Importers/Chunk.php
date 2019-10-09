@@ -26,12 +26,13 @@ class Chunk
     private $params;
     private $sheetName;
     private $chunk;
+    private $index;
     private $rejected;
     private $errorColumn;
     private $validator;
     private $importer;
 
-    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk)
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index)
     {
         $this->dataImport = $dataImport;
         $this->template = $template;
@@ -39,6 +40,7 @@ class Chunk
         $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
+        $this->index = $index;
         $this->rejected = collect();
         $this->errorColumn = config('enso.imports.errorColumn');
         $this->importer = $this->template->importer($sheetName);
@@ -107,7 +109,8 @@ class Chunk
             (new RejectedDump(
                 $this->dataImport,
                 $this->sheetName,
-                $this->rejected
+                $this->rejected,
+                $this->index
             ))->handle();
         }
 

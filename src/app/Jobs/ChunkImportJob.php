@@ -24,6 +24,7 @@ class ChunkImportJob implements ShouldQueue
     private $params;
     private $sheetName;
     private $chunk;
+    private $index;
 
     public $queue;
 
@@ -35,6 +36,7 @@ class ChunkImportJob implements ShouldQueue
         $this->params = $params;
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
+        $this->index = $dataImport->chunks;
 
         $this->queue = $template->queue();
     }
@@ -47,7 +49,8 @@ class ChunkImportJob implements ShouldQueue
             $this->user,
             $this->params,
             $this->sheetName,
-            $this->chunk
+            $this->chunk,
+            $this->index
         ))->run();
     }
 }
