@@ -27,10 +27,10 @@
     ],
     "require": {
         "box/spout": "3.0.*",
-        "laravel-enso/core": "4.4.*",
+        "laravel-enso/core": "4.5.*",
         "laravel-enso/enums": "1.1.*",
         "laravel-enso/files": "3.2.*",
-        "laravel-enso/helpers": "1.12.*",
+        "laravel-enso/helpers": "1.2.*",
         "laravel-enso/io": "1.2.*",
         "laravel-enso/migrator": "1.0.*",
         "laravel-enso/track-who": "1.8.*",

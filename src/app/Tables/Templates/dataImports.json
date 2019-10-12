@@ -2,7 +2,6 @@
     "routePrefix": "import",
     "crtNo": true,
     "appends": ["entries"],
-    "cache": true,
     "buttons": [
         "excel",
         {

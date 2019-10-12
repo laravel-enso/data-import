@@ -48,7 +48,9 @@ class AppServiceProvider extends ServiceProvider
         ], 'enso-factories');
 
         $this->publishes([
-            __DIR__.'/../resources' => app_path(),
+            __DIR__.'/../stubs/Imports/Importers/ExampleImporter.stub' => app_path('Imports/Importers/ExampleImporter.php'),
+            __DIR__.'/../stubs/Imports/Templates/exampleTemplate.stub' => app_path('Imports/Templates/exampleTemplate.json'),
+            __DIR__.'/../stubs/Imports/Validators/CustomValidator.stub' => app_path('Imports/Validators/CustomValidator.php'),
         ], 'data-import-examples');
 
         $this->publishes([

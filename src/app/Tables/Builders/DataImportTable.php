@@ -2,15 +2,16 @@
 
 namespace LaravelEnso\DataImport\app\Tables\Builders;
 
-use LaravelEnso\Tables\app\Services\Table;
+use Illuminate\Database\Eloquent\Builder;
+use LaravelEnso\Tables\app\Contracts\Table;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Models\RejectedImportSummary;
 
-class DataImportTable extends Table
+class DataImportTable implements Table
 {
-    protected $templatePath = __DIR__.'/../Templates/dataImports.json';
+    protected const TemplatePath = __DIR__.'/../Templates/dataImports.json';
 
-    public function query()
+    public function query(): Builder
     {
         return DataImport::selectRaw('
             data_imports.id, data_imports.type, data_imports.status, data_imports.status as computedStatus,
@@ -26,5 +27,10 @@ class DataImportTable extends Table
             $join->on('rejected_files.attachable_id', 'rejected_imports.id')
             ->where('rejected_files.attachable_type', RejectedImportSummary::class);
         });
+    }
+
+    public function templatePath(): string
+    {
+        return static::TemplatePath;
     }
 }
