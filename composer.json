@@ -34,7 +34,7 @@
         "laravel-enso/io": "1.2.*",
         "laravel-enso/migrator": "1.0.*",
         "laravel-enso/track-who": "1.8.*",
-        "laravel-enso/tables": "2.2.*",
+        "laravel-enso/tables": "3.0.*",
         "laravel-enso/select": "3.2.*"
     },
     "autoload": {
