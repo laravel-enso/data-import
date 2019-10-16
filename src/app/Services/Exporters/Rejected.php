@@ -5,6 +5,7 @@ namespace LaravelEnso\DataImport\app\Services\Exporters;
 use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use LaravelEnso\Core\app\Models\User;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Models\DataImport;
@@ -15,15 +16,17 @@ use LaravelEnso\DataImport\app\Notifications\ImportDone;
 class Rejected
 {
     private $dataImport;
+    private $user;
     private $writer;
     private $path;
     private $filename;
     private $sheets;
     private $dumps;
 
-    public function __construct(DataImport $dataImport)
+    public function __construct(DataImport $dataImport, User $user)
     {
         $this->dataImport = $dataImport;
+        $this->user = $user;
         $this->sheets = collect();
         $this->dumps = $this->dumps();
     }
@@ -108,7 +111,7 @@ class Rejected
         $this->dataImport->rejected()
             ->create(['data_import_id' => $this->dataImport->id])
             ->attach(
-                new File(Storage::path($this->path())), $this->filename()
+                new File(Storage::path($this->path())), $this->filename(), $this->user
             );
 
         return $this;

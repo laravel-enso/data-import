@@ -138,7 +138,7 @@ class Chunk
 
         $this->dataImport->setStatus(Statuses::Processed);
 
-        RejectedExportJob::dispatch($this->dataImport);
+        RejectedExportJob::dispatch($this->dataImport, $this->user);
     }
 
     private function afterHook()
