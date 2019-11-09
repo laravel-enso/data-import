@@ -3,18 +3,18 @@
 namespace LaravelEnso\DataImport\app\Services\Importers;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\DataImport\app\Contracts\AfterHook;
+use LaravelEnso\DataImport\app\Contracts\Authenticates;
 use LaravelEnso\DataImport\app\Enums\Statuses;
+use LaravelEnso\DataImport\app\Jobs\RejectedExportJob;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\DataImport\app\Contracts\AfterHook;
-use LaravelEnso\DataImport\app\Jobs\RejectedExportJob;
-use LaravelEnso\DataImport\app\Contracts\Authenticates;
-use LaravelEnso\DataImport\app\Services\Writer\RejectedDump;
 use LaravelEnso\DataImport\app\Services\Validators\Validation;
+use LaravelEnso\DataImport\app\Services\Writer\RejectedDump;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 class Chunk
 {

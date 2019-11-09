@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Services\Validators;
 
-use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Services\Validators\Row as ImplicitValidator;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 class Validation
 {

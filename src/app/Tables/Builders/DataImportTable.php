@@ -3,9 +3,9 @@
 namespace LaravelEnso\DataImport\app\Tables\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
-use LaravelEnso\Tables\app\Contracts\Table;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Models\RejectedImportSummary;
+use LaravelEnso\Tables\app\Contracts\Table;
 
 class DataImportTable implements Table
 {

@@ -3,8 +3,8 @@
 namespace LaravelEnso\DataImport\app\Enums;
 
 use Exception;
-use LaravelEnso\Enums\app\Services\Enum;
 use LaravelEnso\DataImport\app\Exceptions\DataImportException;
+use LaravelEnso\Enums\app\Services\Enum;
 
 class ImportTypes extends Enum
 {

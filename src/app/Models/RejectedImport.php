@@ -3,8 +3,8 @@
 namespace LaravelEnso\DataImport\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelEnso\Files\app\Traits\HasFile;
 use LaravelEnso\Files\app\Contracts\Attachable;
+use LaravelEnso\Files\app\Traits\HasFile;
 
 class RejectedImport extends Model implements Attachable
 {

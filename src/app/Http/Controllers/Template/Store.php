@@ -3,8 +3,8 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers\Template;
 
 use Illuminate\Routing\Controller;
-use LaravelEnso\DataImport\app\Models\ImportTemplate;
 use LaravelEnso\DataImport\app\Http\Requests\ValidateTemplateRequest;
+use LaravelEnso\DataImport\app\Models\ImportTemplate;
 
 class Store extends Controller
 {

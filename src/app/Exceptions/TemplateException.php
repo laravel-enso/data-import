@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Exceptions;
 
-use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\DataImport\app\Contracts\Importable;
+use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\Helpers\app\Exceptions\EnsoException;
 
 class TemplateException extends EnsoException

@@ -2,24 +2,24 @@
 
 namespace LaravelEnso\DataImport\app\Models;
 
-use Illuminate\Http\UploadedFile;
-use LaravelEnso\IO\app\Enums\IOTypes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\Files\app\Traits\HasFile;
-use LaravelEnso\IO\app\Traits\HasIOStatuses;
-use LaravelEnso\IO\app\Contracts\IOOperation;
-use LaravelEnso\Tables\app\Traits\TableCache;
-use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Jobs\ImportJob;
-use LaravelEnso\Files\app\Traits\FilePolicies;
-use LaravelEnso\TrackWho\app\Traits\CreatedBy;
-use LaravelEnso\Files\app\Contracts\Attachable;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
-use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\DataImport\app\Services\Structure;
-use LaravelEnso\Files\app\Contracts\AuthorizesFileAccess;
+use LaravelEnso\DataImport\app\Enums\Statuses;
 use LaravelEnso\DataImport\app\Exceptions\DataImportException;
+use LaravelEnso\DataImport\app\Jobs\ImportJob;
+use LaravelEnso\DataImport\app\Services\Structure;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\Files\app\Contracts\Attachable;
+use LaravelEnso\Files\app\Contracts\AuthorizesFileAccess;
+use LaravelEnso\Files\app\Traits\FilePolicies;
+use LaravelEnso\Files\app\Traits\HasFile;
+use LaravelEnso\IO\app\Contracts\IOOperation;
+use LaravelEnso\IO\app\Enums\IOTypes;
+use LaravelEnso\IO\app\Traits\HasIOStatuses;
+use LaravelEnso\Tables\app\Traits\TableCache;
+use LaravelEnso\TrackWho\app\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {

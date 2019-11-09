@@ -3,16 +3,16 @@
 namespace LaravelEnso\DataImport\app\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Collection;
-use LaravelEnso\Core\app\Models\User;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use LaravelEnso\Helpers\app\Classes\Obj;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
+use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Template;
 use LaravelEnso\DataImport\app\Services\Importers\Chunk;
+use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\Helpers\app\Classes\Obj;
 
 class ChunkImportJob implements ShouldQueue
 {

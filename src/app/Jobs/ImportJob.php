@@ -3,14 +3,14 @@
 namespace LaravelEnso\DataImport\app\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Template;
 use LaravelEnso\DataImport\app\Services\Importers\Import;
+use LaravelEnso\DataImport\app\Services\Template;
 
 class ImportJob implements ShouldQueue
 {

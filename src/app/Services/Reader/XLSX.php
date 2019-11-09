@@ -2,11 +2,11 @@
 
 namespace LaravelEnso\DataImport\app\Services\Reader;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Exception;
 use Illuminate\Support\Str;
-use Box\Spout\Common\Entity\Row;
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use LaravelEnso\DataImport\app\Exceptions\DataImportException;
 
 class XLSX

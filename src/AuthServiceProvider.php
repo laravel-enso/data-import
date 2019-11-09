@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport;
 
-use LaravelEnso\DataImport\app\Policies\Policy;
-use LaravelEnso\DataImport\app\Models\DataImport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\app\Policies\Policy;
 
 class AuthServiceProvider extends ServiceProvider
 {

@@ -2,8 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Policies;
 
-use LaravelEnso\Core\app\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use LaravelEnso\Core\app\Models\User;
 use LaravelEnso\DataImport\app\Models\DataImport;
 
 class Policy
