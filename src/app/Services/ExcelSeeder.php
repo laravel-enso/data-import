@@ -23,6 +23,7 @@ class ExcelSeeder extends Seeder
 
     private function importFile()
     {
+        //TODO refactor
         return new UploadedFile(
             Storage::path('seeds'.DIRECTORY_SEPARATOR.$this->filename),
             $this->filename,
