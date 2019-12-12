@@ -11,4 +11,3 @@ Route::namespace('Import')
         Route::get('tableData', 'TableData')->name('tableData');
         Route::get('exportExcel', 'ExportExcel')->name('exportExcel');
     });
-
