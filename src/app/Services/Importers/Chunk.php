@@ -33,7 +33,8 @@ class Chunk
     private $importer;
 
     public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params,
-        string $sheetName, Collection $chunk, int $index) {
+        string $sheetName, Collection $chunk, int $index)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;
