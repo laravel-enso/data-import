@@ -6,7 +6,7 @@ use LaravelEnso\DataImport\app\Attributes\Column as ColumnAttributes;
 use LaravelEnso\DataImport\app\Attributes\Sheet;
 use LaravelEnso\DataImport\app\Attributes\Template as TemplateAttributes;
 use LaravelEnso\DataImport\app\Contracts\Importable;
-use LaravelEnso\DataImport\app\Exceptions\TemplateException;
+use LaravelEnso\DataImport\app\Exceptions\Template as TemplateException;
 use LaravelEnso\Helpers\app\Classes\Obj;
 
 class Template

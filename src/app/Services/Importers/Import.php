@@ -5,7 +5,6 @@ namespace LaravelEnso\DataImport\app\Services\Importers;
 use Carbon\Carbon;
 use DateTime;
 use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\DataImport\app\Contracts\AfterHook;
 use LaravelEnso\DataImport\app\Contracts\BeforeHook;
 use LaravelEnso\DataImport\app\Jobs\ChunkImportJob;
 use LaravelEnso\DataImport\app\Models\DataImport;
@@ -113,7 +112,7 @@ class Import
 
             $this->rowIterator->next();
 
-            if ($this->sheetHasFinished()) {
+            if ($this->fileHasFinished()) {
                 $this->dataImport->update(['file_parsed' => true]);
 
                 break;
@@ -190,14 +189,5 @@ class Import
         unset($this->reader);
 
         return $this;
-    }
-
-    private function afterHook()
-    {
-        $importer = $this->template->importer($this->sheetName);
-
-        if ($importer instanceof AfterHook) {
-            $importer->after($this->user, $this->params);
-        }
     }
 }

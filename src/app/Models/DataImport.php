@@ -7,7 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\app\Enums\ImportTypes;
 use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Exceptions\DataImportException;
+use LaravelEnso\DataImport\app\Exceptions\DataImport as DataImportException;
 use LaravelEnso\DataImport\app\Jobs\ImportJob;
 use LaravelEnso\DataImport\app\Services\Structure;
 use LaravelEnso\DataImport\app\Services\Template;
@@ -44,7 +44,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function handle(UploadedFile $file, array $params = [])
     {
         $template = new Template($this);
-        $structure = new Structure($this, $template, $file);
+        $structure = new Structure($template, $file);
 
         if ($structure->validates()) {
             tap($this)->save()

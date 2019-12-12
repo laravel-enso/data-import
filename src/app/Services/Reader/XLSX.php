@@ -7,7 +7,7 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Exception;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\app\Exceptions\DataImportException;
+use LaravelEnso\DataImport\app\Exceptions\DataImport;
 
 class XLSX
 {
@@ -25,7 +25,7 @@ class XLSX
         try {
             $this->reader->open($this->file);
         } catch (Exception $exception) {
-            throw DataImportException::fileNotReadable();
+            throw DataImport::fileNotReadable();
         }
 
         return $this;
@@ -61,7 +61,7 @@ class XLSX
 
     protected function normalizeSheet($string)
     {
-        return Str::snake(Str::lower(($string)));
+        return Str::snake(Str::lower($string));
     }
 
     protected function normalizeHeader(Row $row)

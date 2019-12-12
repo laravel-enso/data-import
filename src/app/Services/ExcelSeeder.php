@@ -15,8 +15,6 @@ class ExcelSeeder extends Seeder
 
     public function run()
     {
-        // DataImport::reguard(); //TODO test!
-
         factory(DataImport::class)->create([
             'type' => $this->type,
             'status' => Statuses::Waiting,

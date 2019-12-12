@@ -6,7 +6,7 @@ use LaravelEnso\DataImport\app\Contracts\Importable;
 use LaravelEnso\Helpers\app\Classes\Obj;
 use LaravelEnso\Helpers\app\Exceptions\EnsoException;
 
-class TemplateException extends EnsoException
+class Template extends EnsoException
 {
     public static function missingRootAttributes($attrs)
     {

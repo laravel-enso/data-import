@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\app\Enums;
 
 use Exception;
-use LaravelEnso\DataImport\app\Exceptions\DataImportException;
+use LaravelEnso\DataImport\app\Exceptions\DataImport;
 use LaravelEnso\Enums\app\Services\Enum;
 
 class ImportTypes extends Enum
@@ -15,8 +15,8 @@ class ImportTypes extends Enum
                 array_keys(config('enso.imports.configs')),
                 array_column(config('enso.imports.configs'), 'label')
             );
-        } catch (Exception $e) {
-            throw DataImportException::configNotReadable();
+        } catch (Exception $exception) {
+            throw DataImport::configNotReadable();
         }
 
         return $data;
