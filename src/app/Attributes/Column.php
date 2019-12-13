@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\app\Attributes;
 
 class Column
 {
-    const Mandatory = ['name'];
+    public const Mandatory = ['name'];
 
-    const Optional = ['validations'];
+    public const Optional = ['validations'];
 }

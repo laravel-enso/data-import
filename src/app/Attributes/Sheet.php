@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\app\Attributes;
 
 class Sheet
 {
-    const Mandatory = ['name', 'columns', 'importerClass'];
+    public const Mandatory = ['name', 'columns', 'importerClass'];
 
-    const Optional = ['validatorClass', 'chunkSize'];
+    public const Optional = ['validatorClass', 'chunkSize'];
 }

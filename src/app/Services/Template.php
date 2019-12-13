@@ -67,7 +67,7 @@ class Template
     {
         $class = $this->sheet($sheetName)->get('importerClass');
 
-        return new $class;
+        return new $class();
     }
 
     public function customValidator($sheetName)
@@ -75,7 +75,7 @@ class Template
         if ($this->sheet($sheetName)->has('validatorClass')) {
             $class = $this->sheet($sheetName)->get('validatorClass');
 
-            return new $class;
+            return new $class();
         }
     }
 

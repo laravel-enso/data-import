@@ -31,6 +31,14 @@ class AppServiceProvider extends ServiceProvider
 
     private function publish()
     {
+        $this->publishConfig()
+            ->publishFactories()
+            ->publishExamples()
+            ->publishEmailViews();
+    }
+
+    private function publishConfig()
+    {
         $this->publishes([
             __DIR__.'/config' => config_path('enso'),
         ], 'data-import-config');
@@ -39,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
             __DIR__.'/config' => config_path('enso'),
         ], 'enso-config');
 
+        return $this;
+    }
+
+    private function publishFactories()
+    {
         $this->publishes([
             __DIR__.'/database/factories' => database_path('factories'),
         ], 'data-import-factory');
@@ -47,12 +60,11 @@ class AppServiceProvider extends ServiceProvider
             __DIR__.'/database/factories' => database_path('factories'),
         ], 'enso-factories');
 
-        $this->publishes([
-            __DIR__.'/../stubs/Imports/Importers/ExampleImporter.stub' => app_path('Imports/Importers/ExampleImporter.php'),
-            __DIR__.'/../stubs/Imports/Templates/exampleTemplate.stub' => app_path('Imports/Templates/exampleTemplate.json'),
-            __DIR__.'/../stubs/Imports/Validators/CustomValidator.stub' => app_path('Imports/Validators/CustomValidator.php'),
-        ], 'data-import-examples');
+        return $this;
+    }
 
+    private function publishEmailViews()
+    {
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/data-import'),
         ], 'data-import-mail');
@@ -60,5 +72,18 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/laravel-enso/data-import'),
         ], 'enso-mail');
+
+        return $this;
+    }
+
+    private function publishExamples()
+    {
+        $this->publishes([
+            __DIR__.'/../stubs/Imports/Importers/ExampleImporter.stub' => app_path('Imports/Importers/ExampleImporter.php'),
+            __DIR__.'/../stubs/Imports/Templates/exampleTemplate.stub' => app_path('Imports/Templates/exampleTemplate.json'),
+            __DIR__.'/../stubs/Imports/Validators/CustomValidator.stub' => app_path('Imports/Validators/CustomValidator.php'),
+        ], 'data-import-examples');
+
+        return $this;
     }
 }

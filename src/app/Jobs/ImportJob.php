@@ -16,13 +16,13 @@ class ImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $queue;
+    public $timeout;
+
     private $dataImport;
     private $params;
     private $template;
     private $user;
-
-    public $queue;
-    public $timeout;
 
     public function __construct(DataImport $dataImport, Template $template, array $params = [])
     {

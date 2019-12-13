@@ -4,5 +4,5 @@ namespace LaravelEnso\DataImport\app\Attributes;
 
 class Template
 {
-    const Attributes = ['sheets', 'timeout'];
+    public const Attributes = ['sheets', 'timeout'];
 }

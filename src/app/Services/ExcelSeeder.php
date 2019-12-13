@@ -15,8 +15,6 @@ class ExcelSeeder extends Seeder
 
     public function run()
     {
-        // DataImport::reguard(); //TODO test!
-
         factory(DataImport::class)->create([
             'type' => $this->type,
             'status' => Statuses::Waiting,
@@ -25,6 +23,7 @@ class ExcelSeeder extends Seeder
 
     private function importFile()
     {
+        //TODO refactor
         return new UploadedFile(
             Storage::path('seeds'.DIRECTORY_SEPARATOR.$this->filename),
             $this->filename,

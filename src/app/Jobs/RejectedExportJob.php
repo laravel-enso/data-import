@@ -16,11 +16,11 @@ class RejectedExportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $dataImport;
-    private $user;
-
     public $queue;
     public $timeout;
+
+    private $dataImport;
+    private $user;
 
     public function __construct(DataImport $dataImport, User $user)
     {

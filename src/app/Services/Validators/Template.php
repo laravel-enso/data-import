@@ -6,7 +6,7 @@ use LaravelEnso\DataImport\app\Attributes\Column as ColumnAttributes;
 use LaravelEnso\DataImport\app\Attributes\Sheet;
 use LaravelEnso\DataImport\app\Attributes\Template as TemplateAttributes;
 use LaravelEnso\DataImport\app\Contracts\Importable;
-use LaravelEnso\DataImport\app\Exceptions\TemplateException;
+use LaravelEnso\DataImport\app\Exceptions\Template as Exception;
 use LaravelEnso\Helpers\app\Classes\Obj;
 
 class Template
@@ -31,7 +31,7 @@ class Template
             ->diff($this->template->keys());
 
         if ($diff->isNotEmpty()) {
-            throw TemplateException::missingRootAttributes($diff->implode('", "'));
+            throw Exception::missingRootAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -56,7 +56,7 @@ class Template
             ->diff($sheet->keys());
 
         if ($diff->isNotEmpty()) {
-            throw TemplateException::missingSheetAttributes($diff->implode('", "'));
+            throw Exception::missingSheetAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -65,12 +65,12 @@ class Template
     private function importer($sheet)
     {
         if (! class_exists($sheet->get('importerClass'))) {
-            throw TemplateException::missingImporterClass($sheet);
+            throw Exception::missingImporterClass($sheet);
         }
 
         if (! collect(class_implements($sheet->get('importerClass')))
             ->contains(Importable::class)) {
-            throw TemplateException::importerMissingContract($sheet);
+            throw Exception::importerMissingContract($sheet);
         }
 
         return $this;
@@ -83,11 +83,11 @@ class Template
         }
 
         if (! class_exists($sheet->get('validatorClass'))) {
-            throw TemplateException::missingValidatorClass($sheet);
+            throw Exception::missingValidatorClass($sheet);
         }
 
         if (! is_subclass_of($sheet->get('validatorClass'), Validator::class)) {
-            throw TemplateException::incorectValidator($sheet);
+            throw Exception::incorectValidator($sheet);
         }
     }
 
@@ -98,7 +98,7 @@ class Template
             ->diff(Sheet::Optional);
 
         if ($diff->isNotEmpty()) {
-            throw TemplateException::unknownSheetAttributes($diff->implode('", "'));
+            throw Exception::unknownSheetAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -121,7 +121,7 @@ class Template
             ->diff($column->keys());
 
         if ($diff->isNotEmpty()) {
-            throw TemplateException::missingColumnAttributes($diff->implode('", "'));
+            throw Exception::missingColumnAttributes($diff->implode('", "'));
         }
 
         return $this;
@@ -134,7 +134,7 @@ class Template
             ->diff(ColumnAttributes::Optional);
 
         if ($diff->isNotEmpty()) {
-            throw TemplateException::unknownColumnAttributes($diff->implode('", "'));
+            throw Exception::unknownColumnAttributes($diff->implode('", "'));
         }
     }
 }

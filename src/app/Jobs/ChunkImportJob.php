@@ -18,6 +18,8 @@ class ChunkImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $queue;
+
     private $dataImport;
     private $template;
     private $user;
@@ -26,10 +28,14 @@ class ChunkImportJob implements ShouldQueue
     private $chunk;
     private $index;
 
-    public $queue;
-
-    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk)
-    {
+    public function __construct(
+        DataImport $dataImport,
+        Template $template,
+        User $user,
+        Obj $params,
+        string $sheetName,
+        Collection $chunk
+    ) {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;

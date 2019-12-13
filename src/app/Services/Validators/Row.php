@@ -18,6 +18,13 @@ class Row extends Validator
         }
     }
 
+    public function rules(array $rules)
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
     private function addErrors()
     {
         collect($this->rules)->keys()->each(function ($column) {
@@ -28,12 +35,5 @@ class Row extends Validator
                     });
             }
         });
-    }
-
-    public function rules(array $rules)
-    {
-        $this->rules = $rules;
-
-        return $this;
     }
 }
