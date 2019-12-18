@@ -99,7 +99,7 @@ class Import
 
     private function prepareChunk()
     {
-        $this->dataImport->update(['chunks' => $this->dataImport->chunks + 1]);
+        $this->dataImport->increment('chunks');
 
         $this->chunk = collect();
 
@@ -112,8 +112,10 @@ class Import
 
             $this->rowIterator->next();
 
-            if ($this->fileHasFinished()) {
-                $this->dataImport->update(['file_parsed' => true]);
+            if ($this->sheetHasFinished()) {
+                if ($this->fileHasFinished()) {
+                    $this->dataImport->update(['file_parsed' => true]);
+                }
 
                 break;
             }
