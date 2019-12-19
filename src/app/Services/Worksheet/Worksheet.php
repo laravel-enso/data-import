@@ -23,8 +23,6 @@ class Worksheet
 
     public function sheetNames()
     {
-        return $this->sheets->map(function ($sheet) {
-            return $sheet->name();
-        });
+        return $this->sheets->map(fn($sheet) => $sheet->name());
     }
 }

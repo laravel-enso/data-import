@@ -40,12 +40,12 @@ class Template
     private function sheetAttributes()
     {
         $this->template->get('sheets')
-            ->each(function ($sheet) {
+            ->each(fn($sheet) => (
                 $this->sheetMandatory($sheet)
                     ->sheetOptional($sheet)
                     ->importer($sheet)
-                    ->validator($sheet);
-            });
+                    ->validator($sheet)
+            ));
 
         return $this;
     }
@@ -107,12 +107,12 @@ class Template
     private function columnAttributes()
     {
         $this->template->get('sheets')
-            ->pluck('columns')->each(function ($columns) {
-                $columns->each(function ($column) {
+            ->pluck('columns')->each(fn($columns) => (
+                $columns->each(fn($column) => (
                     $this->columnMandatory($column)
-                        ->columnOptional($column);
-                });
-            });
+                        ->columnOptional($column)
+                ))
+            ));
     }
 
     private function columnMandatory($column)

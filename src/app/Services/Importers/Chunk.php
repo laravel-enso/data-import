@@ -2,6 +2,8 @@
 
 namespace LaravelEnso\DataImport\app\Services\Importers;
 
+use Exception;
+use Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -52,11 +54,8 @@ class Chunk
     {
         $this->auth();
 
-        $this->chunk->each(function ($row) {
-            if ($this->validates($row)) {
-                $this->import($row);
-            }
-        });
+        $this->chunk->filter(fn($row) => $this->validates($row))
+            ->each(fn($row) => $this->import($row));
 
         $this->dumpRejected()
             ->updateProgress();
@@ -97,10 +96,10 @@ class Chunk
     {
         try {
             $this->importer->run($row, $this->user, $this->params);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $row->set($this->errorColumn, self::UndeterminedImportError);
             $this->rejected->push($row);
-            \Log::debug($exception->getMessage());
+            Log::debug($exception->getMessage());
         }
     }
 

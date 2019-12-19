@@ -148,9 +148,8 @@ class Import
     private function sanitizeRow()
     {
         return collect($this->rowIterator->current()->getCells())
-            ->map(function ($cell) {
-                return $this->sanitizeCell($cell->getValue());
-            })->slice(0, $this->headerCount)
+            ->map(fn($cell) => $this->sanitizeCell($cell->getValue()))
+            ->slice(0, $this->headerCount)
             ->pad($this->headerCount, null);
     }
 

@@ -53,9 +53,9 @@ class Structure
     private function missingSheets(Collection $templateSheets, Collection $fileSheets)
     {
         $templateSheets->diff($fileSheets)
-            ->each(function ($sheetName) {
-                $this->summary->addError(__('Missing Sheets'), $sheetName);
-            });
+            ->each(fn($sheetName) => (
+                $this->summary->addError(__('Missing Sheets'), $sheetName)
+            ));
 
         return $this;
     }
@@ -63,9 +63,9 @@ class Structure
     private function extraSheets(Collection $templateSheets, Collection $fileSheets)
     {
         $fileSheets->diff($templateSheets)
-            ->each(function ($sheetName) {
-                $this->summary->addError(__('Extra Sheets'), $sheetName);
-            });
+            ->each(fn($sheetName) => (
+                $this->summary->addError(__('Extra Sheets'), $sheetName)
+            ));
     }
 
     private function checkColumns()
@@ -84,14 +84,15 @@ class Structure
     private function missingColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
         $templateHeader->diff($fileHeader)
-            ->each(function ($column) use ($sheetName) {
+            ->each(fn($column) => (
                 $this->summary->addError(
-                    __('Missing Columns'), __(
+                    __('Missing Columns'), 
+                    __(
                         'Sheet ":sheet", column ":column"',
                         ['sheet' => $sheetName, 'column' => $column]
                     )
-                );
-            });
+                )
+            ));
 
         return $this;
     }
@@ -99,13 +100,13 @@ class Structure
     private function extraColumns(string $sheetName, Collection $fileHeader, Collection $templateHeader)
     {
         $fileHeader->diff($templateHeader)
-            ->each(function ($column) use ($sheetName) {
+            ->each(fn($column) => (
                 $this->summary->addError(
                     __('Extra Columns'), __(
                         'Sheet ":sheet", column ":column"',
                         ['sheet' => $sheetName, 'column' => $column]
                     )
-                );
-            });
+                )
+            ));
     }
 }
