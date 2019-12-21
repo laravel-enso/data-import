@@ -16,7 +16,8 @@ class DataImportTable implements Table
         return DataImport::selectRaw('
             data_imports.id, data_imports.type, data_imports.status, data_imports.status as computedStatus,
             files.original_name as name, data_imports.successful, data_imports.failed, data_imports.created_at,
-            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId
+            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId,
+            sec_to_time(timestampdiff(second, data_imports.created_at, data_imports.updated_at)) as duration
         ')->join('files', function ($join) {
             $join->on('files.attachable_id', 'data_imports.id')
                 ->where('files.attachable_type', DataImport::class);
