@@ -48,8 +48,7 @@
     }, {
         "label": "Time",
         "name": "time",
-        "data": "data_imports.time",
-        "meta": ["sortable"]
+        "data": "data_imports.time"
     }, {
         "label": "Duration",
         "name": "duration",
