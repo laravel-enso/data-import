@@ -149,8 +149,8 @@ class Rejected
 
     private function filename()
     {
-        return $this->filename ??= 
-            tap(collect(explode('.', $this->dataImport->file->original_name)))
+        return $this->filename
+            ??= tap(collect(explode('.', $this->dataImport->file->original_name)))
                 ->pop()
                 ->implode('.').'_rejected.xlsx';
     }
