@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\app\Tables\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use LaravelEnso\DataImport\app\Models\DataImport;
 use LaravelEnso\DataImport\app\Models\RejectedImportSummary;
 use LaravelEnso\Tables\app\Contracts\Table;
@@ -13,11 +14,10 @@ class DataImportTable implements Table
 
     public function query(): Builder
     {
-        return DataImport::selectRaw('
+        $query =  DataImport::selectRaw('
             data_imports.id, data_imports.type, data_imports.status, data_imports.status as computedStatus,
             files.original_name as name, data_imports.successful, data_imports.failed, data_imports.created_at,
-            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId,
-            sec_to_time(timestampdiff(second, data_imports.created_at, data_imports.updated_at)) as duration
+            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId
         ')->join('files', function ($join) {
             $join->on('files.attachable_id', 'data_imports.id')
                 ->where('files.attachable_type', DataImport::class);
@@ -28,6 +28,10 @@ class DataImportTable implements Table
             $join->on('rejected_files.attachable_id', 'rejected_imports.id')
             ->where('rejected_files.attachable_type', RejectedImportSummary::class);
         });
+
+       return $query->selectRaw(DB::getDriverName() === 'sqlite'
+           ? '0 as duration'
+           : 'sec_to_time(timestampdiff(second, data_imports.created_at, data_imports.updated_at)) as duration');
     }
 
     public function templatePath(): string
