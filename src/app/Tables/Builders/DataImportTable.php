@@ -14,11 +14,12 @@ class DataImportTable implements Table
 
     public function query(): Builder
     {
-        $query =  DataImport::selectRaw('
+        return DataImport::selectRaw("
             data_imports.id, data_imports.type, data_imports.status, data_imports.status as computedStatus,
             files.original_name as name, data_imports.successful, data_imports.failed, data_imports.created_at,
-            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId
-        ')->join('files', function ($join) {
+            TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId,
+            {$this->rawDuration()} as duration
+        ")->join('files', function ($join) {
             $join->on('files.attachable_id', 'data_imports.id')
                 ->where('files.attachable_type', DataImport::class);
         })->join('users', 'files.created_by', '=', 'users.id')
@@ -26,16 +27,19 @@ class DataImportTable implements Table
         ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
         ->leftJoin('files as rejected_files', function ($join) {
             $join->on('rejected_files.attachable_id', 'rejected_imports.id')
-            ->where('rejected_files.attachable_type', RejectedImportSummary::class);
+                ->where('rejected_files.attachable_type', RejectedImportSummary::class);
         });
-
-       return $query->selectRaw(DB::getDriverName() === 'sqlite'
-           ? '0 as duration'
-           : 'sec_to_time(timestampdiff(second, data_imports.created_at, data_imports.updated_at)) as duration');
     }
 
     public function templatePath(): string
     {
         return static::TemplatePath;
+    }
+
+    private function rawDuration()
+    {
+        return DB::getDriverName() === 'sqlite'
+           ? '0'
+           : 'sec_to_time(timestampdiff(second, data_imports.created_at, data_imports.updated_at))';
     }
 }
