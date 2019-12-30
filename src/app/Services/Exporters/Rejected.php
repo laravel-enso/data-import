@@ -37,9 +37,7 @@ class Rejected
             $this->start()
                 ->initWriter();
 
-            $this->dumps->each(function ($file) {
-                $this->export($this->content($file));
-            });
+            $this->dumps->each(fn($file) => $this->export($this->content($file)));
 
             $this->closeWriter()
                 ->storeRejected();
@@ -60,9 +58,7 @@ class Rejected
     {
         $this->prepare($rejected);
 
-        $rows = $rejected->map(function ($row) {
-            return $this->row($row);
-        });
+        $rows = $rejected->map(fn($row) => $this->row($row));
 
         $this->writer->addRows($rows->toArray());
     }
@@ -146,18 +142,16 @@ class Rejected
 
     private function path()
     {
-        return $this->path
-            ?? $this->path = $this->dataImport->rejectedFolder()
-                .DIRECTORY_SEPARATOR
-                .$this->hashName();
+        return $this->path ??= $this->dataImport->rejectedFolder()
+            .DIRECTORY_SEPARATOR
+            .$this->hashName();
     }
 
     private function filename()
     {
         return $this->filename
-            ?? $this->filename = tap(
-                    collect(explode('.', $this->dataImport->file->original_name))
-                )->pop()
+            ??= tap(collect(explode('.', $this->dataImport->file->original_name)))
+                ->pop()
                 ->implode('.').'_rejected.xlsx';
     }
 

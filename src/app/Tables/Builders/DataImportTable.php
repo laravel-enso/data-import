@@ -19,16 +19,16 @@ class DataImportTable implements Table
             files.original_name as name, data_imports.successful, data_imports.failed, data_imports.created_at,
             TIME(data_imports.created_at) as time, people.name as createdBy, rejected_imports.id as rejectedId,
             {$this->rawDuration()} as duration
-        ")->join('files', function ($join) {
-            $join->on('files.attachable_id', 'data_imports.id')
-                ->where('files.attachable_type', DataImport::class);
-        })->join('users', 'files.created_by', '=', 'users.id')
+        ')->join('files', fn($join) => $join
+            ->on('files.attachable_id', 'data_imports.id')
+            ->where('files.attachable_type', DataImport::class))
+        )->join('users', 'files.created_by', '=', 'users.id')
         ->join('people', 'users.person_id', '=', 'people.id')
         ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
-        ->leftJoin('files as rejected_files', function ($join) {
-            $join->on('rejected_files.attachable_id', 'rejected_imports.id')
-                ->where('rejected_files.attachable_type', RejectedImportSummary::class);
-        });
+        ->leftJoin('files as rejected_files', fn($join) => $join
+            ->on('rejected_files.attachable_id', 'rejected_imports.id')
+            ->where('rejected_files.attachable_type', RejectedImportSummary::class)
+        ));
     }
 
     public function templatePath(): string

@@ -47,10 +47,9 @@ class Template
     public function validationRules(string $sheetName)
     {
         return $this->columns($sheetName)
+            ->filter(fn($column) => $column->has('validations'))
             ->reduce(function ($rules, $column) {
-                if ($column->has('validations')) {
-                    $rules[$column->get('name')] = $column->get('validations');
-                }
+                $rules[$column->get('name')] = $column->get('validations');
 
                 return $rules;
             }, []);
@@ -87,9 +86,7 @@ class Template
     private function sheet(string $sheetName)
     {
         return $this->sheets()
-            ->first(function ($sheet) use ($sheetName) {
-                return $sheet->get('name') === $sheetName;
-            });
+            ->first(fn($sheet) => $sheet->get('name') === $sheetName);
     }
 
     private function sheets()

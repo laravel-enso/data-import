@@ -67,8 +67,7 @@ class XLSX
     protected function normalizeHeader(Row $row)
     {
         return collect($row->getCells())
-            ->map(function (Cell $cell) {
-                return Str::snake(Str::lower($cell->getValue()));
-            })->toArray();
+            ->map(fn(Cell $cell) => Str::snake(Str::lower($cell->getValue())))
+            ->toArray();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\DataImport\app\Services\Writer;
 
+use Storage;
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\app\Models\DataImport;
 
@@ -39,16 +40,14 @@ class RejectedDump
 
     private function store()
     {
-        \Storage::put(
+        Storage::put(
             $this->path(), json_encode($this->dump)
         );
     }
 
     private function rejectedValues()
     {
-        return $this->rejected->map(function ($row) {
-            return $row->values();
-        });
+        return $this->rejected->map(fn($row) => $row->values());
     }
 
     private function path()

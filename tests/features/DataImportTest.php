@@ -58,9 +58,9 @@ class DataImportTest extends TestCase
             'filename' => self::ImportTestFile
         ]);
 
-        $this->model = DataImport::whereHas('file', function ($query) {
-            $query->whereOriginalName(self::ImportTestFile);
-        })->first();
+        $this->model = DataImport::whereHas('file', fn($query) => (
+            $query->whereOriginalName(self::ImportTestFile)
+        ))->first();
 
         $this->assertNotNull($this->model);
 

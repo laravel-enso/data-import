@@ -27,13 +27,11 @@ class Row extends Validator
 
     private function addErrors()
     {
-        collect($this->rules)->keys()->each(function ($column) {
-            if ($this->validator->errors()->has($column)) {
+        collect($this->rules)->keys()
+            ->filter(fn($column) => $this->validator->errors()->has($column))
+            ->each(fn($column) => (
                 collect($this->validator->errors()->get($column))
-                    ->each(function ($error) {
-                        $this->addError($error);
-                    });
-            }
-        });
+                    ->each(fn($error) => $this->addError($error))
+            ));
     }
 }

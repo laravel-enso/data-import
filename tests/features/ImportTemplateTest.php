@@ -52,9 +52,9 @@ class ImportTemplateTest extends TestCase
         ])->assertStatus(201);
 
         $this->model = ImportTemplate::with('file')
-            ->whereHas('file', function ($query) {
-                $query->whereOriginalName(self::TemplateTestFile);
-            })->first();
+            ->whereHas('file', fn($query) => (
+                $query->whereOriginalName(self::TemplateTestFile)
+            ))->first();
 
         \Storage::assertExists(
             $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
