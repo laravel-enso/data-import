@@ -1,17 +1,17 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services;
+namespace LaravelEnso\DataImport\App\Services;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\App\Enums\Statuses;
+use LaravelEnso\DataImport\App\Models\DataImport;
 
 class ExcelSeeder extends Seeder
 {
-    protected $type;
-    protected $filename;
+    protected string $type;
+    protected string $filename;
 
     public function run()
     {

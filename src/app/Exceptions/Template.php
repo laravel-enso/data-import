@@ -1,10 +1,11 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Exceptions;
+namespace LaravelEnso\DataImport\App\Exceptions;
 
-use LaravelEnso\DataImport\app\Contracts\Importable;
-use LaravelEnso\Helpers\app\Classes\Obj;
-use LaravelEnso\Helpers\app\Exceptions\EnsoException;
+use LaravelEnso\DataImport\App\Contracts\Importable;
+use LaravelEnso\DataImport\App\Services\Validators\Validator;
+use LaravelEnso\Helpers\App\Classes\Obj;
+use LaravelEnso\Helpers\App\Exceptions\EnsoException;
 
 class Template extends EnsoException
 {
@@ -74,9 +75,14 @@ class Template extends EnsoException
 
     public static function incorectValidator(Obj $sheet)
     {
+        $validator = Validator::class;
+
         return new static(__(
-            'Validator class ":class" for sheet ":sheet" must extend "LaravelEnso\DataImport\app\Services\Validators\Validator" class',
-            ['class' => $sheet->get('validatorClass'), 'sheet' => $sheet->get('name')]
+            'Validator class ":class" for sheet ":sheet" must extend ":validator" class', [
+                'class' => $sheet->get('validatorClass'),
+                'sheet' => $sheet->get('name'),
+                'validator' => $validator,
+            ]
         ));
     }
 }

@@ -1,13 +1,14 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services;
+namespace LaravelEnso\DataImport\App\Services;
 
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Summary
 {
-    private $filename;
-    private $errors;
+    private string $filename;
+    private Obj $errors;
 
     public function __construct(string $filename)
     {
@@ -15,7 +16,7 @@ class Summary
         $this->errors = new Obj();
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'filename' => $this->filename,
@@ -23,26 +24,20 @@ class Summary
         ];
     }
 
-    public function addError(string $category, string $value)
-    {
-        $this->category($this->errors, $category)
-            ->push($value);
-    }
-
-    public function errors()
+    public function errors(): Obj
     {
         return $this->errors;
     }
 
-    public function hasErrors()
+    public function addError(string $category, string $value): void
     {
-        return $this->errors->isNotEmpty();
+        $this->category($this->errors, $category)->push($value);
     }
 
-    private function category(Obj $container, string $category)
+    private function category(Obj $container, string $category): Collection
     {
         if (! $container->has($category)) {
-            $container->set($category, collect());
+            $container->set($category, new Collection());
         }
 
         return $container->get($category);

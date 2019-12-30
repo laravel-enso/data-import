@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\App\Http\Controllers\Template;
 
 use Illuminate\Routing\Controller;
-use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use LaravelEnso\DataImport\App\Models\ImportTemplate;
 
 class Destroy extends Controller
 {

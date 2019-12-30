@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Notifications;
+namespace LaravelEnso\DataImport\App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use LaravelEnso\DataImport\app\Enums\ImportTypes;
-use LaravelEnso\DataImport\app\Models\DataImport;
+use LaravelEnso\DataImport\App\Enums\ImportTypes;
+use LaravelEnso\DataImport\App\Models\DataImport;
 
 class ImportDone extends Notification implements ShouldQueue
 {

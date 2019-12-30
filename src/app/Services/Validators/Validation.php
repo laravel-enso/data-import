@@ -1,40 +1,43 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Validators;
+namespace LaravelEnso\DataImport\App\Services\Validators;
 
-use LaravelEnso\DataImport\app\Services\Validators\Row as ImplicitValidator;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\DataImport\App\Services\Validators\Row as ImplicitValidator;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Validation
 {
-    private $row;
-    private $rules;
-    private $custom;
-    private $params;
+    private Obj $row;
+    private array $rules;
+    private ?Validator $custom;
+    private User $user;
+    private Obj $params;
     private $errorColumn;
 
-    public function __construct(Obj $row, array $rules, ?Validator $custom, ?Obj $params)
+    public function __construct(Obj $row, array $rules, ?Validator $custom, User $user, Obj $params)
     {
         $this->row = $row;
         $this->rules = $rules;
         $this->custom = $custom;
+        $this->user = $user;
         $this->params = $params;
         $this->errorColumn = config('enso.imports.errorColumn');
     }
 
-    public function run()
+    public function run(): void
     {
-        $this->runValidator($this->implicit())
-            ->runValidator($this->custom);
+        $this->validator($this->implicit())
+            ->validator($this->custom);
     }
 
-    private function runValidator($validator)
+    private function validator($validator): self
     {
         if (! $validator) {
             return $this;
         }
 
-        $validator->setParams($this->params)->run($this->row);
+        $validator->run($this->row);
 
         if ($validator->fails()) {
             $this->addErrors($validator->message());
@@ -43,18 +46,17 @@ class Validation
         return $this;
     }
 
-    private function implicit()
+    private function implicit(): ImplicitValidator
     {
-        return (new ImplicitValidator())->rules($this->rules);
+        return new ImplicitValidator($this->rules, $this->user, $this->params);
     }
 
-    private function addErrors($errors)
+    private function addErrors(string $message): void
     {
-        $this->row->set(
-            $this->errorColumn,
-            $this->row->has($this->errorColumn)
-                ? $this->row->get($this->errorColumn).' | '.$errors
-                : $errors
-        );
+        $message = $this->row->has($this->errorColumn)
+            ? "{$this->row->get($this->errorColumn)} | {$message}"
+            : $message;
+
+        $this->row->set($this->errorColumn, $message);
     }
 }

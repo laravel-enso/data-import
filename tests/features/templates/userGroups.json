@@ -3,7 +3,7 @@
     "sheets": [
         {
             "name": "groups",
-            "importerClass": "LaravelEnso\\DataImport\\app\\Tests\\UserGroupImporter",
+            "importerClass": "LaravelEnso\\DataImport\\App\\Tests\\UserGroupImporter",
             "chunkSize": 250,
             "columns": [
                 {

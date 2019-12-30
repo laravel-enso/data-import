@@ -1,33 +1,34 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Validators;
+namespace LaravelEnso\DataImport\App\Services\Validators;
 
-use LaravelEnso\DataImport\app\Attributes\Column as ColumnAttributes;
-use LaravelEnso\DataImport\app\Attributes\Sheet;
-use LaravelEnso\DataImport\app\Attributes\Template as TemplateAttributes;
-use LaravelEnso\DataImport\app\Contracts\Importable;
-use LaravelEnso\DataImport\app\Exceptions\Template as Exception;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use LaravelEnso\DataImport\App\Attributes\Column as ColumnAttributes;
+use LaravelEnso\DataImport\App\Attributes\Sheet;
+use LaravelEnso\DataImport\App\Attributes\Template as TemplateAttributes;
+use LaravelEnso\DataImport\App\Contracts\Importable;
+use LaravelEnso\DataImport\App\Exceptions\Template as Exception;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Template
 {
-    private $template;
+    private Obj $template;
 
     public function __construct(Obj $template)
     {
         $this->template = $template;
     }
 
-    public function handle()
+    public function run(): void
     {
-        $this->rootAttributes()
-            ->sheetAttributes()
-            ->columnAttributes();
+        $this->root()
+            ->sheets()
+            ->columns();
     }
 
-    private function rootAttributes()
+    private function root(): self
     {
-        $diff = collect(TemplateAttributes::Attributes)
+        $diff = (new Collection(TemplateAttributes::Attributes))
             ->diff($this->template->keys());
 
         if ($diff->isNotEmpty()) {
@@ -37,23 +38,20 @@ class Template
         return $this;
     }
 
-    private function sheetAttributes()
+    private function sheets(): self
     {
         $this->template->get('sheets')
-            ->each(fn($sheet) => (
-                $this->sheetMandatory($sheet)
-                    ->sheetOptional($sheet)
-                    ->importer($sheet)
-                    ->validator($sheet)
-            ));
+            ->each(fn ($sheet) => $this->sheetMandatory($sheet)
+                ->sheetOptional($sheet)
+                ->importer($sheet)
+                ->validator($sheet));
 
         return $this;
     }
 
-    private function sheetMandatory($sheet)
+    private function sheetMandatory($sheet): self
     {
-        $diff = collect(Sheet::Mandatory)
-            ->diff($sheet->keys());
+        $diff = (new Collection(Sheet::Mandatory))->diff($sheet->keys());
 
         if ($diff->isNotEmpty()) {
             throw Exception::missingSheetAttributes($diff->implode('", "'));
@@ -62,13 +60,13 @@ class Template
         return $this;
     }
 
-    private function importer($sheet)
+    private function importer($sheet): self
     {
         if (! class_exists($sheet->get('importerClass'))) {
             throw Exception::missingImporterClass($sheet);
         }
 
-        if (! collect(class_implements($sheet->get('importerClass')))
+        if (! (new Collection(class_implements($sheet->get('importerClass'))))
             ->contains(Importable::class)) {
             throw Exception::importerMissingContract($sheet);
         }
@@ -76,7 +74,7 @@ class Template
         return $this;
     }
 
-    private function validator($sheet)
+    private function validator($sheet): void
     {
         if (! $sheet->has('validatorClass')) {
             return;
@@ -91,7 +89,7 @@ class Template
         }
     }
 
-    private function sheetOptional($sheet)
+    private function sheetOptional($sheet): self
     {
         $diff = $sheet->keys()
             ->diff(Sheet::Mandatory)
@@ -104,21 +102,17 @@ class Template
         return $this;
     }
 
-    private function columnAttributes()
+    private function columns(): void
     {
         $this->template->get('sheets')
-            ->pluck('columns')->each(fn($columns) => (
-                $columns->each(fn($column) => (
-                    $this->columnMandatory($column)
-                        ->columnOptional($column)
-                ))
-            ));
+            ->pluck('columns')->each(fn ($columns) => $columns
+                ->each(fn ($column) => $this->columnMandatory($column)
+                    ->columnOptional($column)));
     }
 
-    private function columnMandatory($column)
+    private function columnMandatory($column): self
     {
-        $diff = collect(ColumnAttributes::Mandatory)
-            ->diff($column->keys());
+        $diff = (new Collection(ColumnAttributes::Mandatory))->diff($column->keys());
 
         if ($diff->isNotEmpty()) {
             throw Exception::missingColumnAttributes($diff->implode('", "'));

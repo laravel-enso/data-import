@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Attributes;
+namespace LaravelEnso\DataImport\App\Attributes;
 
 class Sheet
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Exceptions;
+namespace LaravelEnso\DataImport\App\Exceptions;
 
-use LaravelEnso\Helpers\app\Exceptions\EnsoException;
+use LaravelEnso\Helpers\App\Exceptions\EnsoException;
 
 class DataImport extends EnsoException
 {

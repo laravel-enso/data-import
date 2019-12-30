@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Enums;
+namespace LaravelEnso\DataImport\App\Enums;
 
-use LaravelEnso\IO\app\Enums\IOStatuses;
+use LaravelEnso\IO\App\Enums\IOStatuses;
 
 class Statuses extends IOStatuses
 {

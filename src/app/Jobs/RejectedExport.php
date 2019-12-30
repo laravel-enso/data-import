@@ -1,18 +1,18 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Jobs;
+namespace LaravelEnso\DataImport\App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Exporters\Rejected;
-use LaravelEnso\DataImport\app\Services\Template;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Services\Exporters\Rejected;
+use LaravelEnso\DataImport\App\Services\Template;
 
-class RejectedExportJob implements ShouldQueue
+class RejectedExport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,8 +33,6 @@ class RejectedExportJob implements ShouldQueue
 
     public function handle()
     {
-        (new Rejected(
-            $this->dataImport, $this->user
-        ))->run();
+        (new Rejected($this->dataImport, $this->user))->run();
     }
 }

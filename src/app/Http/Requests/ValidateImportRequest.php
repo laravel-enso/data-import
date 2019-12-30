@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Http\Requests;
+namespace LaravelEnso\DataImport\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use LaravelEnso\DataImport\app\Enums\ImportTypes;
+use LaravelEnso\DataImport\App\Enums\ImportTypes;
 
 class ValidateImportRequest extends FormRequest
 {

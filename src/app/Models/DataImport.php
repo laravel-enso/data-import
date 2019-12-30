@@ -1,25 +1,26 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Models;
+namespace LaravelEnso\DataImport\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\app\Enums\ImportTypes;
-use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Exceptions\DataImport as DataImportException;
-use LaravelEnso\DataImport\app\Jobs\ImportJob;
-use LaravelEnso\DataImport\app\Services\Structure;
-use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\Files\app\Contracts\Attachable;
-use LaravelEnso\Files\app\Contracts\AuthorizesFileAccess;
-use LaravelEnso\Files\app\Traits\FilePolicies;
-use LaravelEnso\Files\app\Traits\HasFile;
-use LaravelEnso\IO\app\Contracts\IOOperation;
-use LaravelEnso\IO\app\Enums\IOTypes;
-use LaravelEnso\IO\app\Traits\HasIOStatuses;
-use LaravelEnso\Tables\app\Traits\TableCache;
-use LaravelEnso\TrackWho\app\Traits\CreatedBy;
+use LaravelEnso\DataImport\App\Enums\ImportTypes;
+use LaravelEnso\DataImport\App\Enums\Statuses;
+use LaravelEnso\DataImport\App\Exceptions\DataImport as DataImportException;
+use LaravelEnso\DataImport\App\Jobs\Import as Job;
+use LaravelEnso\DataImport\App\Services\Structure;
+use LaravelEnso\DataImport\App\Services\Template;
+use LaravelEnso\Files\App\Contracts\Attachable;
+use LaravelEnso\Files\App\Contracts\AuthorizesFileAccess;
+use LaravelEnso\Files\App\Traits\FilePolicies;
+use LaravelEnso\Files\App\Traits\HasFile;
+use LaravelEnso\Helpers\App\Classes\Obj;
+use LaravelEnso\IO\App\Contracts\IOOperation;
+use LaravelEnso\IO\App\Enums\IOTypes;
+use LaravelEnso\IO\App\Traits\HasIOStatuses;
+use LaravelEnso\Tables\App\Traits\TableCache;
+use LaravelEnso\TrackWho\App\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
@@ -46,14 +47,14 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         $template = new Template($this);
         $structure = new Structure($template, $file);
 
-        if ($structure->validates()) {
+        if ($structure->isValid()) {
             tap($this)->save()
                 ->upload($file);
 
-            ImportJob::dispatch($this, $template, $params);
+            Job::dispatch($this, $template, $structure->sheets(), new Obj($params));
         }
 
-        return $structure->summary()->toArray();
+        return $structure->summary();
     }
 
     public function getEntriesAttribute()
@@ -68,9 +69,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function rejectedFolder()
     {
-        return $this->folder
-            .DIRECTORY_SEPARATOR
-            .'rejected_'.$this->id;
+        return $this->folder.DIRECTORY_SEPARATOR."rejected_{$this->id}";
     }
 
     public function delete()

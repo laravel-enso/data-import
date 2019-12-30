@@ -1,37 +1,30 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Validators;
+namespace LaravelEnso\DataImport\App\Services\Validators;
 
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator as Facade;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Row extends Validator
 {
-    private $rules;
     private $validator;
 
-    public function run(Obj $row)
+    public function run(Obj $row): void
     {
-        $this->validator = validator($row->all(), $this->rules);
+        $this->validator = Facade::make($row->all(), $this->rules);
 
         if ($this->validator->fails()) {
             $this->addErrors();
         }
     }
 
-    public function rules(array $rules)
+    private function addErrors(): void
     {
-        $this->rules = $rules;
-
-        return $this;
-    }
-
-    private function addErrors()
-    {
-        collect($this->rules)->keys()
-            ->filter(fn($column) => $this->validator->errors()->has($column))
-            ->each(fn($column) => (
-                collect($this->validator->errors()->get($column))
-                    ->each(fn($error) => $this->addError($error))
-            ));
+        (new Collection($this->rules))->keys()
+            ->filter(fn ($column) => $this->validator->errors()->has($column))
+            ->each(fn ($column) => (new Collection($this->validator->errors()->get($column)))
+                ->each(fn ($error) => $this->addError($error))
+            );
     }
 }

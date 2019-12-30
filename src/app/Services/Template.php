@@ -1,119 +1,124 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services;
+namespace LaravelEnso\DataImport\App\Services;
 
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Validators\Template as Validator;
-use LaravelEnso\Helpers\app\Classes\JsonParser;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use LaravelEnso\DataImport\App\Contracts\Importable;
+use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Services\Validators\Template as Validator;
+use LaravelEnso\DataImport\App\Services\Validators\Validator as CustomValidator;
+use LaravelEnso\Helpers\App\Classes\JsonParser;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Template
 {
-    private $template;
+    private Obj $template;
+    private array $chunkSizes;
 
     public function __construct(DataImport $dataImport)
     {
         $this->template = $this->template($dataImport);
+        $this->chunkSizes = [];
 
         if ($this->shouldValidate()) {
             $this->validate();
         }
     }
 
-    public function timeout()
+    public function timeout(): int
     {
         return $this->template->has('timeout')
             ? $this->template->get('timeout')
-            : config('enso.imports.timeout');
+            : (int) config('enso.imports.timeout');
     }
 
-    public function queue()
+    public function queue(): string
     {
         return $this->template->has('queue')
             ? $this->template->get('queue')
             : config('enso.imports.queues.processing');
     }
 
-    public function sheetNames()
+    public function sheetNames(): Collection
     {
         return $this->sheets()->pluck('name');
     }
 
-    public function header(string $sheetName)
+    public function header(string $sheetName): Collection
     {
         return $this->columns($sheetName)->pluck('name');
     }
 
-    public function validationRules(string $sheetName)
+    public function validationRules(string $sheetName): array
     {
         return $this->columns($sheetName)
-            ->filter(fn($column) => $column->has('validations'))
-            ->reduce(function ($rules, $column) {
-                $rules[$column->get('name')] = $column->get('validations');
-
-                return $rules;
-            }, []);
+            ->filter(fn ($column) => $column->has('validations'))
+            ->reduce(fn ($rules, $column) => $rules->put(
+                $column->get('name'), $column->get('validations')
+            ), new Collection())->toArray();
     }
 
-    public function chunkSize($sheetName)
+    public function chunkSize($sheetName): int
     {
-        return $this->sheet($sheetName)->has('chunkSize')
-            ? $this->sheet($sheetName)->get('chunkSize')
-            : config('enso.imports.chunkSize');
+        return $this->chunkSizes[$sheetName]
+            ??= $this->sheet($sheetName)->has('chunkSize')
+                ? $this->sheet($sheetName)->get('chunkSize')
+                : (int) config('enso.imports.chunkSize');
     }
 
-    public function importer($sheetName)
+    public function importer($sheetName): Importable
     {
         $class = $this->sheet($sheetName)->get('importerClass');
 
         return new $class();
     }
 
-    public function customValidator($sheetName)
+    public function customValidator($sheetName): ?CustomValidator
     {
         if ($this->sheet($sheetName)->has('validatorClass')) {
             $class = $this->sheet($sheetName)->get('validatorClass');
 
             return new $class();
         }
+
+        return null;
     }
 
-    private function columns(string $sheetName)
+    private function columns(string $sheetName): Obj
     {
         return $this->sheet($sheetName)->get('columns');
     }
 
-    private function sheet(string $sheetName)
+    private function sheet(string $sheetName): Obj
     {
         return $this->sheets()
-            ->first(fn($sheet) => $sheet->get('name') === $sheetName);
+            ->first(fn ($sheet) => $sheet->get('name') === $sheetName);
     }
 
-    private function sheets()
+    private function sheets(): Obj
     {
         return $this->template->get('sheets');
     }
 
-    private function validate()
+    private function validate(): void
     {
-        (new Validator($this->template))
-            ->handle();
+        (new Validator($this->template))->run();
     }
 
-    private function shouldValidate()
+    private function shouldValidate(): bool
     {
         return ! app()->environment('production')
             || config('enso.imports.validations') === 'always';
     }
 
-    private function template(DataImport $dataImport)
+    private function template(DataImport $dataImport): Obj
     {
-        $path = base_path(config(
-            'enso.imports.configs.'.$dataImport->type.'.template'
-        ));
+        $templatePath = base_path(
+            config("enso.imports.configs.{$dataImport->type}.template")
+        );
 
         return new Obj(
-            (new JsonParser($path))->array()
+            (new JsonParser($templatePath))->array()
         );
     }
 }

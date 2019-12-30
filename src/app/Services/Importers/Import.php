@@ -1,74 +1,67 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Importers;
+namespace LaravelEnso\DataImport\App\Services\Importers;
 
+use Box\Spout\Reader\XLSX\RowIterator;
 use Carbon\Carbon;
 use DateTime;
-use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\DataImport\app\Contracts\BeforeHook;
-use LaravelEnso\DataImport\app\Jobs\ChunkImportJob;
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Reader\Content as Reader;
-use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\DataImport\app\Services\Worksheet\Row;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\DataImport\App\Contracts\BeforeHook;
+use LaravelEnso\DataImport\App\Jobs\ChunkImport;
+use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Services\DTOs\Row;
+use LaravelEnso\DataImport\App\Services\DTOs\Sheets;
+use LaravelEnso\DataImport\App\Services\Readers\XLSX;
+use LaravelEnso\DataImport\App\Services\Template;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Import
 {
-    private $dataImport;
-    private $params;
-    private $template;
-    private $user;
-    private $reader;
-    private $rowIterator;
-    private $sheetName;
-    private $header;
-    private $headerCount;
-    private $chunkSize;
-    private $chunk;
+    private DataImport $dataImport;
+    private Template $template;
+    private Sheets $sheets;
+    private User $user;
+    private Obj $params;
+    private XLSX $xlsx;
+    private RowIterator $rowIterator;
+    private Collection $header;
+    private Collection $chunk;
+    private string $sheetName;
 
-    public function __construct(DataImport $dataImport, Template $template, User $user, array $params)
+    public function __construct(DataImport $dataImport, Template $template, Sheets $sheets,
+        User $user, Obj $params)
     {
         $this->dataImport = $dataImport;
         $this->template = $template;
+        $this->sheets = $sheets;
         $this->user = $user;
-        $this->params = new Obj($params);
+        $this->params = $params;
+        $this->xlsx = new XLSX($dataImport->file->path());
     }
 
-    public function run()
+    public function run(): void
     {
-        $this->openReader()
-            ->start();
+        $this->dataImport->startProcessing();
 
         $this->template->sheetNames()
-            ->each(function ($sheetName) {
-                $this->sheetName = $sheetName;
+            ->each(fn ($sheetName) => $this->prepareSheet($sheetName)
+                ->beforeHook()
+                ->queueChunks());
 
-                $this->beforeHook()
-                    ->prepareSheet()
-                    ->queueChunks();
-            });
-
-        $this->closeReader();
+        $this->xlsx->close();
     }
 
-    private function openReader()
+    private function prepareSheet(string $sheetName): self
     {
-        $this->reader = new Reader(
-            $this->dataImport->file->path()
-        );
-
-        $this->reader->open();
+        $this->sheetName = $sheetName;
+        $this->header = $this->sheets->get($this->sheetName)->header();
+        $this->rowIterator = $this->xlsx->rowIteratorFor($this->sheetName);
 
         return $this;
     }
 
-    private function start()
-    {
-        $this->dataImport->startProcessing();
-    }
-
-    private function beforeHook()
+    private function beforeHook(): self
     {
         $importer = $this->template->importer($this->sheetName);
 
@@ -79,52 +72,40 @@ class Import
         return $this;
     }
 
-    private function prepareSheet()
+    private function queueChunks(): void
     {
-        $this->header = collect($this->reader->header($this->sheetName));
-        $this->headerCount = $this->header->count();
-        $this->rowIterator = $this->reader->rowIterator($this->sheetName);
-        $this->chunkSize = $this->template->chunkSize($this->sheetName);
-
-        return $this;
-    }
-
-    private function queueChunks()
-    {
-        while (! $this->sheetHasFinished()) {
+        while (! $this->sheetFinalized()) {
             $this->prepareChunk()
+                ->fileParseStatus()
                 ->dispatch();
         }
     }
 
-    private function prepareChunk()
+    private function prepareChunk(): self
     {
         $this->dataImport->increment('chunks');
 
-        $this->chunk = collect();
+        $this->chunk = new Collection();
 
-        while ($this->chunkIsIncomplete()) {
-            $row = $this->row();
-
-            if ($row->isNotEmpty()) {
-                $this->chunk->push($row);
-            }
-
-            $this->rowIterator->next();
-
-            if ($this->sheetHasFinished()) {
-                if ($this->fileHasFinished()) {
-                    $this->dataImport->update(['file_parsed' => true]);
-                }
-
-                break;
-            }
+        while ($this->chunkIncomplete() && ! $this->sheetFinalized()) {
+            $this->addRow();
         }
 
         return $this;
     }
 
-    private function row()
+    private function addRow(): void
+    {
+        $row = $this->row();
+
+        if ($row->hasContent()) {
+            $this->chunk->push($row);
+        }
+
+        $this->rowIterator->next();
+    }
+
+    private function row(): Row
     {
         return new Row(
             $this->header->combine(
@@ -133,9 +114,18 @@ class Import
         );
     }
 
-    private function dispatch()
+    private function fileParseStatus(): self
     {
-        ChunkImportJob::dispatch(
+        if ($this->fileFinalized()) {
+            $this->dataImport->update(['file_parsed' => true]);
+        }
+
+        return $this;
+    }
+
+    private function dispatch(): void
+    {
+        ChunkImport::dispatch(
             $this->dataImport,
             $this->template,
             $this->user,
@@ -145,15 +135,17 @@ class Import
         );
     }
 
-    private function sanitizeRow()
+    private function sanitizeRow(): Collection
     {
-        return collect($this->rowIterator->current()->getCells())
-            ->map(fn($cell) => $this->sanitizeCell($cell->getValue()))
-            ->slice(0, $this->headerCount)
-            ->pad($this->headerCount, null);
+        $count = $this->header->count();
+
+        return (new Collection($this->rowIterator->current()->getCells()))
+            ->map(fn ($cell) => $this->sanitizeCell($cell->getValue()))
+            ->slice(0, $count)
+            ->pad($count, null);
     }
 
-    private function sanitizeCell($cell)
+    private function sanitizeCell(?string $cell): ?string
     {
         if ($cell instanceof DateTime) {
             return Carbon::instance($cell)->toDateTimeString();
@@ -168,27 +160,19 @@ class Import
         return empty($cell) ? null : $cell;
     }
 
-    private function chunkIsIncomplete()
+    private function chunkIncomplete(): bool
     {
-        return $this->chunk->count() < $this->chunkSize;
+        return $this->chunk->count() < $this->template->chunkSize($this->sheetName);
     }
 
-    private function sheetHasFinished()
+    private function fileFinalized(): bool
     {
-        return ! $this->rowIterator->valid();
-    }
-
-    private function fileHasFinished()
-    {
-        return $this->sheetHasFinished()
+        return $this->sheetFinalized()
             && $this->sheetName === $this->template->sheetNames()->last();
     }
 
-    private function closeReader()
+    private function sheetFinalized(): bool
     {
-        $this->reader->close();
-        unset($this->reader);
-
-        return $this;
+        return ! $this->rowIterator->valid();
     }
 }

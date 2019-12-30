@@ -1,59 +1,61 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Writer;
+namespace LaravelEnso\DataImport\App\Services\Writer;
 
-use Storage;
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Support\Facades\Storage;
+use LaravelEnso\DataImport\App\Models\DataImport;
 
 class RejectedDump
 {
-    private $dataImport;
-    private $sheetName;
-    private $rejected;
-    private $index;
-    private $dump;
+    private DataImport $dataImport;
+    private string $sheetName;
+    private Collection $rejected;
+    private int $index;
+    private Collection $dump;
 
-    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected, int $index)
+    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected,
+        int $index)
     {
         $this->dataImport = $dataImport;
         $this->sheetName = $sheetName;
         $this->rejected = $rejected;
         $this->index = $index;
-        $this->dump = collect();
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->prepare()
             ->store();
     }
 
-    private function prepare()
+    private function prepare(): self
     {
-        $this->dump->push($this->sheetName);
-        $this->dump->push($this->rejected->first()->keys());
-        $this->dump = $this->dump->merge($this->rejectedValues());
+        $this->dump = (new Collection([$this->sheetName, $this->header()]))
+            ->merge($this->values());
 
         return $this;
     }
 
-    private function store()
+    private function store(): void
     {
-        Storage::put(
-            $this->path(), json_encode($this->dump)
-        );
+        Storage::put($this->path(), $this->dump->toJson());
     }
 
-    private function rejectedValues()
+    private function header(): Collection
     {
-        return $this->rejected->map(fn($row) => $row->values());
+        return $this->rejected->first()->keys();
     }
 
-    private function path()
+    private function values(): Collection
+    {
+        return $this->rejected->map(fn ($row) => $row->values());
+    }
+
+    private function path(): string
     {
         return $this->dataImport->rejectedFolder()
             .DIRECTORY_SEPARATOR
-            .'rejected_dump_'.$this->index.'.json';
+            ."rejected_dump_{$this->index}.json";
     }
 }

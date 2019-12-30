@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Enums;
+namespace LaravelEnso\DataImport\App\Enums;
 
 use Exception;
-use LaravelEnso\DataImport\app\Exceptions\DataImport;
-use LaravelEnso\Enums\app\Services\Enum;
+use LaravelEnso\DataImport\App\Exceptions\DataImport;
+use LaravelEnso\Enums\App\Services\Enum;
 
 class ImportTypes extends Enum
 {

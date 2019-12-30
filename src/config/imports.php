@@ -76,6 +76,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Unknown Import Error Message
+    |--------------------------------------------------------------------------
+    | If the developer misses covering with validations an error scenario
+    | when that scenario is met the importer will report and unknown
+    | error. Here you can customize that error message.
+     */
+
+    'unknownError' => 'Undetermined import error',
+
+    /*
+    |--------------------------------------------------------------------------
     | Notification channels
     |--------------------------------------------------------------------------
     | After each import the user will be notified by email. Additionally

@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Contracts;
+namespace LaravelEnso\DataImport\App\Contracts;
 
-use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 interface Importable
 {

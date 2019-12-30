@@ -4,10 +4,10 @@ use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use LaravelEnso\Core\app\Models\User;
+use LaravelEnso\Core\App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use LaravelEnso\DataImport\app\Models\ImportTemplate;
+use LaravelEnso\DataImport\App\Models\ImportTemplate;
 
 class ImportTemplateTest extends TestCase
 {

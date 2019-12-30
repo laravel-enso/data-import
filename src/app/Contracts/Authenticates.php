@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Contracts;
+namespace LaravelEnso\DataImport\App\Contracts;
 
 interface Authenticates
 {

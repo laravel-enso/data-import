@@ -1,50 +1,55 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Validators;
+namespace LaravelEnso\DataImport\App\Services\Validators;
 
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Collection;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 abstract class Validator
 {
-    private $errors;
-    private $params;
+    protected array $rules;
 
-    public function __construct()
+    private Collection $errors;
+    private Obj $params;
+
+    public function __construct(array $rules, User $user, Obj $params)
     {
-        $this->emptyErrors();
+        $this->rules = $rules;
+        $this->user = $user;
+        $this->params = $params;
+        $this->errors = new Collection();
     }
 
     abstract public function run(Obj $row);
 
-    public function fails()
+    public function fails(): bool
     {
         return $this->errors->isNotEmpty();
     }
 
-    public function message()
+    public function message(): string
     {
         return $this->errors->implode(' | ');
     }
 
-    public function addError(string $error)
+    public function addError(string $error): void
     {
         $this->errors->push($error);
     }
 
-    public function emptyErrors()
+    public function clearErrors(): void
     {
-        $this->errors = collect();
+        $this->errors->splice(0);
     }
 
-    public function params()
+    public function user(): User
+    {
+        return $this->user;
+    }
+
+    public function params(): Obj
     {
         return $this->params;
-    }
-
-    public function setParams(?Obj $params)
-    {
-        $this->params = $params;
-
-        return $this;
     }
 }

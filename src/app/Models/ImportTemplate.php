@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Models;
+namespace LaravelEnso\DataImport\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
-use LaravelEnso\Files\app\Contracts\Attachable;
-use LaravelEnso\Files\app\Traits\HasFile;
+use LaravelEnso\Files\App\Contracts\Attachable;
+use LaravelEnso\Files\App\Traits\HasFile;
 
 class ImportTemplate extends Model implements Attachable
 {

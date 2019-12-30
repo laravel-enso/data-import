@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Jobs;
+namespace LaravelEnso\DataImport\App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -8,34 +8,29 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Importers\Chunk;
-use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Services\Importers\Chunk;
+use LaravelEnso\DataImport\App\Services\Template;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
-class ChunkImportJob implements ShouldQueue
+class ChunkImport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $queue;
 
-    private $dataImport;
-    private $template;
-    private $user;
-    private $params;
-    private $sheetName;
-    private $chunk;
-    private $index;
+    private DataImport $dataImport;
+    private Template $template;
+    private User $user;
+    private Obj $params;
+    private string $sheetName;
+    private Collection $chunk;
+    private int $index;
 
-    public function __construct(
-        DataImport $dataImport,
-        Template $template,
-        User $user,
-        Obj $params,
-        string $sheetName,
-        Collection $chunk
-    ) {
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params,
+        string $sheetName, Collection $chunk)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;

@@ -1,38 +1,38 @@
 <?php
 
-namespace LaravelEnso\DataImport\app\Services\Importers;
+namespace LaravelEnso\DataImport\App\Services\Importers;
 
 use Exception;
-use Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use LaravelEnso\Core\app\Models\User;
-use LaravelEnso\DataImport\app\Contracts\AfterHook;
-use LaravelEnso\DataImport\app\Contracts\Authenticates;
-use LaravelEnso\DataImport\app\Enums\Statuses;
-use LaravelEnso\DataImport\app\Jobs\RejectedExportJob;
-use LaravelEnso\DataImport\app\Models\DataImport;
-use LaravelEnso\DataImport\app\Services\Template;
-use LaravelEnso\DataImport\app\Services\Validators\Validation;
-use LaravelEnso\DataImport\app\Services\Writer\RejectedDump;
-use LaravelEnso\Helpers\app\Classes\Obj;
+use Illuminate\Support\Facades\Log;
+use LaravelEnso\Core\App\Models\User;
+use LaravelEnso\DataImport\App\Contracts\AfterHook;
+use LaravelEnso\DataImport\App\Contracts\Authenticates;
+use LaravelEnso\DataImport\App\Contracts\Importable;
+use LaravelEnso\DataImport\App\Enums\Statuses;
+use LaravelEnso\DataImport\App\Jobs\Finalize;
+use LaravelEnso\DataImport\App\Jobs\RejectedExport;
+use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Services\Template;
+use LaravelEnso\DataImport\App\Services\Validators\Validation;
+use LaravelEnso\DataImport\App\Services\Validators\Validator;
+use LaravelEnso\DataImport\App\Services\Writer\RejectedDump;
+use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Chunk
 {
-    private const UndeterminedImportError = 'Undetermined import error';
-
-    private $dataImport;
-    private $template;
-    private $user;
-    private $params;
-    private $sheetName;
-    private $chunk;
-    private $index;
-    private $rejected;
-    private $errorColumn;
-    private $validator;
-    private $importer;
+    private DataImport $dataImport;
+    private Template $template;
+    private User $user;
+    private Obj $params;
+    private string $sheetName;
+    private Collection $chunk;
+    private int $index;
+    private Collection $rejected;
+    private Importable $importer;
+    private ?Validator $validator;
 
     public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params,
         string $sheetName, Collection $chunk, int $index)
@@ -44,18 +44,17 @@ class Chunk
         $this->sheetName = $sheetName;
         $this->chunk = $chunk;
         $this->index = $index;
-        $this->rejected = collect();
-        $this->errorColumn = config('enso.imports.errorColumn');
+        $this->rejected = new Collection();
         $this->importer = $this->template->importer($sheetName);
         $this->validator = $this->template->customValidator($sheetName);
     }
 
-    public function run()
+    public function run(): void
     {
         $this->auth();
 
-        $this->chunk->filter(fn($row) => $this->validates($row))
-            ->each(fn($row) => $this->import($row));
+        $this->chunk->filter(fn ($row) => $this->validates($row))
+            ->each(fn ($row) => $this->import($row));
 
         $this->dumpRejected()
             ->updateProgress();
@@ -65,95 +64,77 @@ class Chunk
         }
     }
 
-    private function auth()
+    private function auth(): void
     {
         if ($this->importer instanceof Authenticates) {
             Auth::onceUsingId($this->user->id);
         }
     }
 
-    private function validates($row)
+    private function validates($row): bool
     {
-        (new Validation(
-            $row,
-            $this->template->validationRules($this->sheetName),
-            $this->validator,
-            $this->params
-        ))->run();
+        $rules = $this->template->validationRules($this->sheetName);
+
+        (new Validation($row, $rules, $this->validator, $this->user, $this->params))->run();
 
         if ($row->isRejected()) {
             $this->rejected->push($row);
         }
 
-        if ($this->validator) {
-            $this->validator->emptyErrors();
-        }
+        optional($this->validator)->clearErrors();
 
-        return ! $row->isRejected();
+        return $row->isImportable();
     }
 
-    private function import($row)
+    private function import($row): void
     {
         try {
             $this->importer->run($row, $this->user, $this->params);
         } catch (Exception $exception) {
-            $row->set($this->errorColumn, self::UndeterminedImportError);
+            $row->set(config('enso.imports.errorColumn'), config('enso.imports.unknownError'));
             $this->rejected->push($row);
             Log::debug($exception->getMessage());
         }
     }
 
-    private function dumpRejected()
+    private function dumpRejected(): self
     {
-        if ($this->rejected->isNotEmpty()) {
-            (new RejectedDump(
-                $this->dataImport,
-                $this->sheetName,
-                $this->rejected,
-                $this->index
-            ))->handle();
-        }
+        $this->rejected->whenNotEmpty(fn ($rejected) => (new RejectedDump(
+            $this->dataImport, $this->sheetName, $rejected, $this->index
+        ))->handle());
 
         return $this;
     }
 
-    private function updateProgress()
+    private function updateProgress(): void
     {
-        DB::transaction(function () {
-            $this->dataImport = DataImport::whereId($this->dataImport->id)
-                ->lockForUpdate()
-                ->first();
-
-            $this->dataImport->update([
+        DB::transaction(fn () => DataImport::whereId($this->dataImport->id)
+            ->lockForUpdate()->first()
+            ->update([
                 'successful' => $this->dataImport->successful + $this->successful(),
                 'failed' => $this->dataImport->failed + $this->rejected->count(),
                 'processed_chunks' => $this->dataImport->processed_chunks + 1,
-            ]);
-        });
+            ]));
     }
 
-    private function finalize()
-    {
-        $this->afterHook();
-
-        $this->dataImport->setStatus(Statuses::Processed);
-
-        RejectedExportJob::dispatch($this->dataImport, $this->user);
-    }
-
-    private function afterHook()
+    private function finalize(): void
     {
         if ($this->importer instanceof AfterHook) {
             $this->importer->after($this->user, $this->params);
         }
+
+        $this->dataImport->setStatus(Statuses::Processed);
+
+        RejectedExport::withChain([new Finalize($this->dataImport)])
+            ->dispatch($this->dataImport, $this->user);
     }
 
-    private function successful()
+    private function successful(): bool
     {
         return $this->chunk->count() - $this->rejected->count();
     }
 
-    private function shouldEnd()
+    private function shouldEnd(): bool
     {
         return $this->dataImport->fresh()->isFinalized();
     }

@@ -1,9 +1,10 @@
 <?php
 
-use LaravelEnso\DataImport\app\Models\DataImport;
+use Illuminate\Support\Collection;
+use LaravelEnso\DataImport\App\Models\DataImport;
 
-$factory->define(DataImport::class, fn() => [
-    'type' => collect(config('enso.imports.configs'))->keys()->random(),
+$factory->define(DataImport::class, fn () => [
+    'type' => (new Collection(config('enso.imports.configs')))->keys()->random(),
     'successful' => 0,
     'failed' => 0,
     'chunks' => 0,
