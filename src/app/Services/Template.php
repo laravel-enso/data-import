@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\App\Services;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use LaravelEnso\DataImport\App\Contracts\Importable;
 use LaravelEnso\DataImport\App\Models\DataImport;
 use LaravelEnso\DataImport\App\Services\Validators\Template as Validator;
@@ -107,8 +108,10 @@ class Template
 
     private function shouldValidate(): bool
     {
-        return ! app()->environment('production')
-            || config('enso.imports.validations') === 'always';
+        return in_array(
+            config('enso.imports.validations'),
+            [App::environment(), 'always']
+        );
     }
 
     private function template(DataImport $dataImport): Obj
