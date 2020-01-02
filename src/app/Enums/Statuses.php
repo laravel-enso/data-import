@@ -9,7 +9,7 @@ class Statuses extends IOStatuses
     public const Processed = 23;
     public const ExportingRejected = 26;
 
-    protected static $data = [
+    protected static array $data = [
         IOStatuses::Waiting => 'Waiting',
         IOStatuses::Processing => 'Processing',
         self::Processed => 'Processed',

@@ -8,7 +8,7 @@ use LaravelEnso\DataImport\App\Models\DataImport;
 
 class Store extends Controller
 {
-    public function __invoke(ValidateImportRequest $request, DataImport $dataImport)
+    public function __invoke(ValidateImportRequest $request)
     {
         $dataImport = factory(DataImport::class)
             ->make(['type' => $request->get('type')]);
