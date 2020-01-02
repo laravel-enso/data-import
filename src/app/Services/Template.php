@@ -54,7 +54,7 @@ class Template
         return $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
-                $column->get('name') => $column->get('validations')
+                $column->get('name') => $column->get('validations'),
             ])->toArray();
     }
 
