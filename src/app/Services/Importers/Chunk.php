@@ -129,7 +129,7 @@ class Chunk
             ->dispatch($this->dataImport, $this->user);
     }
 
-    private function successful(): bool
+    private function successful(): int
     {
         return $this->chunk->count() - $this->rejected->count();
     }

@@ -25,8 +25,7 @@ class Sheets
 
     public function names(): Collection
     {
-        return $this->items
-            ->map(fn ($sheet) => $sheet->name());
+        return $this->items->map->name();
     }
 
     public function get(string $sheetName): Sheet

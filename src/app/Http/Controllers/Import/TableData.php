@@ -10,5 +10,5 @@ class TableData extends Controller
 {
     use Data;
 
-    protected $tableClass = DataImportTable::class;
+    protected string $tableClass = DataImportTable::class;
 }

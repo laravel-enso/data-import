@@ -75,13 +75,11 @@ class Template extends EnsoException
 
     public static function incorectValidator(Obj $sheet)
     {
-        $validator = Validator::class;
-
         return new static(__(
             'Validator class ":class" for sheet ":sheet" must extend ":validator" class', [
                 'class' => $sheet->get('validatorClass'),
                 'sheet' => $sheet->get('name'),
-                'validator' => $validator,
+                'validator' => Validator::class,
             ]
         ));
     }

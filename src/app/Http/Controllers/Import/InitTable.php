@@ -10,5 +10,5 @@ class InitTable extends Controller
 {
     use Init;
 
-    protected $tableClass = DataImportTable::class;
+    protected string $tableClass = DataImportTable::class;
 }

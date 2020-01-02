@@ -10,5 +10,5 @@ class ExportExcel extends Controller
 {
     use Excel;
 
-    protected $tableClass = DataImportTable::class;
+    protected string $tableClass = DataImportTable::class;
 }

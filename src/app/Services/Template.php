@@ -54,9 +54,9 @@ class Template
     {
         return $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
-            ->reduce(fn ($rules, $column) => $rules->put(
-                $column->get('name'), $column->get('validations')
-            ), new Collection())->toArray();
+            ->mapWithKeys(fn ($column) => [
+                $column->get('name') => $column->get('validations'),
+            ])->toArray();
     }
 
     public function chunkSize($sheetName): int
