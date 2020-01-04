@@ -8,7 +8,7 @@ use LaravelEnso\Enums\App\Services\Enum;
 
 class ImportTypes extends Enum
 {
-    public static function attributes()
+    protected static function data(): array
     {
         try {
             $data = array_combine(

@@ -53,7 +53,7 @@ class Template extends EnsoException
     {
         return new static(__(
             'Importer class ":class" for sheet ":sheet" does not exist',
-            ['class' => $sheet->get('validatorClass'), 'sheet' => $sheet->get('name')]
+            ['class' => $sheet->get('importerClass'), 'sheet' => $sheet->get('name')]
         ));
     }
 
