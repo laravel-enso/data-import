@@ -13,6 +13,8 @@ use LaravelEnso\Helpers\App\Classes\Obj;
 
 class Template
 {
+    private static $rules;
+
     private Obj $template;
     private array $chunkSizes;
 
@@ -52,7 +54,7 @@ class Template
 
     public function validationRules(string $sheetName): array
     {
-        return $this->columns($sheetName)
+        return self::$rules ??= $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
                 $column->get('name') => $column->get('validations'),
@@ -74,12 +76,12 @@ class Template
         return new $class();
     }
 
-    public function customValidator($sheetName): ?CustomValidator
+    public function customValidator($sheetName, $user, $params): ?CustomValidator
     {
         if ($this->sheet($sheetName)->has('validatorClass')) {
             $class = $this->sheet($sheetName)->get('validatorClass');
 
-            return new $class();
+            return new $class($this->validationRules($sheetName), $user, $params);
         }
 
         return null;
