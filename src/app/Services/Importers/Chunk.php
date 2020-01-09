@@ -46,7 +46,7 @@ class Chunk
         $this->index = $index;
         $this->rejected = new Collection();
         $this->importer = $this->template->importer($sheetName);
-        $this->validator = $this->template->customValidator($sheetName);
+        $this->validator = $this->template->customValidator($sheetName, $this->user, $this->params);
     }
 
     public function run(): void
@@ -108,8 +108,10 @@ class Chunk
 
     private function updateProgress(): void
     {
+        $this->dataImport->refresh();
+
         DB::transaction(fn () => DataImport::whereId($this->dataImport->id)
-            ->lockForUpdate()->first()
+            ->lockForUpdate()
             ->update([
                 'successful' => $this->dataImport->successful + $this->successful(),
                 'failed' => $this->dataImport->failed + $this->rejected->count(),
