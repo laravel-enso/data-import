@@ -145,7 +145,7 @@ class Import
             ->pad($count, null);
     }
 
-    private function sanitizeCell($cell): ?string
+    private function sanitizeCell($cell)
     {
         if ($cell instanceof DateTime) {
             return Carbon::instance($cell)->toDateTimeString();
