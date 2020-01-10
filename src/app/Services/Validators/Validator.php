@@ -8,20 +8,14 @@ use LaravelEnso\Helpers\App\Classes\Obj;
 
 abstract class Validator
 {
-    protected array $rules;
-
     private Collection $errors;
-    private Obj $params;
 
-    public function __construct(array $rules, User $user, Obj $params)
+    public function __construct()
     {
-        $this->rules = $rules;
-        $this->user = $user;
-        $this->params = $params;
         $this->errors = new Collection();
     }
 
-    abstract public function run(Obj $row);
+    abstract public function run(Obj $row, User $user, Obj $params);
 
     public function fails(): bool
     {

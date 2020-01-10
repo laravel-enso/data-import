@@ -14,6 +14,7 @@ use LaravelEnso\Helpers\App\Classes\Obj;
 class Template
 {
     private Obj $template;
+    private array $rules;
     private array $chunkSizes;
 
     public function __construct(DataImport $dataImport)
@@ -52,7 +53,7 @@ class Template
 
     public function validationRules(string $sheetName): array
     {
-        return $this->columns($sheetName)
+        return $this->rules ??= $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
                 $column->get('name') => $column->get('validations'),

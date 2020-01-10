@@ -108,13 +108,18 @@ class Chunk
 
     private function updateProgress(): void
     {
-        DB::transaction(fn () => DataImport::whereId($this->dataImport->id)
-            ->lockForUpdate()->first()
-            ->update([
-                'successful' => $this->dataImport->successful + $this->successful(),
-                'failed' => $this->dataImport->failed + $this->rejected->count(),
-                'processed_chunks' => $this->dataImport->processed_chunks + 1,
-            ]));
+        DB::beginTransaction();
+
+        $this->dataImport = DataImport::whereId($this->dataImport->id)
+            ->lockForUpdate()->first();
+
+        $this->dataImport->update([
+            'successful' => $this->dataImport->successful + $this->successful(),
+            'failed' => $this->dataImport->failed + $this->rejected->count(),
+            'processed_chunks' => $this->dataImport->processed_chunks + 1,
+        ]);
+
+        DB::commit();
     }
 
     private function finalize(): void
