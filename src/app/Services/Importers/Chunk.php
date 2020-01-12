@@ -53,8 +53,7 @@ class Chunk
     {
         $this->auth();
 
-        $this->chunk->filter(fn ($row) => $this->validates($row))
-            ->each(fn ($row) => $this->import($row));
+        $this->chunk->filter(fn ($row) => $this->process($row));
 
         $this->dumpRejected()
             ->updateProgress();
@@ -68,6 +67,13 @@ class Chunk
     {
         if ($this->importer instanceof Authenticates) {
             Auth::onceUsingId($this->user->id);
+        }
+    }
+
+    private function process(Obj $row): void
+    {
+        if ($this->validates($row)) {
+            $this->import($row);
         }
     }
 

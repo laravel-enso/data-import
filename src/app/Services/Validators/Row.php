@@ -32,9 +32,7 @@ class Row extends Validator
     {
         (new Collection($this->rules))->keys()
             ->filter(fn ($column) => $this->validator->errors()->has($column))
-            ->each(
-                fn ($column) => (new Collection($this->validator->errors()->get($column)))
-                ->each(fn ($error) => $this->addError($error))
-            );
+            ->each(fn ($column) => (new Collection($this->validator->errors()->get($column)))
+                ->each(fn ($error) => $this->addError($error)));
     }
 }
