@@ -36,14 +36,4 @@ abstract class Validator
     {
         $this->errors->splice(0);
     }
-
-    public function user(): User
-    {
-        return $this->user;
-    }
-
-    public function params(): Obj
-    {
-        return $this->params;
-    }
 }
