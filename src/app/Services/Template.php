@@ -5,6 +5,7 @@ namespace LaravelEnso\DataImport\App\Services;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use LaravelEnso\DataImport\App\Contracts\Importable;
+use LaravelEnso\DataImport\App\Exceptions\Template as Exception;
 use LaravelEnso\DataImport\App\Models\DataImport;
 use LaravelEnso\DataImport\App\Services\Validators\Template as Validator;
 use LaravelEnso\DataImport\App\Services\Validators\Validator as CustomValidator;
@@ -64,8 +65,8 @@ class Template
     {
         return $this->chunkSizes[$sheetName]
             ??= $this->sheet($sheetName)->has('chunkSize')
-                ? $this->sheet($sheetName)->get('chunkSize')
-                : (int) config('enso.imports.chunkSize');
+            ? $this->sheet($sheetName)->get('chunkSize')
+            : (int) config('enso.imports.chunkSize');
     }
 
     public function importer($sheetName): Importable
@@ -117,12 +118,12 @@ class Template
 
     private function template(DataImport $dataImport): Obj
     {
-        $templatePath = base_path(
-            config("enso.imports.configs.{$dataImport->type}.template")
-        );
+        $template = config("enso.imports.configs.{$dataImport->type}.template");
 
-        return new Obj(
-            (new JsonParser($templatePath))->array()
-        );
+        if (! $template) {
+            throw Exception::disabled();
+        }
+
+        return (new JsonParser(base_path($template)))->obj();
     }
 }

@@ -9,6 +9,11 @@ use LaravelEnso\Helpers\App\Exceptions\EnsoException;
 
 class Template extends EnsoException
 {
+    public static function disabled()
+    {
+        return new static(__('The requested data import is currently disabled'));
+    }
+
     public static function missingRootAttributes($attrs)
     {
         return new static(__(
@@ -76,7 +81,8 @@ class Template extends EnsoException
     public static function incorectValidator(Obj $sheet)
     {
         return new static(__(
-            'Validator class ":class" for sheet ":sheet" must extend ":validator" class', [
+            'Validator class ":class" for sheet ":sheet" must extend ":validator" class',
+            [
                 'class' => $sheet->get('validatorClass'),
                 'sheet' => $sheet->get('name'),
                 'validator' => Validator::class,
