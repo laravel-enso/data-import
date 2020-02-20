@@ -34,9 +34,15 @@ class Chunk
     private Importable $importer;
     private ?Validator $validator;
 
-    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params,
-        string $sheetName, Collection $chunk, int $index)
-    {
+    public function __construct(
+        DataImport $dataImport,
+        Template $template,
+        User $user,
+        Obj $params,
+        string $sheetName,
+        Collection $chunk,
+        int $index
+    ) {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;
@@ -106,7 +112,10 @@ class Chunk
     private function dumpRejected(): self
     {
         $this->rejected->whenNotEmpty(fn ($rejected) => (new RejectedDump(
-            $this->dataImport, $this->sheetName, $rejected, $this->index
+            $this->dataImport,
+            $this->sheetName,
+            $rejected,
+            $this->index
         ))->handle());
 
         return $this;
@@ -114,18 +123,16 @@ class Chunk
 
     private function updateProgress(): void
     {
-        DB::beginTransaction();
+        DB::transaction(function () {
+            $this->dataImport = DataImport::whereId($this->dataImport->id)
+                ->lockForUpdate()->first();
 
-        $this->dataImport = DataImport::whereId($this->dataImport->id)
-            ->lockForUpdate()->first();
-
-        $this->dataImport->update([
-            'successful' => $this->dataImport->successful + $this->successful(),
-            'failed' => $this->dataImport->failed + $this->rejected->count(),
-            'processed_chunks' => $this->dataImport->processed_chunks + 1,
-        ]);
-
-        DB::commit();
+            $this->dataImport->update([
+                'successful' => $this->dataImport->successful + $this->successful(),
+                'failed' => $this->dataImport->failed + $this->rejected->count(),
+                'processed_chunks' => $this->dataImport->processed_chunks + 1,
+            ]);
+        });
     }
 
     private function finalize(): void
