@@ -29,9 +29,13 @@ class Import
     private Collection $chunk;
     private string $sheetName;
 
-    public function __construct(DataImport $dataImport, Template $template, Sheets $sheets,
-        User $user, Obj $params)
-    {
+    public function __construct(
+        DataImport $dataImport,
+        Template $template,
+        Sheets $sheets,
+        User $user,
+        Obj $params
+    ) {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->sheets = $sheets;
@@ -149,10 +153,6 @@ class Import
     {
         if ($cell instanceof DateTime) {
             return Carbon::instance($cell)->toDateTimeString();
-        }
-
-        if (! is_string($cell)) {
-            return $cell;
         }
 
         $cell = trim($cell);
