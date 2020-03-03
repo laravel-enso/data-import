@@ -155,7 +155,9 @@ class Import
             return Carbon::instance($cell)->toDateTimeString();
         }
 
-        $cell = trim($cell);
+        if (is_string($cell)) {
+            $cell = trim($cell);
+        }
 
         return $cell = '' ? null : $cell;
     }
