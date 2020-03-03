@@ -157,7 +157,7 @@ class Import
 
         $cell = trim($cell);
 
-        return empty($cell) ? null : $cell;
+        return $cell = '' ? null : $cell;
     }
 
     private function chunkIncomplete(): bool
