@@ -159,7 +159,7 @@ class Import
             $cell = trim($cell);
         }
 
-        return $cell = '' ? null : $cell;
+        return $cell === '' ? null : $cell;
     }
 
     private function chunkIncomplete(): bool
