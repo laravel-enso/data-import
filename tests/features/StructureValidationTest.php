@@ -1,12 +1,12 @@
 <?php
 
-use Tests\TestCase;
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use LaravelEnso\Core\App\Models\User;
 use LaravelEnso\DataImport\App\Models\DataImport;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class StructureValidationTest extends TestCase
 {
@@ -48,13 +48,13 @@ class StructureValidationTest extends TestCase
             'import' => $this->file(self::InvalidSheetsFile),
             'type' => self::ImportType,
         ])->assertStatus(200)
-        ->assertJsonFragment([
-            'errors' => [
-                'Extra Sheets' => ['invalid_sheet'],
-                'Missing Sheets' => ['groups']
-            ],
-            'filename' => self::TestFile,
-        ]);
+            ->assertJsonFragment([
+                'errors' => [
+                    'Extra Sheets' => ['invalid_sheet'],
+                    'Missing Sheets' => ['groups'],
+                ],
+                'filename' => self::TestFile,
+            ]);
 
         $this->assertNull(
             DataImport::whereName(self::TestFile)
@@ -74,13 +74,13 @@ class StructureValidationTest extends TestCase
             'import' => $this->file(self::InvalidColumnsFile),
             'type' => self::ImportType,
         ])->assertStatus(200)
-        ->assertJsonFragment([
-            'errors' => [
-                'Extra Columns' => ['Sheet "groups", column "invalid_column"'],
-                'Missing Columns' => ['Sheet "groups", column "description"']
-            ],
-            'filename' => self::TestFile,
-        ]);
+            ->assertJsonFragment([
+                'errors' => [
+                    'Extra Columns' => ['Sheet "groups", column "invalid_column"'],
+                    'Missing Columns' => ['Sheet "groups", column "description"'],
+                ],
+                'filename' => self::TestFile,
+            ]);
 
         $this->assertNull(
             DataImport::whereName(self::TestFile)
@@ -98,7 +98,6 @@ class StructureValidationTest extends TestCase
         return new UploadedFile(
             self::Path.self::TestFile,
             self::TestFile,
-            null,
             null,
             null,
             true

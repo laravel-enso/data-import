@@ -1,13 +1,13 @@
 <?php
 
-use Tests\TestCase;
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use LaravelEnso\Core\App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+use LaravelEnso\Core\App\Models\User;
 use LaravelEnso\DataImport\App\Models\ImportTemplate;
+use Tests\TestCase;
 
 class ImportTemplateTest extends TestCase
 {
@@ -52,9 +52,7 @@ class ImportTemplateTest extends TestCase
         ])->assertStatus(201);
 
         $this->model = ImportTemplate::with('file')
-            ->whereHas('file', fn($query) => (
-                $query->whereOriginalName(self::TemplateTestFile)
-            ))->first();
+            ->whereHas('file', fn ($query) => ($query->whereOriginalName(self::TemplateTestFile)))->first();
 
         \Storage::assertExists(
             $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
@@ -125,7 +123,6 @@ class ImportTemplateTest extends TestCase
         return new UploadedFile(
             self::Path.self::TemplateTestFile,
             self::TemplateTestFile,
-            null,
             null,
             null,
             true

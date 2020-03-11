@@ -54,14 +54,12 @@ class DataImportTest extends TestCase
             'import' => $this->importFile(self::ImportFile),
             'type' => self::ImportType,
         ])->assertStatus(200)
-        ->assertJsonFragment([
-            'errors' => [],
-            'filename' => self::ImportTestFile
-        ]);
+            ->assertJsonFragment([
+                'errors' => [],
+                'filename' => self::ImportTestFile,
+            ]);
 
-        $this->model = DataImport::whereHas('file', fn ($query) => (
-            $query->whereOriginalName(self::ImportTestFile)
-        ))->first();
+        $this->model = DataImport::whereHas('file', fn ($query) => ($query->whereOriginalName(self::ImportTestFile)))->first();
 
         $this->assertNotNull($this->model);
 
@@ -164,7 +162,6 @@ class DataImportTest extends TestCase
         return new UploadedFile(
             self::Path.self::ImportTestFile,
             self::ImportTestFile,
-            null,
             null,
             null,
             true
