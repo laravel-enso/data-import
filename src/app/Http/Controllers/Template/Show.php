@@ -9,6 +9,6 @@ class Show extends Controller
 {
     public function __invoke(string $type)
     {
-        return ImportTemplate::whereType($type)->first();
+        return ['template' => ImportTemplate::whereType($type)->first()];
     }
 }
