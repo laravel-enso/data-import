@@ -13,6 +13,6 @@ class Store extends Controller
         $importTemplate->type = $request->get('type');
         $importTemplate->store($request->file('template'));
 
-        return $importTemplate;
+        return ['template' => $importTemplate];
     }
 }

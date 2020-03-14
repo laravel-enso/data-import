@@ -49,7 +49,7 @@ class ImportTemplateTest extends TestCase
         $this->post(route('import.uploadTemplate', [], false), [
             'template' => $this->templateFile(),
             'type' => self::ImportType,
-        ])->assertStatus(201);
+        ])->assertStatus(200);
 
         $this->model = ImportTemplate::with('file')
             ->whereHas('file', fn ($query) => ($query->whereOriginalName(self::TemplateTestFile)))->first();
