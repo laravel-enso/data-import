@@ -1,23 +1,22 @@
 <?php
 
 use LaravelEnso\Migrator\App\Database\Migration;
-use LaravelEnso\Permissions\App\Enums\Types;
 
 class CreateStructureForDataImport extends Migration
 {
     protected $permissions = [
-        ['name' => 'import.index', 'description' => 'Imports index', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.store', 'description' => 'Upload file for import', 'type' => Types::Write, 'is_default' => false],
-        ['name' => 'import.destroy', 'description' => 'Delete import', 'type' => Types::Write, 'is_default' => false],
-        ['name' => 'import.download', 'description' => 'Download import', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.initTable', 'description' => 'Init table for imports', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.tableData', 'description' => 'Table data for imports', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.exportExcel', 'description' => 'Export excel for imports', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.downloadRejected', 'description' => 'Download rejected summary for import', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.template', 'description' => 'Get import template', 'type' => Types::Read, 'is_default' => false],
-        ['name' => 'import.uploadTemplate', 'description' => 'Upload import template', 'type' => Types::Write, 'is_default' => false],
-        ['name' => 'import.deleteTemplate', 'description' => 'Delete import template', 'type' => Types::Write, 'is_default' => false],
-        ['name' => 'import.downloadTemplate', 'description' => 'Download import template', 'type' => Types::Read, 'is_default' => false],
+        ['name' => 'import.index', 'description' => 'Imports index', 'is_default' => false],
+        ['name' => 'import.store', 'description' => 'Upload file for import', 'is_default' => false],
+        ['name' => 'import.destroy', 'description' => 'Delete import', 'is_default' => false],
+        ['name' => 'import.download', 'description' => 'Download import', 'is_default' => false],
+        ['name' => 'import.initTable', 'description' => 'Init table for imports', 'is_default' => false],
+        ['name' => 'import.tableData', 'description' => 'Table data for imports', 'is_default' => false],
+        ['name' => 'import.exportExcel', 'description' => 'Export excel for imports', 'is_default' => false],
+        ['name' => 'import.downloadRejected', 'description' => 'Download rejected summary for import', 'is_default' => false],
+        ['name' => 'import.template', 'description' => 'Get import template', 'is_default' => false],
+        ['name' => 'import.uploadTemplate', 'description' => 'Upload import template', 'is_default' => false],
+        ['name' => 'import.deleteTemplate', 'description' => 'Delete import template', 'is_default' => false],
+        ['name' => 'import.downloadTemplate', 'description' => 'Download import template', 'is_default' => false],
     ];
 
     protected $menu = [
