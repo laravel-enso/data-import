@@ -29,7 +29,6 @@ class ExcelSeeder extends Seeder
             $this->filename,
             null,
             null,
-            null,
             true
         );
     }
