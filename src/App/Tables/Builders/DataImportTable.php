@@ -15,8 +15,7 @@ class DataImportTable implements Table
     public function query(): Builder
     {
         return DataImport::selectRaw("
-            data_imports.id, data_imports.type, data_imports.status,
-            data_imports.status as computedStatus, files.original_name as name,
+            data_imports.id, data_imports.type, data_imports.status, files.original_name as name,
             data_imports.successful, data_imports.failed, data_imports.created_at,
             TIME(data_imports.created_at) as time, people.name as createdBy,
             rejected_imports.id as rejectedId, {$this->rawDuration()} as duration
