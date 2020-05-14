@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -134,6 +135,6 @@ class ImportTemplateTest extends TestCase
         $this->model->delete();
 
         File::delete(self::Path.self::TemplateTestFile);
-        Storage::deleteDirectory(config('enso.files.paths.testing'));
+        Storage::deleteDirectory(Config::get('enso.files.testingFolder'));
     }
 }
