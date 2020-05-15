@@ -16,6 +16,7 @@ use LaravelEnso\Files\App\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\App\Traits\FilePolicies;
 use LaravelEnso\Files\App\Traits\HasFile;
 use LaravelEnso\Helpers\App\Classes\Obj;
+use LaravelEnso\Helpers\App\Traits\CascadesMorphMap;
 use LaravelEnso\IO\App\Contracts\IOOperation;
 use LaravelEnso\IO\App\Enums\IOTypes;
 use LaravelEnso\IO\App\Traits\HasIOStatuses;
@@ -24,7 +25,7 @@ use LaravelEnso\TrackWho\App\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use CreatedBy, HasIOStatuses, HasFile, FilePolicies, TableCache;
+    use CascadesMorphMap, CreatedBy, HasIOStatuses, HasFile, FilePolicies, TableCache;
 
     protected $extensions = ['xlsx'];
 
@@ -79,6 +80,8 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         }
 
         Storage::deleteDirectory($this->rejectedFolder());
+
+        optional($this->rejected)->delete();
 
         parent::delete();
     }

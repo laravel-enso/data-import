@@ -134,7 +134,7 @@ class Rejected
 
     private function hashFilename(): string
     {
-        $hash = Str::random(40).'.xlsx';
+        $hash = Str::random(40);
         $path = $this->dataImport->rejectedFolder()
             .DIRECTORY_SEPARATOR
             ."{$hash}.xlsx";

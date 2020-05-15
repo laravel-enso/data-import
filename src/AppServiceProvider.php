@@ -2,9 +2,12 @@
 
 namespace LaravelEnso\DataImport;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\DataImport\App\Models\ImportTemplate;
+use LaravelEnso\DataImport\App\Models\RejectedImport;
 use LaravelEnso\IO\App\Observers\IOObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
         DataImport::observe(IOObserver::class);
 
         $this->load()
+            ->mapMorphs()
             ->publishAssets()
             ->publishExamples();
     }
@@ -27,6 +31,17 @@ class AppServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/config/imports.php', 'enso.imports');
 
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-enso/data-import');
+
+        return $this;
+    }
+
+    private function mapMorphs()
+    {
+        Relation::morphMap([
+            DataImport::morphMapKey() => DataImport::class,
+            ImportTemplate::morphMapKey() => ImportTemplate::class,
+            RejectedImport::morphMapKey() => RejectedImport::class,
+        ]);
 
         return $this;
     }
