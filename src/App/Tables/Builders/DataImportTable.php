@@ -21,13 +21,13 @@ class DataImportTable implements Table
             rejected_imports.id as rejectedId, {$this->rawDuration()} as duration
         ")->join('files', fn ($join) => $join
             ->on('files.attachable_id', 'data_imports.id')
-            ->where('files.attachable_type', DataImport::class))
+            ->where('files.attachable_type', DataImport::morphMapKey()))
             ->join('users', 'files.created_by', '=', 'users.id')
             ->join('people', 'users.person_id', '=', 'people.id')
             ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
             ->leftJoin('files as rejected_files', fn ($join) => $join
                 ->on('rejected_files.attachable_id', 'rejected_imports.id')
-                ->where('rejected_files.attachable_type', RejectedImport::class));
+                ->where('rejected_files.attachable_type', RejectedImport::morphMapKey()));
     }
 
     public function templatePath(): string

@@ -5,10 +5,11 @@ namespace LaravelEnso\DataImport\App\Models;
 use Illuminate\Database\Eloquent\Model;
 use LaravelEnso\Files\App\Contracts\Attachable;
 use LaravelEnso\Files\App\Traits\HasFile;
+use LaravelEnso\Helpers\App\Traits\CascadesMorphMap;
 
 class RejectedImport extends Model implements Attachable
 {
-    use HasFile;
+    use CascadesMorphMap, HasFile;
 
     protected $fillable = ['data_import_id'];
 
