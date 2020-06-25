@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Services;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Summary
 {

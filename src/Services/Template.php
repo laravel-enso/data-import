@@ -9,8 +9,8 @@ use LaravelEnso\DataImport\Exceptions\Template as Exception;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
 use LaravelEnso\DataImport\Services\Validators\Validator as CustomValidator;
-use LaravelEnso\Helpers\Classes\JsonReader;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\JsonReader;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Template
 {

@@ -8,7 +8,7 @@ use LaravelEnso\DataImport\Attributes\Sheet;
 use LaravelEnso\DataImport\Attributes\Template as TemplateAttributes;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Template
 {

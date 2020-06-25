@@ -15,7 +15,7 @@ use LaravelEnso\Files\Contracts\Attachable;
 use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;

@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Contracts;
 
 use LaravelEnso\Core\Models\User;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 interface BeforeHook
 {

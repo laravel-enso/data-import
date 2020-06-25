@@ -14,7 +14,7 @@ use LaravelEnso\DataImport\Services\DTOs\Row;
 use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Import
 {

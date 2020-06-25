@@ -2,7 +2,7 @@
 
 namespace App\Imports\Importers;
 
-use LaravelEnso\Helpers\App\Classes\Obj;
+use LaravelEnso\Helpers\App\Services\Obj;
 use LaravelEnso\DataImport\App\Contracts\Importable;
 use LaravelEnso\DataImport\App\Contracts\AfterHook; // optional
 use LaravelEnso\DataImport\App\Contracts\BeforeHook; // optional

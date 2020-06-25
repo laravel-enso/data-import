@@ -4,8 +4,8 @@ namespace LaravelEnso\DataImport\Exceptions;
 
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Services\Validators\Validator;
-use LaravelEnso\Helpers\Classes\Obj;
 use LaravelEnso\Helpers\Exceptions\EnsoException;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Template extends EnsoException
 {

@@ -12,7 +12,7 @@ use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Importers\Import as Service;
 use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Import implements ShouldQueue
 {

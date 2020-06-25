@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\Services\DTOs;
 
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Row extends Obj
 {

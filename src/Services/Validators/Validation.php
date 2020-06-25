@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\Services\Validators;
 
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Services\Validators\Row as ImplicitValidator;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Validation
 {

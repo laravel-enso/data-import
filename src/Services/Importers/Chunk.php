@@ -19,7 +19,7 @@ use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Validation;
 use LaravelEnso\DataImport\Services\Validators\Validator;
 use LaravelEnso\DataImport\Services\Writer\RejectedDump;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Chunk
 {

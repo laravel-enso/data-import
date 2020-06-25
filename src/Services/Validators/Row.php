@@ -5,7 +5,7 @@ namespace LaravelEnso\DataImport\Services\Validators;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator as Facade;
 use LaravelEnso\Core\Models\User;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Row extends Validator
 {

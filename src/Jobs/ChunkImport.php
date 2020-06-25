@@ -12,7 +12,7 @@ use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Importers\Chunk;
 use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Classes\Obj;
+use LaravelEnso\Helpers\Services\Obj;
 
 class ChunkImport implements ShouldQueue
 {
