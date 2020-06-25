@@ -11,8 +11,7 @@
     "homepage": "https://github.com/laravel-enso/data-import",
     "type": "library",
     "license": "MIT",
-    "authors": [
-        {
+    "authors": [{
             "name": "Adrian Ocneanu",
             "email": "aocneanu@gmail.com",
             "homepage": "https://laravel-enso.com",
@@ -27,15 +26,16 @@
     ],
     "require": {
         "box/spout": "^3.0",
-        "laravel-enso/core": "4.8.*",
-        "laravel-enso/enums": "1.2.*",
-        "laravel-enso/files": "3.4.*",
-        "laravel-enso/helpers": "1.15.*",
-        "laravel-enso/io": "1.3.*",
-        "laravel-enso/migrator": "1.1.*",
-        "laravel-enso/track-who": "1.9.*",
-        "laravel-enso/tables": "3.2.*",
-        "laravel-enso/select": "3.3.*"
+        "laravel-enso/core": "^5.0",
+        "laravel-enso/dynamic-relations": "^2.0",
+        "laravel-enso/enums": "^2.0",
+        "laravel-enso/files": "^4.0",
+        "laravel-enso/helpers": "^2.0",
+        "laravel-enso/io": "^2.0",
+        "laravel-enso/migrator": "^2.0",
+        "laravel-enso/track-who": "^2.0",
+        "laravel-enso/tables": "^4.0",
+        "laravel-enso/select": "^4.0"
     },
     "autoload": {
         "psr-4": {
