@@ -113,7 +113,7 @@ class DataImportTest extends TestCase
         $this->createImport();
 
         $response = $this->delete(route('import.destroy', [$this->model->id], false));
-        $response->assertStatus(555);
+        $response->assertStatus(488);
 
         $this->updateStatus();
     }
