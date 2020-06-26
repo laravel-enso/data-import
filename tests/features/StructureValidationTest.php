@@ -4,8 +4,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use LaravelEnso\Core\App\Models\User;
-use LaravelEnso\DataImport\App\Models\DataImport;
+use LaravelEnso\Core\Models\User;
+use LaravelEnso\DataImport\Models\DataImport;
 use Tests\TestCase;
 
 class StructureValidationTest extends TestCase

@@ -2,8 +2,8 @@
 
 namespace App\Imports\Validators;
 
-use LaravelEnso\Helpers\App\Services\Obj;
-use LaravelEnso\DataImport\App\Services\Validators\Validator;
+use LaravelEnso\Helpers\Services\Obj;
+use LaravelEnso\DataImport\Services\Validators\Validator;
 
 class CustomValidator extends Validator
 {

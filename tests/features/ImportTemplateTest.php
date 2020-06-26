@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\Core\App\Models\User;
-use LaravelEnso\DataImport\App\Models\ImportTemplate;
+use LaravelEnso\Core\Models\User;
+use LaravelEnso\DataImport\Models\ImportTemplate;
 use Tests\TestCase;
 
 class ImportTemplateTest extends TestCase
