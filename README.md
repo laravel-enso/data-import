@@ -1,6 +1,6 @@
 # Data Import
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b169a2f09f864cd5b274ce63008f04b9)](https://www.codacy.com/app/laravel-enso/dataImport?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=laravel-enso/data-import&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8c53be4df359406b8ce6bc48f627aee8)](https://www.codacy.com/gh/laravel-enso/data-import?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=laravel-enso/data-import&amp;utm_campaign=Badge_Grade) 
 [![StyleCI](https://github.styleci.io/repos/89221336/shield?branch=master)](https://github.styleci.io/repos/89221336)
 [![License](https://poser.pugx.org/laravel-enso/data-import/license)](https://packagist.org/packages/laravel-enso/data-import)
 [![Total Downloads](https://poser.pugx.org/laravel-enso/data-import/downloads)](https://packagist.org/packages/laravel-enso/data-import)
