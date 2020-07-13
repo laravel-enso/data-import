@@ -9,7 +9,7 @@ return [
     | or only in local/development.
     | Values: 'always/local/yourEnv...'
     |
- */
+    */
 
     'validations' => 'local',
 
@@ -20,7 +20,7 @@ return [
     | The default row chunk for the import queued jobs. Can be overwritten
     | per template.
     |
-     */
+    */
 
     'chunkSize' => 1000,
 
@@ -31,7 +31,7 @@ return [
     | Specifies the queue for each type of job during the import process.
     | The splitting process will be the longest and should be set
     | to a larger value.
-     */
+    */
 
     'queues' => [
         'splitting' => 'heavy',
@@ -47,7 +47,7 @@ return [
     | Sets the default timeout used for chunk splitting jobs & rejected
     | summary export. It can be overwritten in the import's template.
     |
-     */
+    */
 
     'timeout' => 60 * 5,
 
@@ -59,7 +59,7 @@ return [
     | with the same structure as the import and an extra errors column.
     | This flag sets the name of the errors column.
     |
-     */
+    */
 
     'errorColumn' => '_errors',
 
@@ -81,7 +81,7 @@ return [
     | After each import the user will be notified by email. Additionally
     | a notification can be broadcasted to the user.
     |
-     */
+    */
 
     'notifications' => ['broadcast', 'database'],
 
@@ -92,7 +92,7 @@ return [
     | Holds your import configuration. 'label' is used for the main page select
     | and template is the full path to your import template JSON.
     |
-     */
+    */
 
     'configs' => [
         'userGroups' => [
