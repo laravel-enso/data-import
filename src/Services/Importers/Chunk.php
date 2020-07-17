@@ -85,7 +85,7 @@ class Chunk
 
     private function validates($row): bool
     {
-        $rules = $this->template->validationRules($this->sheetName);
+        $rules = $this->template->columnRules($this->sheetName);
 
         (new Validation($row, $rules, $this->validator, $this->user, $this->params))->run();
 

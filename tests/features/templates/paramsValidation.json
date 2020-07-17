@@ -1,0 +1,26 @@
+{
+    "timeout": 500,
+    "params": [
+        {
+            "name": "name",
+            "validations": "required|exists:companies,id"
+        }
+    ],
+    "sheets": [
+        {
+            "name": "groups",
+            "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
+            "chunkSize": 250,
+            "columns": [
+                {
+                    "name": "name",
+                    "validations": "string|required|unique:user_groups,name"
+                },
+                {
+                    "name": "description",
+                    "validations": "string|nullable"
+                }
+            ]
+        }
+    ]
+}

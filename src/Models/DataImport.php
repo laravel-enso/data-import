@@ -11,6 +11,7 @@ use LaravelEnso\DataImport\Exceptions\DataImport as DataImportException;
 use LaravelEnso\DataImport\Jobs\Import as Job;
 use LaravelEnso\DataImport\Services\Structure;
 use LaravelEnso\DataImport\Services\Template;
+use LaravelEnso\DataImport\Services\Validators\Params;
 use LaravelEnso\Files\Contracts\Attachable;
 use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
@@ -43,16 +44,11 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function handle(UploadedFile $file, array $params = [])
     {
         $template = new Template($this);
-        $structure = new Structure($template, $file);
+        $validator = new Params($template, new Obj($params));
 
-        if ($structure->isValid()) {
-            tap($this)->save()
-                ->upload($file);
-
-            Job::dispatch($this, $template, $structure->sheets(), new Obj($params));
-        }
-
-        return $structure->summary();
+        return $validator->isInvalid()
+            ? $validator->toArray()
+            : $this->structure($template, $file, new Obj($params));
     }
 
     public function getEntriesAttribute()
@@ -97,5 +93,19 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function type()
     {
         return IOTypes::Import;
+    }
+
+    protected function structure(Template $template, UploadedFile $file, Obj $params): array
+    {
+        $structure = new Structure($template, $file);
+
+        if ($structure->isValid()) {
+            tap($this)->save()
+                ->upload($file);
+
+            Job::dispatch($this, $template, $structure->sheets(), new Obj($params));
+        }
+
+        return $structure->summary();
     }
 }

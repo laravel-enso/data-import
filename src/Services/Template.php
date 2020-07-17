@@ -15,7 +15,8 @@ use LaravelEnso\Helpers\Services\Obj;
 class Template
 {
     private Obj $template;
-    private array $rules;
+    private array $columnRules;
+    private array $paramRules;
     private array $chunkSizes;
 
     public function __construct(DataImport $dataImport)
@@ -52,12 +53,21 @@ class Template
         return $this->columns($sheetName)->pluck('name');
     }
 
-    public function validationRules(string $sheetName): array
+    public function columnRules(string $sheetName): array
     {
-        return $this->rules ??= $this->columns($sheetName)
+        return $this->columnRules ??= $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
                 $column->get('name') => $column->get('validations'),
+            ])->toArray();
+    }
+
+    public function paramRules(): array
+    {
+        return $this->paramRules ??= (new Obj($this->template->get('params', [])))
+            ->filter(fn ($param) => $param->has('validations'))
+            ->mapWithKeys(fn ($param) => [
+                $param->get('name') => $param->get('validations'),
             ])->toArray();
     }
 
@@ -85,6 +95,11 @@ class Template
         }
 
         return null;
+    }
+
+    public function params(): Obj
+    {
+        return $this->template->get('params');
     }
 
     private function columns(string $sheetName): Obj
