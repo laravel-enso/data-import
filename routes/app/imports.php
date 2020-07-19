@@ -12,4 +12,6 @@ Route::namespace('Import')
         Route::get('initTable', 'InitTable')->name('initTable');
         Route::get('tableData', 'TableData')->name('tableData');
         Route::get('exportExcel', 'ExportExcel')->name('exportExcel');
+
+        Route::get('{type}', 'Show')->name('show');
     });

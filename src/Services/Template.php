@@ -19,9 +19,9 @@ class Template
     private array $paramRules;
     private array $chunkSizes;
 
-    public function __construct(DataImport $dataImport)
+    public function __construct(string $type)
     {
-        $this->template = $this->template($dataImport);
+        $this->template = $this->template($type);
         $this->chunkSizes = [];
 
         if ($this->shouldValidate()) {
@@ -131,9 +131,9 @@ class Template
         );
     }
 
-    private function template(DataImport $dataImport): Obj
+    private function template(string $type): Obj
     {
-        $template = config("enso.imports.configs.{$dataImport->type}.template");
+        $template = config("enso.imports.configs.{$type}.template");
 
         if (! $template) {
             throw Exception::disabled();

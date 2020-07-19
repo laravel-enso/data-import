@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Models\DataImport;
 use Tests\TestCase;
@@ -36,29 +37,19 @@ class ParamsValidationTest extends TestCase
     }
 
     /** @test */
-    public function stops_on_invalid_sheets()
+    public function cannot_import_invalid_params()
     {
         config(['enso.imports.configs.userGroups' => [
             'label' => 'User Groups',
             'template' => Str::replaceFirst(base_path(), '', self::Template),
         ]]);
 
-        $resp = $this->post(route('import.store', [], false), [
+        $exception = $this->post(route('import.store', [], false), [
             'import' => $this->file('invalid_sheets.xlsx'),
             'type' => self::ImportType,
-        ]);
-
-        $resp->assertStatus(200)
-            ->assertJsonFragment([
-                'errors' => [
-                    'name' => ['The name field is required.'],
-                ],
-            ]);
-
-        $this->assertNull(
-            DataImport::whereName(self::TestFile)
-                ->first()
-        );
+        ])->exception;
+        $this->assertInstanceOf(ValidationException::class, $exception);
+        $this->assertArrayHasKey('name', $exception->errors());
     }
 
     private function file($file)
