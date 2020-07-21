@@ -63,7 +63,7 @@ class Template
 
     public function paramRules(): array
     {
-        return $this->paramRules ??= (new Obj($this->template->get('params', [])))
+        return $this->paramRules ??= $this->params()
             ->filter(fn ($param) => $param->has('validations'))
             ->mapWithKeys(fn ($param) => [
                 $param->get('name') => $param->get('validations'),

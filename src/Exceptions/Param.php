@@ -15,14 +15,6 @@ class Param extends EnsoException
         ));
     }
 
-    public static function unknownAttributes(Collection $attributes)
-    {
-        return new static(__(
-            'The following optional attributes are allowed for params: ":attrs"',
-            ['attrs' => $attributes->implode('", "')]
-        ));
-    }
-
     public static function routeNotFound(string $route)
     {
         return new static(__(
