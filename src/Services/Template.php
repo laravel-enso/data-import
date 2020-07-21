@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
-use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
 use LaravelEnso\DataImport\Services\Validators\Validator as CustomValidator;
 use LaravelEnso\Helpers\Services\JsonReader;

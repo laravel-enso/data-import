@@ -22,8 +22,8 @@ class Import implements Responsable
         return [
             'import' => [
                 'params' => $this->params(),
-                'template' => $this->template()
-            ]
+                'template' => $this->template(),
+            ],
         ];
     }
 
