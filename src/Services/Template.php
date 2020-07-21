@@ -98,7 +98,7 @@ class Template
 
     public function params(): Obj
     {
-        return $this->template->get('params');
+        return new Obj($this->template->get('params', []));
     }
 
     private function columns(string $sheetName): Obj

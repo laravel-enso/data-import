@@ -3,7 +3,8 @@
     "params": [
         {
             "name": "name",
-            "validations": "required|exists:companies,id"
+            "validations": "required|exists:companies,id",
+            "type": "string"
         }
     ],
     "sheets": [

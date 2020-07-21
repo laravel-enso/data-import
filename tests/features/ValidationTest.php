@@ -124,9 +124,6 @@ class ValidationTest extends TestCase
         File::delete(self::Path.self::TestFile);
     }
 
-    /**
-     * @return string
-     */
     protected function template($template): string
     {
         return Str::replaceFirst(base_path(), '', __DIR__ . DIRECTORY_SEPARATOR . 'templates'
