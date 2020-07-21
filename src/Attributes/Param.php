@@ -9,7 +9,6 @@ class Param extends Attribute
     public const Optional = ['validations', 'multiple', 'route', 'params', 'custom', 'label',  'value'];
 
     public const Dependent = [
-        'select' => ['route']
+        'select' => ['route'],
     ];
-
 }

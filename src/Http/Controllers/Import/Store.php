@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\Http\Requests\ValidateImportRequest;
-use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Import;
 
 class Store extends Controller
@@ -16,7 +15,6 @@ class Store extends Controller
             $request->file('import'),
             $request->except(['import', 'type'])
         );
-
 
         return $import->handle()
             ->summary();

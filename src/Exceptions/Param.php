@@ -22,6 +22,7 @@ class Param extends EnsoException
             ['attrs' => $attributes->implode('", "')]
         ));
     }
+
     public static function routeNotFound(string $route)
     {
         return new static(__(

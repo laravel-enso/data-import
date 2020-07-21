@@ -5,7 +5,6 @@ namespace LaravelEnso\DataImport\Services\Validators\Params;
 use Illuminate\Support\Facades\Validator as Facade;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Helpers\Services\Obj;
-use Illuminate\Contracts\Validation\Validator;
 
 class Data
 {
@@ -16,7 +15,6 @@ class Data
     {
         $this->template = $template;
         $this->params = $params;
-
     }
 
     public function validate()

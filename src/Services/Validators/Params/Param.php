@@ -4,8 +4,8 @@ namespace LaravelEnso\DataImport\Services\Validators\Params;
 
 use Illuminate\Support\Facades\Route;
 use LaravelEnso\DataImport\Attributes\Param as Attribute;
-use LaravelEnso\Helpers\Services\Obj;
 use LaravelEnso\DataImport\Exceptions\Param as Exception;
+use LaravelEnso\Helpers\Services\Obj;
 
 class Param
 {

@@ -5,8 +5,6 @@ namespace LaravelEnso\DataImport\Services;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\DataImport;
 
 class ExcelSeeder extends Seeder
 {
