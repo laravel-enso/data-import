@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\Attributes;
 
-class Column
+class Column extends Attribute
 {
     public const Mandatory = ['name'];
 

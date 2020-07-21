@@ -11,14 +11,11 @@ class Data
 {
     protected Template $template;
     protected Obj $params;
-    protected Obj $errors;
-    protected Validator $validator;
 
     public function __construct(Template $template, $params)
     {
         $this->template = $template;
         $this->params = $params;
-        $this->errors = new Obj();
 
     }
 

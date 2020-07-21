@@ -2,7 +2,7 @@
 
 namespace LaravelEnso\DataImport\Attributes;
 
-class Template
+class Template extends Attribute
 {
-    public const Attributes = ['sheets', 'timeout'];
+    public const Mandatory = ['sheets', 'timeout'];
 }

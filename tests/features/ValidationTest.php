@@ -4,17 +4,16 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Models\DataImport;
 use Tests\TestCase;
 
-class StructureValidationTest extends TestCase
+class ValidationTest extends TestCase
 {
     use RefreshDatabase;
 
     private const ImportType = 'userGroups';
-    private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'
-        .DIRECTORY_SEPARATOR.'userGroups.json';
     private const Path = __DIR__.DIRECTORY_SEPARATOR.'testFiles'.DIRECTORY_SEPARATOR;
     private const InvalidSheetsFile = 'invalid_sheets.xlsx';
     private const InvalidColumnsFile = 'invalid_columns.xlsx';
@@ -41,7 +40,7 @@ class StructureValidationTest extends TestCase
     {
         config(['enso.imports.configs.userGroups' => [
             'label' => 'User Groups',
-            'template' => Str::replaceFirst(base_path(), '', self::Template),
+            'template' => $this->template('userGroups'),
         ]]);
 
         $this->post(route('import.store', [], false), [
@@ -67,7 +66,7 @@ class StructureValidationTest extends TestCase
     {
         config(['enso.imports.configs.userGroups' => [
             'label' => 'User Groups',
-            'template' => Str::replaceFirst(base_path(), '', self::Template),
+            'template' => $this->template('userGroups'),
         ]]);
 
         $this->post(route('import.store', [], false), [
@@ -86,6 +85,22 @@ class StructureValidationTest extends TestCase
             DataImport::whereName(self::TestFile)
                 ->first()
         );
+    }
+
+    /** @test */
+    public function cannot_import_invalid_params()
+    {
+        config(['enso.imports.configs.userGroups' => [
+            'label' => 'User Groups',
+            'template' => $this->template('paramsValidation'),
+        ]]);
+
+        $exception = $this->post(route('import.store', [], false), [
+            'import' => $this->file('invalid_sheets.xlsx'),
+            'type' => self::ImportType,
+        ])->exception;
+        $this->assertInstanceOf(ValidationException::class, $exception);
+        $this->assertArrayHasKey('name', $exception->errors());
     }
 
     private function file($file)
@@ -107,5 +122,14 @@ class StructureValidationTest extends TestCase
     private function cleanUp()
     {
         File::delete(self::Path.self::TestFile);
+    }
+
+    /**
+     * @return string
+     */
+    protected function template($template): string
+    {
+        return Str::replaceFirst(base_path(), '', __DIR__ . DIRECTORY_SEPARATOR . 'templates'
+            . DIRECTORY_SEPARATOR . "{$template}.json");
     }
 }

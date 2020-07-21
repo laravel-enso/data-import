@@ -2,12 +2,8 @@
 
 namespace LaravelEnso\DataImport\Attributes;
 
-use LaravelEnso\DataImport\Contracts\FieldValidation as Contract;
-
-class Param implements Contract
+class Param extends Attribute
 {
-    use FieldValidation;
-
     public const Mandatory = ['name', 'type'];
 
     public const Optional = ['validations', 'multiple', 'route', 'params', 'custom', 'label',  'value'];

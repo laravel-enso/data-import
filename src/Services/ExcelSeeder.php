@@ -15,10 +15,8 @@ class ExcelSeeder extends Seeder
 
     public function run()
     {
-        factory(DataImport::class)->create([
-            'type' => $this->type,
-            'status' => Statuses::Waiting,
-        ])->handle($this->importFile());
+        (new Import($this->type, $this->importFile()))
+            ->handle();
     }
 
     private function importFile()

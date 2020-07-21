@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport\Services\Validators\Params;
 
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Helpers\Services\Obj;
-use LaravelEnso\DataImport\Attributes\Param as Attribute;
 
 class Structure
 {
@@ -24,7 +23,7 @@ class Structure
 
     private function structure(): self
     {
-        $this->params->each(fn ($filter) => (new Param($filter, new Attribute()))->validate());
+        $this->params->each(fn ($filter) => (new Param($filter))->validate());
 
         return $this;
     }
