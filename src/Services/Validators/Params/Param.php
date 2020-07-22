@@ -34,7 +34,7 @@ class Param
     private function complementaryAttributes(): self
     {
         $missing = Attribute::dependent($this->param->get('type'))
-            ->reject(fn ($attr) => $this->param->has('route'));
+            ->reject(fn ($attr) => $this->param->has($attr));
 
         throw_if($missing->isNotEmpty(), Exception::missingAttributes($missing));
 
