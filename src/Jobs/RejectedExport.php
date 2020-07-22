@@ -28,7 +28,7 @@ class RejectedExport implements ShouldQueue
         $this->user = $user;
 
         $this->queue = config('enso.imports.queues.rejected');
-        $this->timeout = (new Template($dataImport))->timeout();
+        $this->timeout = (new Template($dataImport->type))->timeout();
     }
 
     public function handle()

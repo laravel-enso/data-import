@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
-use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
 use LaravelEnso\DataImport\Services\Validators\Validator as CustomValidator;
 use LaravelEnso\Helpers\Services\JsonReader;
@@ -15,12 +14,13 @@ use LaravelEnso\Helpers\Services\Obj;
 class Template
 {
     private Obj $template;
-    private array $rules;
+    private array $columnRules;
+    private array $paramRules;
     private array $chunkSizes;
 
-    public function __construct(DataImport $dataImport)
+    public function __construct(string $type)
     {
-        $this->template = $this->template($dataImport);
+        $this->template = $this->template($type);
         $this->chunkSizes = [];
 
         if ($this->shouldValidate()) {
@@ -52,12 +52,21 @@ class Template
         return $this->columns($sheetName)->pluck('name');
     }
 
-    public function validationRules(string $sheetName): array
+    public function columnRules(string $sheetName): array
     {
-        return $this->rules ??= $this->columns($sheetName)
+        return $this->columnRules ??= $this->columns($sheetName)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
                 $column->get('name') => $column->get('validations'),
+            ])->toArray();
+    }
+
+    public function paramRules(): array
+    {
+        return $this->paramRules ??= $this->params()
+            ->filter(fn ($param) => $param->has('validations'))
+            ->mapWithKeys(fn ($param) => [
+                $param->get('name') => $param->get('validations'),
             ])->toArray();
     }
 
@@ -85,6 +94,11 @@ class Template
         }
 
         return null;
+    }
+
+    public function params(): Obj
+    {
+        return new Obj($this->template->get('params', []));
     }
 
     private function columns(string $sheetName): Obj
@@ -116,9 +130,9 @@ class Template
         );
     }
 
-    private function template(DataImport $dataImport): Obj
+    private function template(string $type): Obj
     {
-        $template = config("enso.imports.configs.{$dataImport->type}.template");
+        $template = config("enso.imports.configs.{$type}.template");
 
         if (! $template) {
             throw Exception::disabled();

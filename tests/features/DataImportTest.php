@@ -10,6 +10,7 @@ use LaravelEnso\Core\Models\User;
 use LaravelEnso\Core\Models\UserGroup;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Services\Import;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use Tests\TestCase;
 
@@ -138,14 +139,17 @@ class DataImportTest extends TestCase
 
     private function createImport($file = null)
     {
+        if ($file) {
+            $this->model = (new Import(static::ImportType, $this->importFile($file)))
+                ->handle()
+                ->dataImport();
+
+            return;
+        }
+
         $this->model = factory(DataImport::class)->create([
             'type' => self::ImportType,
         ]);
-
-        if ($file) {
-            $this->model->handle($this->importFile($file));
-            $this->model->fresh();
-        }
     }
 
     private function updateStatus()

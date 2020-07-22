@@ -3,19 +3,14 @@
 namespace LaravelEnso\DataImport\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Enums\ImportTypes;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Exceptions\DataImport as DataImportException;
-use LaravelEnso\DataImport\Jobs\Import as Job;
-use LaravelEnso\DataImport\Services\Structure;
-use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Files\Contracts\Attachable;
 use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
-use LaravelEnso\Helpers\Services\Obj;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
@@ -38,21 +33,6 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function rejected()
     {
         return $this->hasOne(RejectedImport::class);
-    }
-
-    public function handle(UploadedFile $file, array $params = [])
-    {
-        $template = new Template($this);
-        $structure = new Structure($template, $file);
-
-        if ($structure->isValid()) {
-            tap($this)->save()
-                ->upload($file);
-
-            Job::dispatch($this, $template, $structure->sheets(), new Obj($params));
-        }
-
-        return $structure->summary();
     }
 
     public function getEntriesAttribute()
