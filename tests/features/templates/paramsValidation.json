@@ -3,7 +3,7 @@
     "params": [
         {
             "name": "name",
-            "validations": "required|exists:companies,id",
+            "validations": "required",
             "type": "string"
         }
     ],
