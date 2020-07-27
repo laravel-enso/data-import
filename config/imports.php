@@ -87,6 +87,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Seeder path
+    |--------------------------------------------------------------------------
+    |
+    | The path for excel files used for the ExcelSeeder class inside the
+    |
+    */
+
+    'seederPath' => database_path('seeds/xlsx'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Configurations
     |--------------------------------------------------------------------------
     | Holds your import configuration. 'label' is used for the main page select
