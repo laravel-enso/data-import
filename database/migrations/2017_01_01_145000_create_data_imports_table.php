@@ -23,6 +23,8 @@ class CreateDataImportsTable extends Migration
 
             $table->tinyInteger('status');
 
+            $table->json('params')->nullable();
+
             $table->integer('created_by')->unsigned()->nullable();
             $table->foreign('created_by')->references('id')->on('users');
 

@@ -57,8 +57,11 @@ class Import
 
     private function init(): self
     {
-        $this->dataImport = factory(DataImport::class)
-            ->make(['type' => $this->type]);
+        $this->dataImport = factory(DataImport::class)->make([
+            'type' => $this->type,
+            'params' => $this->params
+        ]);
+
         $this->template = new Template($this->type);
         $this->structure = new Structure($this->template, $this->file);
 

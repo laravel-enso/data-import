@@ -26,7 +26,11 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     protected $guarded = ['id'];
 
-    protected $casts = ['status' => 'integer', 'file_parsed' => 'boolean'];
+    protected $casts = [
+        'status' => 'integer',
+        'file_parsed' => 'boolean',
+        'params' => 'array',
+    ];
 
     protected $folder = 'imports';
 
