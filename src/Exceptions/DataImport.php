@@ -20,4 +20,9 @@ class DataImport extends EnsoException
     {
         return new static(__('Unable to read file'));
     }
+
+    public static function unauthorized()
+    {
+        return new static(__("This action is unauthorized"));
+    }
 }
