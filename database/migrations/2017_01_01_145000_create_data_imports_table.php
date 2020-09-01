@@ -13,6 +13,8 @@ class CreateDataImportsTable extends Migration
 
             $table->string('type')->index();
 
+            $table->json('params')->nullable();
+
             $table->integer('successful');
             $table->integer('failed');
 
@@ -22,8 +24,6 @@ class CreateDataImportsTable extends Migration
             $table->boolean('file_parsed');
 
             $table->tinyInteger('status');
-
-            $table->json('params')->nullable();
 
             $table->integer('created_by')->unsigned()->nullable();
             $table->foreign('created_by')->references('id')->on('users');
