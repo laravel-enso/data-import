@@ -82,7 +82,7 @@ class Chunk
     private function authorize(): void
     {
         if ($this->importer instanceof Authorizes
-            && $this->importer->authorizes($this->user, $this->params) === false) {
+            && ! $this->importer->authorizes($this->user, $this->params)) {
             throw DataImportExcpetion::unauthorized();
         }
     }
