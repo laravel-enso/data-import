@@ -23,6 +23,6 @@ class DataImport extends EnsoException
 
     public static function unauthorized()
     {
-        return new static(__("This action is unauthorized"));
+        return new static(__('You are not authorized to perform this import'));
     }
 }

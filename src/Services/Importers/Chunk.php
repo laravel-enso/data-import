@@ -59,8 +59,8 @@ class Chunk
 
     public function run(): void
     {
-        $this->authenticate();
         $this->authorize();
+        $this->authenticate();
 
         $this->chunk->filter(fn ($row) => $this->process($row));
 
@@ -82,7 +82,7 @@ class Chunk
     private function authorize(): void
     {
         if ($this->importer instanceof Authorizes
-            && $this->importer->authorize($this->user, $this->params) === false) {
+            && $this->importer->authorizes($this->user, $this->params) === false) {
             throw DataImportExcpetion::unauthorized();
         }
     }
