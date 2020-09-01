@@ -59,7 +59,7 @@ class Import
     {
         $this->dataImport = factory(DataImport::class)->make([
             'type' => $this->type,
-            'params' => $this->params
+            'params' => $this->params,
         ]);
 
         $this->template = new Template($this->type);
