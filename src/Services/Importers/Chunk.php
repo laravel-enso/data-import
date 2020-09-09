@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Log;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Contracts\Authenticates;
+use LaravelEnso\DataImport\Contracts\Authorizes;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Exceptions\DataImport as DataImportExcpetion;
 use LaravelEnso\DataImport\Jobs\Finalize;
 use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Models\DataImport;
@@ -57,7 +59,8 @@ class Chunk
 
     public function run(): void
     {
-        $this->auth();
+        $this->authorize();
+        $this->authenticate();
 
         $this->chunk->filter(fn ($row) => $this->process($row));
 
@@ -69,10 +72,18 @@ class Chunk
         }
     }
 
-    private function auth(): void
+    private function authenticate(): void
     {
         if ($this->importer instanceof Authenticates) {
             Auth::setUser($this->user);
+        }
+    }
+
+    private function authorize(): void
+    {
+        if ($this->importer instanceof Authorizes
+            && ! $this->importer->authorizes($this->user, $this->params)) {
+            throw DataImportExcpetion::unauthorized();
         }
     }
 

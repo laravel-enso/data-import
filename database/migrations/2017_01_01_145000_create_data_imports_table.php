@@ -13,6 +13,8 @@ class CreateDataImportsTable extends Migration
 
             $table->string('type')->index();
 
+            $table->json('params')->nullable();
+
             $table->integer('successful');
             $table->integer('failed');
 
