@@ -25,4 +25,9 @@ class DataImport extends EnsoException
     {
         return new static(__('You are not authorized to perform this import'));
     }
+
+    public static function alreadyRunning()
+    {
+        return new static(__('An import job is already running for the same type'));
+    }
 }

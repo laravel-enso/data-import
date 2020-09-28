@@ -3,10 +3,13 @@
 namespace LaravelEnso\DataImport\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Jobs\Import as Job;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Validators\Params\Data as Params;
 use LaravelEnso\Helpers\Services\Obj;
+use LaravelEnso\IO\Enums\IOStatuses;
+use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
 
 class Import
 {
@@ -26,7 +29,8 @@ class Import
 
     public function handle(): self
     {
-        $this->init()
+        $this->checkAlreadyRunning()
+            ->init()
             ->validate()
             ->import();
 
@@ -73,5 +77,23 @@ class Import
         (new Params($this->template, $this->params))->validate();
 
         return $this;
+    }
+
+    private function checkAlreadyRunning(): self
+    {
+        if ($this->alreadyRunning()) {
+            throw Exception::alreadyRunning();
+        }
+
+        return $this;
+    }
+
+    private function alreadyRunning(): bool
+    {
+        return DataImport::whereType($this->type)
+            ->inprogress()
+            ->where('created_at', '>', now()->subSeconds(
+                Config::get('enso.imports.timeout')
+            ))->exists();
     }
 }
