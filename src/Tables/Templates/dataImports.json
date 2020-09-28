@@ -12,6 +12,11 @@
             "event": "download-rejected",
             "class": "is-row-button has-text-danger"
         },
+        {
+            "type": "global",
+            "icon": "sync-alt",
+            "slot": "reject"
+        },
         "download",
         "destroy"
     ],
