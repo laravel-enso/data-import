@@ -92,7 +92,7 @@ class Import
 
         $this->chunk = new Collection();
 
-        while ($this->chunkIncomplete() && ! $this->sheetFinalized() && ! $this->wasCanceled()) {
+        while ($this->chunkIncomplete() && ! $this->sheetFinalized()) {
             $this->addRow();
         }
 

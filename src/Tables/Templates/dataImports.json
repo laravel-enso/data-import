@@ -7,11 +7,17 @@
     "buttons": [
         "excel",
         {
+            "name": "cancel",
             "type": "row",
             "icon": "ban",
-            "slot": "cancel"
+            "method": "PATCH",
+            "class": "is-row-button has-text-danger",
+            "fullRoute": "import.cancel",
+            "action": "ajax",
+            "confirmation": true
         },
         {
+            "name": "download-rejected",
             "type": "row",
             "icon": "cloud-download-alt",
             "event": "download-rejected",
