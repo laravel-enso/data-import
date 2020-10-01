@@ -4,11 +4,13 @@ namespace LaravelEnso\DataImport\Tables\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Models\RejectedImport;
+use LaravelEnso\Tables\Contracts\ConditionalActions;
 use LaravelEnso\Tables\Contracts\Table;
 
-class DataImportTable implements Table
+class DataImportTable implements Table, ConditionalActions
 {
     protected const TemplatePath = __DIR__.'/../Templates/dataImports.json';
 
@@ -76,5 +78,18 @@ class DataImportTable implements Table
         $seconds = 'EXTRACT(EPOCH FROM (data_imports.updated_at::timestamp- data_imports.created_at::timestamp ))';
 
         return "($seconds || ' second')::interval";
+    }
+
+    public function render(array $row, string $action): bool
+    {
+        if ($action === 'download-rejected' && $row['failed'] === 0) {
+            return false;
+        }
+
+        if ($action === 'cancel' && ! Statuses::cancelable($row['status'])) {
+            return false;
+        }
+
+        return true;
     }
 }

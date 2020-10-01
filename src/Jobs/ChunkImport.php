@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use LaravelEnso\Core\Models\User;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Importers\Chunk;
 use LaravelEnso\DataImport\Services\Template;
@@ -49,6 +50,10 @@ class ChunkImport implements ShouldQueue
 
     public function handle()
     {
+        if ($this->dataImport->status === Statuses::Canceled) {
+            return;
+        }
+
         (new Chunk(
             $this->dataImport,
             $this->template,

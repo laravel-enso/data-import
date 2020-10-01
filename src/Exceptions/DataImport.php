@@ -25,4 +25,9 @@ class DataImport extends EnsoException
     {
         return new static(__('You are not authorized to perform this import'));
     }
+
+    public static function cannotBeCanceled()
+    {
+        return new static(__('Only in-progress imports can be canceled'));
+    }
 }

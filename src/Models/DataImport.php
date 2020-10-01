@@ -67,6 +67,13 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         parent::delete();
     }
 
+    public function cancel()
+    {
+        throw_unless(Statuses::cancelable($this->status), DataImportException::cannotBeCanceled());
+
+        $this->update(['status' => Statuses::Canceled]);
+    }
+
     public function isFinalized()
     {
         return $this->file_parsed

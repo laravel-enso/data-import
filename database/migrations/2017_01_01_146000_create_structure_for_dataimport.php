@@ -18,6 +18,7 @@ class CreateStructureForDataImport extends Migration
         ['name' => 'import.deleteTemplate', 'description' => 'Delete import template', 'is_default' => false],
         ['name' => 'import.downloadTemplate', 'description' => 'Download import template', 'is_default' => false],
         ['name' => 'import.show', 'description' => 'Get import', 'is_default' => false],
+        ['name' => 'import.cancel', 'description' => 'Cancel imports', 'is_default' => false],
     ];
 
     protected array $menu = [
