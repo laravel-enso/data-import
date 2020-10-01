@@ -18,4 +18,11 @@ class Statuses extends IOStatuses
         IOStatuses::Finalized => 'Finalized',
         self::Canceled => 'Canceled',
     ];
+
+    public static function cancelable($status): bool
+    {
+        return in_array($status, [
+            static::Waiting, static::Processing,
+        ]);
+    }
 }

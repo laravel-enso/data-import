@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Importers\Import as Service;
@@ -45,6 +46,10 @@ class Import implements ShouldQueue
 
     public function handle()
     {
+        if ($this->dataImport->status === Statuses::Canceled) {
+            return;
+        }
+
         (new Service(
             $this->dataImport,
             $this->template,

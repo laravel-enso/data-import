@@ -59,10 +59,6 @@ class Chunk
 
     public function run(): void
     {
-        if ($this->dataImport->fresh()->status === Statuses::Canceled) {
-            return;
-        }
-
         $this->authorize();
         $this->authenticate();
 

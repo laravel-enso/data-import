@@ -69,7 +69,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function cancel()
     {
-        throw_if($this->status >= Statuses::Finalized, DataImportException::cannotBeCanceled());
+        throw_unless(Statuses::cancelable($this->status), DataImportException::cannotBeCanceled());
 
         $this->update(['status' => Statuses::Canceled]);
     }

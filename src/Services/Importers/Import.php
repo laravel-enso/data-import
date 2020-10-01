@@ -47,10 +47,6 @@ class Import
 
     public function run(): void
     {
-        if ($this->dataImport->fresh()->status === Statuses::Canceled) {
-            return;
-        }
-
         $this->dataImport->startProcessing();
 
         $this->template->sheetNames()
