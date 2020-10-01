@@ -8,6 +8,7 @@ use DateTime;
 use Illuminate\Support\Collection;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\ChunkImport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Row;
@@ -78,7 +79,7 @@ class Import
 
     private function queueChunks(): void
     {
-        while (! $this->sheetFinalized()) {
+        while (! $this->sheetFinalized() && ! $this->wasCanceled()) {
             $this->prepareChunk()
                 ->fileParseStatus()
                 ->dispatch();
@@ -91,7 +92,7 @@ class Import
 
         $this->chunk = new Collection();
 
-        while ($this->chunkIncomplete() && ! $this->sheetFinalized()) {
+        while ($this->chunkIncomplete() && ! $this->sheetFinalized() && ! $this->wasCanceled()) {
             $this->addRow();
         }
 
@@ -176,5 +177,10 @@ class Import
     private function sheetFinalized(): bool
     {
         return ! $this->rowIterator->valid();
+    }
+
+    private function wasCanceled(): bool
+    {
+        return $this->dataImport->fresh()->status === Statuses::Canceled;
     }
 }

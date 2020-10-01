@@ -13,7 +13,7 @@ Route::namespace('Import')
         Route::get('tableData', 'TableData')->name('tableData');
         Route::get('exportExcel', 'ExportExcel')->name('exportExcel');
 
-        Route::patch('cancel/{dataImport}', 'Cancel')->name('cancel');
+        Route::patch('{dataImport}/cancel', 'Cancel')->name('cancel');
 
         Route::get('{type}', 'Show')->name('show');
     });
