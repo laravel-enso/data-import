@@ -8,6 +8,7 @@ use DateTime;
 use Illuminate\Support\Collection;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\ChunkImport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Row;
@@ -46,6 +47,10 @@ class Import
 
     public function run(): void
     {
+        if ($this->dataImport->fresh()->status === Statuses::Rejected) {
+            return;
+        }
+
         $this->dataImport->startProcessing();
 
         $this->template->sheetNames()

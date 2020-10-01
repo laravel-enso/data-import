@@ -26,8 +26,8 @@ class DataImport extends EnsoException
         return new static(__('You are not authorized to perform this import'));
     }
 
-    public static function alreadyRunning()
+    public static function cannotReject()
     {
-        return new static(__('An import job is already running for the same type'));
+        return new static(__('Only in-progress imports can be rejected'));
     }
 }

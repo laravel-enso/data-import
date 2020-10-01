@@ -8,14 +8,14 @@
         "excel",
         {
             "type": "row",
+            "icon": "ban",
+            "slot": "reject"
+        },
+        {
+            "type": "row",
             "icon": "cloud-download-alt",
             "event": "download-rejected",
             "class": "is-row-button has-text-danger"
-        },
-        {
-            "type": "global",
-            "icon": "sync-alt",
-            "slot": "reject"
         },
         "download",
         "destroy"

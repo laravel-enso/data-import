@@ -13,7 +13,7 @@ Route::namespace('Import')
         Route::get('tableData', 'TableData')->name('tableData');
         Route::get('exportExcel', 'ExportExcel')->name('exportExcel');
 
-        Route::patch('reject', 'Reject')->name('reject');
+        Route::patch('reject/{dataImport}', 'Reject')->name('reject');
 
         Route::get('{type}', 'Show')->name('show');
     });
