@@ -10,7 +10,7 @@ class StuckPermission implements MigratesStructure
     use StructureMigration;
 
     protected array $permissions = [
-        ['name' => 'import.reject', 'description' => 'Reject stuck imports', 'is_default' => false],
+        ['name' => 'import.cancel', 'description' => 'Cancel stuck imports', 'is_default' => false],
     ];
 
     protected array $roles = ['admin'];

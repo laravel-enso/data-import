@@ -47,7 +47,7 @@ class Import
 
     public function run(): void
     {
-        if ($this->dataImport->fresh()->status === Statuses::Rejected) {
+        if ($this->dataImport->fresh()->status === Statuses::Canceled) {
             return;
         }
 

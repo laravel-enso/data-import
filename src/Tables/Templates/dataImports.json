@@ -9,7 +9,7 @@
         {
             "type": "row",
             "icon": "ban",
-            "slot": "reject"
+            "slot": "cancel"
         },
         {
             "type": "row",

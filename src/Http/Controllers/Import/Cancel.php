@@ -5,12 +5,12 @@ namespace LaravelEnso\DataImport\Http\Controllers\Import;
 use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\Models\DataImport;
 
-class Reject extends Controller
+class Cancel extends Controller
 {
     public function __invoke(DataImport $dataImport)
     {
-        $dataImport->reject();
+        $dataImport->cancel();
 
-        return ['message' => __('The import was rejected successfully')];
+        return ['message' => __('The import was canceled successfully')];
     }
 }

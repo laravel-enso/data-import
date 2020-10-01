@@ -40,11 +40,6 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return $this->hasOne(RejectedImport::class);
     }
 
-    public function scopeInprogress($query)
-    {
-        $query->where('status', '<', IOStatuses::Finalized);
-    }
-
     public function getEntriesAttribute()
     {
         return $this->entries();
@@ -73,11 +68,11 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         parent::delete();
     }
 
-    public function reject()
+    public function cancel()
     {
-        throw_if($this->status >= Statuses::Finalized, DataImportException::cannotReject());
+        throw_if($this->status >= Statuses::Finalized, DataImportException::cannotBeCanceled());
 
-        $this->update(['status' => Statuses::Rejected]);
+        $this->update(['status' => Statuses::Canceled]);
     }
 
     public function isFinalized()
