@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\DB;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Models\RejectedImport;
-use LaravelEnso\Tables\Contracts\RenderActionsConditionally;
+use LaravelEnso\Tables\Contracts\ConditionalActions;
 use LaravelEnso\Tables\Contracts\Table;
 
-class DataImportTable implements Table, RenderActionsConditionally
+class DataImportTable implements Table, ConditionalActions
 {
     protected const TemplatePath = __DIR__.'/../Templates/dataImports.json';
 
