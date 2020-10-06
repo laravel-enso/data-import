@@ -147,7 +147,7 @@ class DataImportTest extends TestCase
             return;
         }
 
-        $this->model = factory(DataImport::class)->create([
+        $this->model = DataImport::factory()->create([
             'type' => self::ImportType,
         ]);
     }
