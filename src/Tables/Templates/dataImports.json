@@ -83,7 +83,7 @@
             "name": "created_at",
             "data": "data_imports.created_at",
             "meta": [
-                "searchable",
+                "filterable",
                 "sortable",
                 "sort:DESC",
                 "date"
