@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use LaravelEnso\DataImport\Http\Controllers\Rejected\Download;
 
-Route::namespace('Rejected')
-    ->group(function () {
-        Route::get('downloadRejected/{rejectedImport}', 'Download')->name('downloadRejected');
-    });
+Route::get('downloadRejected/{rejectedImport}', Download::class)->name('downloadRejected');
