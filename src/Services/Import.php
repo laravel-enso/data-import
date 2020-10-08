@@ -57,7 +57,7 @@ class Import
 
     private function init(): self
     {
-        $this->dataImport = factory(DataImport::class)->make([
+        $this->dataImport = DataImport::factory()->make([
             'type' => $this->type,
             'params' => $this->params,
         ]);
