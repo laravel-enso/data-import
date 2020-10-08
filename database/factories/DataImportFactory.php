@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Models\DataImport;
 
-class UserFactory extends Factory
+class DataImportFactory extends Factory
 {
     protected $model = DataImport::class;
 
