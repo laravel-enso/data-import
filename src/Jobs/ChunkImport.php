@@ -29,14 +29,8 @@ class ChunkImport implements ShouldQueue
     private Collection $chunk;
     private int $index;
 
-    public function __construct(
-        DataImport $dataImport,
-        Template $template,
-        User $user,
-        Obj $params,
-        string $sheetName,
-        Collection $chunk
-    ) {
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;

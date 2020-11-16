@@ -14,12 +14,8 @@ class RejectedDump
     private int $index;
     private Collection $dump;
 
-    public function __construct(
-        DataImport $dataImport,
-        string $sheetName,
-        Collection $rejected,
-        int $index
-    ) {
+    public function __construct(DataImport $dataImport, string $sheetName, Collection $rejected, int $index)
+    {
         $this->dataImport = $dataImport;
         $this->sheetName = $sheetName;
         $this->rejected = $rejected;

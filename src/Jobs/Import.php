@@ -28,12 +28,8 @@ class Import implements ShouldQueue
     private Obj $params;
     private $user;
 
-    public function __construct(
-        DataImport $dataImport,
-        Template $template,
-        Sheets $sheets,
-        Obj $params
-    ) {
+    public function __construct(DataImport $dataImport, Template $template, Sheets $sheets, Obj $params)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = Auth::user();

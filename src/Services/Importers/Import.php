@@ -30,13 +30,8 @@ class Import
     private Collection $chunk;
     private string $sheetName;
 
-    public function __construct(
-        DataImport $dataImport,
-        Template $template,
-        Sheets $sheets,
-        User $user,
-        Obj $params
-    ) {
+    public function __construct(DataImport $dataImport, Template $template, Sheets $sheets, User $user, Obj $params)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->sheets = $sheets;

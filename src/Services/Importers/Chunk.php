@@ -36,15 +36,8 @@ class Chunk
     private Importable $importer;
     private ?Validator $validator;
 
-    public function __construct(
-        DataImport $dataImport,
-        Template $template,
-        User $user,
-        Obj $params,
-        string $sheetName,
-        Collection $chunk,
-        int $index
-    ) {
+    public function __construct(DataImport $dataImport, Template $template, User $user, Obj $params, string $sheetName, Collection $chunk, int $index)
+    {
         $this->dataImport = $dataImport;
         $this->template = $template;
         $this->user = $user;
@@ -81,8 +74,10 @@ class Chunk
 
     private function authorize(): void
     {
-        if ($this->importer instanceof Authorizes
-            && ! $this->importer->authorizes($this->user, $this->params)) {
+        if (
+            $this->importer instanceof Authorizes
+            && ! $this->importer->authorizes($this->user, $this->params)
+        ) {
             throw DataImportExcpetion::unauthorized();
         }
     }
