@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use LaravelEnso\DataImport\Http\Controllers\Import\Cancel;
 use LaravelEnso\DataImport\Http\Controllers\Import\Destroy;
 use LaravelEnso\DataImport\Http\Controllers\Import\Download;
-use LaravelEnso\DataImport\Http\Controllers\Import\DownloadTemplate;
+use LaravelEnso\DataImport\Http\Controllers\Import\Template;
 use LaravelEnso\DataImport\Http\Controllers\Import\ExportExcel;
 use LaravelEnso\DataImport\Http\Controllers\Import\Index;
 use LaravelEnso\DataImport\Http\Controllers\Import\InitTable;
@@ -25,4 +25,4 @@ Route::patch('{dataImport}/cancel', Cancel::class)->name('cancel');
 
 Route::get('{type}', Show::class)->name('show');
 
-Route::get('downloadTemplate/{type}', DownloadTemplate::class)->name('downloadTemplate');
+Route::get('{type}/template', Template::class)->name('template');

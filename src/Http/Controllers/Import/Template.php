@@ -6,7 +6,7 @@ use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\Services\ImportTemplate;
 use LaravelEnso\Excel\Services\ExcelExport;
 
-class DownloadTemplate extends Controller
+class Template extends Controller
 {
     public function __invoke(string $type)
     {

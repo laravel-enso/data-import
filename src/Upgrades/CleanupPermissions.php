@@ -26,6 +26,6 @@ class CleanupPermissions implements MigratesData
 
     private function query()
     {
-        return Permission::whereIn('name', (new Collection(static::Permissions))->pluck('name'));
+        return Permission::whereIn('name', Collection::wrap(static::Permissions)->pluck('name'));
     }
 }
