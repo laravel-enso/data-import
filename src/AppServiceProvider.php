@@ -5,7 +5,6 @@ namespace LaravelEnso\DataImport;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Models\ImportTemplate;
 use LaravelEnso\DataImport\Models\RejectedImport;
 use LaravelEnso\IO\Observers\IOObserver;
 
@@ -70,7 +69,6 @@ class AppServiceProvider extends ServiceProvider
     private function mapMorphs()
     {
         DataImport::morphMap();
-        ImportTemplate::morphMap();
         RejectedImport::morphMap();
 
         return $this;

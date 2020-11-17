@@ -14,6 +14,6 @@ class Show extends Controller
         $template = new Template($type);
         (new Structure($template))->validate();
 
-        return new Import($type, $template);
+        return new Import($template);
     }
 }

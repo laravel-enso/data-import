@@ -7,5 +7,4 @@ Route::middleware(['api', 'auth', 'core'])
     ->group(function () {
         require 'app/imports.php';
         require 'app/rejected.php';
-        require 'app/template.php';
     });

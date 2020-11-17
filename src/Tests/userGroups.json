@@ -4,12 +4,15 @@
         "name": "groups",
         "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
         "chunkSize": 1000,
-        "columns": [{
+        "columns": [
+            {
                 "name": "name",
+                "description": "user group name",
                 "validations": "string|required|unique:user_groups,name"
             },
             {
                 "name": "description",
+                "description": "user group description",
                 "validations": "string|nullable"
             }
         ]
