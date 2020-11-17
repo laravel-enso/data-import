@@ -5,8 +5,9 @@ namespace LaravelEnso\DataImport\Upgrades;
 use Illuminate\Support\Collection;
 use LaravelEnso\Permissions\Models\Permission;
 use LaravelEnso\Upgrade\Contracts\MigratesData;
+use LaravelEnso\Upgrade\Contracts\Prioritization;
 
-class CleanupPermissions implements MigratesData
+class CleanupPermissions implements MigratesData, Prioritization
 {
     const Permissions = [
         ['name' => 'import.template', 'description' => 'Get import template', 'is_default' => false],
@@ -16,16 +17,17 @@ class CleanupPermissions implements MigratesData
 
     public function isMigrated(): bool
     {
-        return ! $this->query()->exists();
+        return ! Permission::whereName('import.uploadTemplate')->exists();
     }
 
     public function migrateData(): void
     {
-        $this->query()->delete();
+        Permission::whereIn('name', Collection::wrap(static::Permissions)->pluck('name'))
+            ->delete();
     }
 
-    private function query()
+    public function priority(): int
     {
-        return Permission::whereIn('name', Collection::wrap(static::Permissions)->pluck('name'));
+        return 0;
     }
 }
