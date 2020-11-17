@@ -4,13 +4,13 @@ use Illuminate\Support\Facades\Route;
 use LaravelEnso\DataImport\Http\Controllers\Import\Cancel;
 use LaravelEnso\DataImport\Http\Controllers\Import\Destroy;
 use LaravelEnso\DataImport\Http\Controllers\Import\Download;
-use LaravelEnso\DataImport\Http\Controllers\Import\Template;
 use LaravelEnso\DataImport\Http\Controllers\Import\ExportExcel;
 use LaravelEnso\DataImport\Http\Controllers\Import\Index;
 use LaravelEnso\DataImport\Http\Controllers\Import\InitTable;
 use LaravelEnso\DataImport\Http\Controllers\Import\Show;
 use LaravelEnso\DataImport\Http\Controllers\Import\Store;
 use LaravelEnso\DataImport\Http\Controllers\Import\TableData;
+use LaravelEnso\DataImport\Http\Controllers\Import\Template;
 
 Route::get('', Index::class)->name('index');
 Route::delete('{dataImport}', Destroy::class)->name('destroy');
