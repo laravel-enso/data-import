@@ -52,6 +52,11 @@ class Template
         return $this->columns($sheetName)->pluck('name');
     }
 
+    public function descriptions(string $sheetName): Collection
+    {
+        return $this->columns($sheetName)->pluck('description');
+    }
+
     public function columnRules(string $sheetName): array
     {
         return $this->columnRules ??= $this->columns($sheetName)

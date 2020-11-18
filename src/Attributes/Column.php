@@ -6,5 +6,5 @@ class Column extends Attribute
 {
     public const Mandatory = ['name'];
 
-    public const Optional = ['validations'];
+    public const Optional = ['validations', 'description'];
 }

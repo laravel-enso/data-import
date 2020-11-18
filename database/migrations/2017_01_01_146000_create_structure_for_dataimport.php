@@ -12,11 +12,8 @@ class CreateStructureForDataImport extends Migration
         ['name' => 'import.initTable', 'description' => 'Init table for imports', 'is_default' => false],
         ['name' => 'import.tableData', 'description' => 'Table data for imports', 'is_default' => false],
         ['name' => 'import.exportExcel', 'description' => 'Export excel for imports', 'is_default' => false],
-        ['name' => 'import.downloadRejected', 'description' => 'Download rejected summary for import', 'is_default' => false],
-        ['name' => 'import.template', 'description' => 'Get import template', 'is_default' => false],
-        ['name' => 'import.uploadTemplate', 'description' => 'Upload import template', 'is_default' => false],
-        ['name' => 'import.deleteTemplate', 'description' => 'Delete import template', 'is_default' => false],
-        ['name' => 'import.downloadTemplate', 'description' => 'Download import template', 'is_default' => false],
+        ['name' => 'import.rejected', 'description' => 'Download rejected summary for import', 'is_default' => false],
+        ['name' => 'import.template', 'description' => 'Download import template', 'is_default' => false],
         ['name' => 'import.show', 'description' => 'Get import', 'is_default' => false],
         ['name' => 'import.cancel', 'description' => 'Cancel imports', 'is_default' => false],
     ];
