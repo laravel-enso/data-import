@@ -5,17 +5,21 @@ namespace LaravelEnso\DataImport\Services\Importers;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\ChunkImport;
+use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Row;
 use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Helpers\Services\Obj;
+use LaravelEnso\DataImport\Jobs\Finalize;
 
 class Import
 {
@@ -28,6 +32,7 @@ class Import
     private RowIterator $rowIterator;
     private Collection $header;
     private Collection $chunk;
+    private PendingBatch $batch;
     private string $sheetName;
 
     public function __construct(DataImport $dataImport, Template $template, Sheets $sheets, User $user, Obj $params)
@@ -38,6 +43,7 @@ class Import
         $this->user = $user;
         $this->params = $params;
         $this->xlsx = new XLSX($dataImport->file->path());
+        $this->batch = Bus::batch([]);
     }
 
     public function run(): void
@@ -48,6 +54,10 @@ class Import
             ->each(fn ($sheetName) => $this->prepareSheet($sheetName)
                 ->beforeHook()
                 ->queueChunks());
+
+        $this->rejected()
+            ->finalize()
+            ->batch->dispatch();
 
         $this->xlsx->close();
     }
@@ -72,13 +82,36 @@ class Import
         return $this;
     }
 
-    private function queueChunks(): void
+    private function queueChunks(): self
     {
         while (! $this->sheetFinalized() && ! $this->wasCanceled()) {
-            $this->prepareChunk()
+            $this->batch->jobs->add($this->prepareChunk()
                 ->fileParseStatus()
-                ->dispatch();
+                ->job());
         }
+
+        return $this;
+    }
+
+    private function rejected(): self
+    {
+        $this->batch->jobs
+            ->add(new RejectedExport($this->dataImport, $this->user));
+
+        return $this;
+    }
+
+    private function finalize(): self
+    {
+        $this->batch->jobs
+            ->add(new Finalize(
+                $this->dataImport,
+                $this->template,
+                $this->user,
+                $this->params
+            ));
+
+        return $this;
     }
 
     private function prepareChunk(): self
@@ -123,9 +156,9 @@ class Import
         return $this;
     }
 
-    private function dispatch(): void
+    private function job(): ChunkImport
     {
-        ChunkImport::dispatch(
+        return new ChunkImport(
             $this->dataImport,
             $this->template,
             $this->user,

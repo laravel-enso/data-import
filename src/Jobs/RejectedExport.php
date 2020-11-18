@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\DataImport\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,7 +15,7 @@ use LaravelEnso\DataImport\Services\Template;
 
 class RejectedExport implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $queue;
     public $timeout;

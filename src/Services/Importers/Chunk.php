@@ -8,14 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use LaravelEnso\Core\Models\User;
-use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\Authorizes;
 use LaravelEnso\DataImport\Contracts\Importable;
-use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Exceptions\DataImport as DataImportExcpetion;
-use LaravelEnso\DataImport\Jobs\Finalize;
-use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Validation;
@@ -59,10 +55,6 @@ class Chunk
 
         $this->dumpRejected()
             ->updateProgress();
-
-        if ($this->shouldEnd()) {
-            $this->finalize();
-        }
     }
 
     private function authenticate(): void
@@ -141,25 +133,8 @@ class Chunk
         });
     }
 
-    private function finalize(): void
-    {
-        if ($this->importer instanceof AfterHook) {
-            $this->importer->after($this->user, $this->params);
-        }
-
-        $this->dataImport->setStatus(Statuses::Processed);
-
-        RejectedExport::withChain([new Finalize($this->dataImport)])
-            ->dispatch($this->dataImport, $this->user);
-    }
-
     private function successful(): int
     {
         return $this->chunk->count() - $this->rejected->count();
-    }
-
-    private function shouldEnd(): bool
-    {
-        return $this->dataImport->fresh()->isFinalized();
     }
 }
