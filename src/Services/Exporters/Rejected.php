@@ -30,7 +30,7 @@ class Rejected
         $this->hashFilename = $this->hashFilename();
     }
 
-    public function run(): void
+    public function handle(): void
     {
         $this->dumps()
             ->whenNotEmpty(fn ($dumps) => $this->process($dumps));

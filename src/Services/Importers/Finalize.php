@@ -27,8 +27,6 @@ class Finalize
 
     public function handle(): void
     {
-        UserGroup::where('id', '>', 5)->delete();
-
         $this->afterHook();
 
         $this->dataImport->refresh()

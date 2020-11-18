@@ -12,14 +12,13 @@ use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\ChunkImport;
-use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Row;
 use LaravelEnso\DataImport\Services\DTOs\Sheets;
+use LaravelEnso\DataImport\Services\Exporters\Rejected;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Helpers\Services\Obj;
-use LaravelEnso\DataImport\Jobs\Finalize;
 
 class Import
 {
@@ -57,7 +56,8 @@ class Import
 
         $this->rejected()
             ->finalize()
-            ->batch->dispatch();
+            ->batch->onQueue($this->template->queue())
+            ->dispatch();
 
         $this->xlsx->close();
     }
@@ -95,21 +95,22 @@ class Import
 
     private function rejected(): self
     {
-        $this->batch->jobs
-            ->add(new RejectedExport($this->dataImport, $this->user));
+        $rejected = new Rejected($this->dataImport, $this->user);
+        $this->batch->then(fn () => $rejected->handle());
 
         return $this;
     }
 
     private function finalize(): self
     {
-        $this->batch->jobs
-            ->add(new Finalize(
-                $this->dataImport,
-                $this->template,
-                $this->user,
-                $this->params
-            ));
+        $finalize = new Finalize(
+            $this->dataImport,
+            $this->template,
+            $this->user,
+            $this->params
+        );
+
+        $this->batch->then(fn () => $finalize->handle());
 
         return $this;
     }
