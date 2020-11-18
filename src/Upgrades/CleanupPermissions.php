@@ -2,7 +2,6 @@
 
 namespace LaravelEnso\DataImport\Upgrades;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\Permissions\Models\Permission;
