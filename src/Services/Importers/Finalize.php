@@ -3,7 +3,6 @@
 namespace LaravelEnso\DataImport\Services\Importers;
 
 use LaravelEnso\Core\Models\User;
-use LaravelEnso\Core\Models\UserGroup;
 use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Notifications\ImportDone;
