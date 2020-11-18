@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelEnso\DataImport\Http\Controllers\Rejected;
+namespace LaravelEnso\DataImport\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
 use LaravelEnso\DataImport\Models\RejectedImport;
 
-class Download extends Controller
+class Rejected extends Controller
 {
     public function __invoke(RejectedImport $rejectedImport)
     {

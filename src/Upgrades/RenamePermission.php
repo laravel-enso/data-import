@@ -17,9 +17,17 @@ class RenamePermission implements MigratesData
 
     public function migrateData(): void
     {
-        $this->query()->update([
-            'name' => 'import.template',
-        ]);
+        $this->query()
+            ->whereName('import.template')
+            ->update([
+                'description' => 'Download import template',
+            ]);
+
+        $this->query()
+            ->whereName('import.downloadRejected')
+            ->update([
+                'name' => 'import.rejected',
+            ]);
 
         if (App::isLocal()) {
             Role::get()
@@ -30,6 +38,6 @@ class RenamePermission implements MigratesData
 
     private function query()
     {
-        return Permission::whereName('import.downloadTemplate');
+        return Permission::whereName('import.downloadRejected');
     }
 }
