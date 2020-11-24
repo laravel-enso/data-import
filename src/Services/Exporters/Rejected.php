@@ -121,7 +121,7 @@ class Rejected
 
     private function dumps(): Collection
     {
-        Log::debug("->DEBUG at <b>" . __FUNCTION__ . "</b>at <b>" . __LINE__ . "</b>\$this->dataImport->rejectedFolder() = ".$this->dataImport->rejectedFolder()."<br>".PHP_EOL);
+        Log::debug('->DEBUG at <b>'.__FUNCTION__.'</b>at <b>'.__LINE__.'</b>$this->dataImport->rejectedFolder() = '.$this->dataImport->rejectedFolder().'<br>'.PHP_EOL);
 
         return new Collection(Storage::files(
             $this->dataImport->rejectedFolder()

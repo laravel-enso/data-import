@@ -13,6 +13,7 @@ use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\ChunkImport;
+use LaravelEnso\DataImport\Jobs\Finalize;
 use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\DTOs\Row;
@@ -20,7 +21,6 @@ use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\Helpers\Services\Obj;
-use LaravelEnso\DataImport\Jobs\Finalize;
 
 class Import
 {
