@@ -43,7 +43,7 @@ class Import implements ShouldQueue
     public function handle()
     {
         if ($this->dataImport->status === Statuses::Canceled) {
-            return;
+            return $this->batch()->cancel();
         }
 
         (new Service(

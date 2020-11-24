@@ -28,8 +28,7 @@ class Finalize
     {
         $this->afterHook();
 
-        $this->dataImport->refresh()
-            ->endOperation();
+        $this->dataImport->endOperation();
 
         $this->notify();
     }

@@ -8,6 +8,7 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\XLSX\Writer;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\Core\Models\User;
@@ -120,6 +121,8 @@ class Rejected
 
     private function dumps(): Collection
     {
+        Log::debug("->DEBUG at <b>" . __FUNCTION__ . "</b>at <b>" . __LINE__ . "</b>\$this->dataImport->rejectedFolder() = ".$this->dataImport->rejectedFolder()."<br>".PHP_EOL);
+
         return new Collection(Storage::files(
             $this->dataImport->rejectedFolder()
         ));
