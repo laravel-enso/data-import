@@ -52,7 +52,7 @@ class Template
         return $this->columns($sheetName)->pluck('name');
     }
 
-    public function description(string $sheetName): Collection
+    public function descriptions(string $sheetName): Collection
     {
         return $this->columns($sheetName)->pluck('description');
     }

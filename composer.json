@@ -29,6 +29,7 @@
         "laravel-enso/core": "^6.0",
         "laravel-enso/dynamic-methods": "^2.0",
         "laravel-enso/enums": "^2.0",
+        "laravel-enso/excel": "^3.0",
         "laravel-enso/files": "^4.0",
         "laravel-enso/helpers": "^2.0",
         "laravel-enso/io": "^2.0",

@@ -90,7 +90,7 @@ class DataImportTest extends TestCase
         $this->createImport(self::ContentErrorsFile);
         $this->updateStatus();
 
-        $this->get(route('import.downloadRejected', [$this->model->rejected->id], false))
+        $this->get(route('import.rejected', [$this->model->rejected->id], false))
             ->assertStatus(200);
     }
 
