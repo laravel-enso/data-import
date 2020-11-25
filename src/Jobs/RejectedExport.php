@@ -18,7 +18,6 @@ class RejectedExport implements ShouldQueue
 
     public $queue;
     public $timeout;
-
     private $dataImport;
     private $user;
 
@@ -33,6 +32,6 @@ class RejectedExport implements ShouldQueue
 
     public function handle()
     {
-        (new Rejected($this->dataImport, $this->user))->run();
+        (new Rejected($this->dataImport, $this->user))->handle();
     }
 }

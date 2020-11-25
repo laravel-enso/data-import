@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use LaravelEnso\DataImport\Enums\ImportTypes;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Models\DataImport;
 
 class ImportDone extends Notification implements ShouldQueue
@@ -30,7 +30,7 @@ class ImportDone extends Notification implements ShouldQueue
     {
         return (new BroadcastMessage([
             'level' => 'success',
-            'title' => $this->broadcastTitle(),
+            'title' => $this->title(),
             'body' => $this->filename(),
             'icon' => 'file-excel',
         ]))->onQueue($this->queue);
@@ -39,43 +39,25 @@ class ImportDone extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject($this->mailSubject())
+            ->subject($this->subject())
             ->markdown('laravel-enso/data-import::emails.import', [
                 'name' => $notifiable->person->appellative
                     ?? $notifiable->person->name,
-                'filename' => $this->filename(),
-                'type' => $this->type(),
-                'successful' => $this->dataImport->successful,
-                'failed' => $this->dataImport->failed,
-                'entries' => $this->dataImport->entries(),
+                'dataImport' => $this->dataImport,
             ]);
     }
 
     public function toArray()
     {
         return [
-            'body' => $this->notificationBody(),
+            'body' => "{$this->title()}: {$this->filename()}",
             'icon' => 'file-excel',
         ];
     }
 
-    private function notificationBody()
+    private function title()
     {
-        return $this->broadcastTitle()
-            .': '
-            .$this->filename();
-    }
-
-    private function broadcastTitle()
-    {
-        return __(':type import done', ['type' => $this->type()]);
-    }
-
-    private function mailSubject()
-    {
-        return __(config('app.name'))
-            .': '
-            .__(':type import done', ['type' => $this->type()]);
+        return __(':name import done', ['name' => $this->dataImport->name()]);
     }
 
     private function filename()
@@ -83,8 +65,10 @@ class ImportDone extends Notification implements ShouldQueue
         return $this->dataImport->file->original_name;
     }
 
-    private function type()
+    private function subject()
     {
-        return ImportTypes::get($this->dataImport->type);
+        $name = __(Config::get('app.name'));
+
+        return "{$name}: {$this->title()}";
     }
 }
