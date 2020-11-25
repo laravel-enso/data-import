@@ -48,7 +48,6 @@ class Chunk
 
     public function run(): void
     {
-        sleep(10);
         $this->authorize();
         $this->authenticate();
 
