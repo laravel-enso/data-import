@@ -71,7 +71,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
         optional($this->rejected)->delete();
 
-        parent::delete();
+        return parent::delete();
     }
 
     public function cancel()

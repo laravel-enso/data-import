@@ -6,7 +6,6 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\XLSX\Writer;
-use Illuminate\Http\File;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -63,7 +62,7 @@ class Rejected
         $this->writer = WriterEntityFactory::createXLSXWriter();
 
         $this->writer->setDefaultRowStyle($defaultStyle)
-            ->openToFile($this->hashFilename);
+            ->openToFile(Storage::path($this->hashFilename));
     }
 
     private function export(string $file): void
@@ -108,7 +107,7 @@ class Rejected
     {
         $this->dataImport->rejected()
             ->create(['data_import_id' => $this->dataImport->id])
-            ->attach(new File($this->hashFilename), $this->filename(), $this->user);
+            ->attach($this->hashFilename, $this->filename(), $this->user);
 
         return $this;
     }
@@ -139,7 +138,7 @@ class Rejected
             .DIRECTORY_SEPARATOR
             ."{$hash}.xlsx";
 
-        return Storage::path($path);
+        return $path;
     }
 
     private function row($row): Row
