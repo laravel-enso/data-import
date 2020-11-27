@@ -82,6 +82,7 @@ class DataImportTest extends TestCase
         $this->updateStatus();
 
         $this->assertNotNull($this->model->rejected);
+        $this->assertNotNull($this->model->rejected->file);
     }
 
     /** @test */
@@ -90,8 +91,9 @@ class DataImportTest extends TestCase
         $this->createImport(self::ContentErrorsFile);
         $this->updateStatus();
 
-        $this->get(route('import.rejected', [$this->model->rejected->id], false))
-            ->assertStatus(200);
+        $resp = $this->get(route('import.rejected', [$this->model->rejected->id], false));
+
+            $resp->assertStatus(200);
     }
 
     /** @test */
@@ -111,7 +113,8 @@ class DataImportTest extends TestCase
     /** @test */
     public function cant_destroy_while_running()
     {
-        $this->createImport();
+        $this->createImport(self::ImportFile);
+        $this->model->update(['status' => Statuses::Processing]);
 
         $response = $this->delete(route('import.destroy', [$this->model->id], false));
         $response->assertStatus(488);
@@ -125,16 +128,14 @@ class DataImportTest extends TestCase
         $this->createImport(self::ImportFile);
         $this->updateStatus();
 
-        $filename = $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name;
-
-        \Storage::assertExists($filename);
+        Storage::assertExists($this->model->file->path);
 
         $this->delete(route('import.destroy', [$this->model->id], false))
             ->assertStatus(200);
 
         $this->assertNull($this->model->fresh());
 
-        Storage::assertMissing($filename);
+        Storage::assertMissing($this->model->file->path);
     }
 
     private function createImport($file = null)
