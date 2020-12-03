@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
@@ -32,19 +33,14 @@ class Template
     {
         return $this->template->has('timeout')
             ? $this->template->get('timeout')
-            : (int) config('enso.imports.timeout');
+            : (int) Config::get('enso.imports.timeout');
     }
 
     public function queue(): string
     {
         return $this->template->has('queue')
             ? $this->template->get('queue')
-            : config('enso.imports.queues.processing');
-    }
-
-    public function sheetNames(): Collection
-    {
-        return $this->sheets()->pluck('name');
+            : Config::get('enso.imports.queues.processing');
     }
 
     public function header(string $sheetName): Collection
@@ -80,7 +76,7 @@ class Template
         return $this->chunkSizes[$sheetName]
             ??= $this->sheet($sheetName)->has('chunkSize')
             ? $this->sheet($sheetName)->get('chunkSize')
-            : (int) config('enso.imports.chunkSize');
+            : (int) Config::get('enso.imports.chunkSize');
     }
 
     public function importer($sheetName): Importable
@@ -106,6 +102,18 @@ class Template
         return new Obj($this->template->get('params', []));
     }
 
+    public function sheets(): Obj
+    {
+        return $this->template->get('sheets');
+    }
+
+    public function nextSheet(string $name): ?Obj
+    {
+        $index = $this->sheets()->search(fn ($sheet) => $sheet->get('name') === $name);
+
+        return $this->sheets()->get($index + 1);
+    }
+
     private function columns(string $sheetName): Obj
     {
         return $this->sheet($sheetName)->get('columns');
@@ -117,11 +125,6 @@ class Template
             ->first(fn ($sheet) => $sheet->get('name') === $sheetName);
     }
 
-    private function sheets(): Obj
-    {
-        return $this->template->get('sheets');
-    }
-
     private function validate(): void
     {
         (new Validator($this->template))->run();
@@ -130,14 +133,14 @@ class Template
     private function shouldValidate(): bool
     {
         return in_array(
-            config('enso.imports.validations'),
+            Config::get('enso.imports.validations'),
             [App::environment(), 'always']
         );
     }
 
     private function template(string $type): Obj
     {
-        $template = config("enso.imports.configs.{$type}.template");
+        $template = Config::get("enso.imports.configs.{$type}.template");
 
         if (! $template) {
             throw Exception::disabled();

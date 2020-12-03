@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
+use LaravelEnso\DataImport\Contracts\BeforeHook;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Notifications\ImportDone;
 
@@ -16,27 +18,40 @@ class Finalize implements ShouldQueue
 
     public $queue;
 
-    private DataImport $dataImport;
+    private DataImport $import;
 
-    public function __construct(DataImport $dataImport)
+    public function __construct(DataImport $import)
     {
-        $this->dataImport = $dataImport;
+        $this->import = $import;
 
-        $this->queue = config('enso.imports.queues.rejected');
+        $this->queue = Config::get('enso.imports.queues.processing');
     }
 
     public function handle()
     {
-        $this->dataImport->refresh()
-            ->endOperation();
+        $this->import->endOperation();
 
         $this->notify();
     }
 
+    private function after(string $sheet)
+    {
+        $importer = $this->import->template()->importer($sheet);
+
+        if ($importer instanceof BeforeHook) {
+            $importer->before(
+                $this->import->createdBy,
+                $this->import->params
+            );
+        }
+
+        return $this;
+    }
+
     private function notify()
     {
-        $this->dataImport->file->createdBy->notify(
-            (new ImportDone($this->dataImport))
+        $this->import->file->createdBy->notify(
+            (new ImportDone($this->import))
                 ->onQueue(config('enso.imports.queues.notifications'))
         );
     }

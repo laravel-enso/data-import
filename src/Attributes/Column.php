@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\Attributes;
 
-class Column extends Attribute
+class Column extends Attributes
 {
-    public const Mandatory = ['name'];
+    protected array $mandatory = ['name'];
 
-    public const Optional = ['validations', 'description'];
+    protected array $optional = ['validations', 'description'];
 }

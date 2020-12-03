@@ -3,95 +3,88 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Services\DTOs\Sheets;
+use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Summary;
 use LaravelEnso\DataImport\Services\Template;
 
 class Structure
 {
-    protected Template $template;
-    protected Sheets $sheets;
-    protected Summary $summary;
+    private Template $template;
+    private XLSX $xlsx;
+    private Summary $summary;
 
-    public function __construct(Template $template, Sheets $sheets, Summary $summary)
+    public function __construct(Template $template, string $path, string $filename)
     {
         $this->template = $template;
-        $this->sheets = $sheets;
-        $this->summary = $summary;
+        $this->xlsx = new XLSX($path);
+        $this->summary = new Summary($filename);
     }
 
-    public function run(): void
+    public function validates(): bool
     {
-        $this->sheets();
+        $this->handleSheets();
 
         if ($this->summary->errors()->isEmpty()) {
-            $this->columns();
+            $this->template->sheets()
+                ->each(fn ($sheet) => $this
+                    ->handleColumns($sheet->get('name')));
         }
+
+        return $this->summary->errors()->isEmpty();
     }
 
-    public function summary(): Summary
+    public function summary(): array
     {
-        return $this->summary;
+        return $this->summary->toArray();
     }
 
-    private function sheets(): void
+    private function handleSheets(): void
     {
-        $templateSheets = $this->template->sheetNames();
-        $fileSheets = $this->sheets->names();
+        $template = $this->template->sheets()->pluck('name');
+        $xlsx = $this->xlsx->sheets();
 
-        $this->missingSheets($templateSheets, $fileSheets)
-            ->extraSheets($templateSheets, $fileSheets);
+        $this->missingSheets($template, $xlsx)
+            ->extraSheets($template, $xlsx);
     }
 
-    private function missingSheets(Collection $templateSheets, Collection $fileSheets): self
+    private function missingSheets(Collection $template, Collection $xlsx): self
     {
-        $templateSheets->diff($fileSheets)
-            ->each(fn ($sheetName) => $this->summary
-                ->addError(__('Missing Sheets'), $sheetName));
+        $template->diff($xlsx)->each(fn ($name) => $this->summary
+            ->addError(__('Missing Sheets'), $name));
 
         return $this;
     }
 
-    private function extraSheets(Collection $templateSheets, Collection $fileSheets): void
+    private function extraSheets(Collection $template, Collection $xlsx): void
     {
-        $fileSheets->diff($templateSheets)
-            ->each(fn ($sheetName) => $this->summary
-                ->addError(__('Extra Sheets'), $sheetName));
+        $xlsx->diff($template)->each(fn ($name) => $this->summary
+            ->addError(__('Extra Sheets'), $name));
     }
 
-    private function columns(): void
+    private function handleColumns(string $sheet): void
     {
-        $this->sheets->all()->each(function ($sheet) {
-            $templateHeader = $this->template->header($sheet->name());
+        $template = $this->template->header($sheet);
+        $xlsx = $this->xlsx->header($sheet);
 
-            $this->missingColumns($sheet->name(), $sheet->header(), $templateHeader)
-                ->extraColumns($sheet->name(), $sheet->header(), $templateHeader);
-        });
+        $this->missingColumns($sheet, $xlsx, $template)
+            ->extraColumns($sheet, $xlsx, $template);
     }
 
-    private function missingColumns(
-        string $sheetName,
-        Collection $fileHeader,
-        Collection $templateHeader
-    ): self {
-        $templateHeader->diff($fileHeader)
-            ->each(fn ($column) => $this->summary
-                ->addError(__('Missing Columns'), __('Sheet ":sheet", column ":column"', [
-                    'sheet' => $sheetName, 'column' => $column,
-                ])));
+    private function missingColumns(string $sheet, Collection $xlsx, Collection $template): self
+    {
+        $template->diff($xlsx)->each(fn ($column) => $this->summary
+            ->addError(__('Missing Columns'), __('Sheet ":sheet", column ":column"', [
+                'sheet' => $sheet, 'column' => $column,
+            ])));
 
         return $this;
     }
 
-    private function extraColumns(
-        string $sheetName,
-        Collection $fileHeader,
-        Collection $templateHeader
-    ): void {
-        $fileHeader->diff($templateHeader)
-            ->each(fn ($column) => $this->summary
-                ->addError(__('Extra Columns'), __('Sheet ":sheet", column ":column"', [
-                    'sheet' => $sheetName, 'column' => $column,
-                ])));
+    private function extraColumns(string $sheet, Collection $xlsx, Collection $template): void
+    {
+        $xlsx->diff($template)->each(fn ($column) => $this->summary
+            ->addError(__('Extra Columns'), __('Sheet ":sheet", column ":column"', [
+                'sheet' => $sheet, 'column' => $column,
+            ])));
     }
 }

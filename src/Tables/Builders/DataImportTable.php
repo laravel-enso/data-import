@@ -86,7 +86,7 @@ class DataImportTable implements Table, ConditionalActions
             return false;
         }
 
-        if ($action === 'cancel' && ! Statuses::cancelable($row['status'])) {
+        if ($action === 'cancel' && ! Statuses::cancellable($row['status'])) {
             return false;
         }
 

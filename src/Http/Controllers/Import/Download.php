@@ -9,6 +9,6 @@ class Download extends Controller
 {
     public function __invoke(DataImport $dataImport)
     {
-        return $dataImport->download();
+        return $dataImport->file->download();
     }
 }

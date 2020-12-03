@@ -11,6 +11,9 @@ class CreateDataImportsTable extends Migration
         Schema::create('data_imports', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->string('batch')->nullable();
+            $table->foreign('batch')->references('id')->on('job_batches');
+
             $table->string('type')->index();
 
             $table->json('params')->nullable();

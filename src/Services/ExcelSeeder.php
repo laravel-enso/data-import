@@ -3,23 +3,19 @@
 namespace LaravelEnso\DataImport\Services;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
+use LaravelEnso\DataImport\Models\DataImport;
 
 class ExcelSeeder extends Seeder
 {
     protected string $type;
     protected string $filename;
+    protected array $params;
 
     public function run()
     {
-        (new Import($this->type, $this->importFile()))->handle();
-    }
-
-    private function importFile()
-    {
-        $path = Config::get('enso.imports.seederPath');
-        //TODO refactor
-        return new UploadedFile("{$path}/{$this->filename}", $this->filename, null, null, true);
+        DataImport::factory()
+            ->make(['type' => $this->type])
+            ->importAttached(Config::get('enso.imports.seederPath'), $this->filename);
     }
 }

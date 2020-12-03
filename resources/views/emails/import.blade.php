@@ -1,21 +1,21 @@
 @component('mail::message')
 {{ __('Hi :name', ['name' => $name]) }},
 
-{{ __('Your :name import is done', ['name' => $dataImport->name()]) }}:
-{{ $dataImport->file->original_name }}.
+{{ __('Your :name import is done', ['name' => $import->name()]) }}:
+{{ $import->file->original_name }}.
 
 @component('mail::table')
 | Entries                 |    Count          |
 |:-----------------------:|:-----------------:|
-| {{ __('Successful') }}  | {{ $dataImport->successful }} |
-| {{ __('Failed') }}      | {{ $dataImport->failed }}     |
-| {{ __('Total') }}       | {{ $dataImport->entries }}    |
+| {{ __('Successful') }}  | {{ $import->successful }} |
+| {{ __('Failed') }}      | {{ $import->failed }}     |
+| {{ __('Total') }}       | {{ $import->entries }}    |
 @endcomponent
 
-@if($dataImport->failed > 0)
-@component('mail::button', ['url' => $dataImport->rejected->file->temporaryLink()])
+@if($import->rejected !== null)
+    @component('mail::button', ['url' => $import->rejected->file->temporaryLink()])
     @lang('Download failed report')
-@endcomponent
+    @endcomponent
 @endif
 
 

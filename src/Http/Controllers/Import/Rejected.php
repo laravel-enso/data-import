@@ -9,6 +9,6 @@ class Rejected extends Controller
 {
     public function __invoke(RejectedImport $rejectedImport)
     {
-        return $rejectedImport->download();
+        return $rejectedImport->file->download();
     }
 }

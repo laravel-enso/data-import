@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -22,8 +23,6 @@ class ValidationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // $this->withoutExceptionHandling();
 
         $this->seed()
             ->actingAs(User::first());
@@ -55,10 +54,7 @@ class ValidationTest extends TestCase
                 'filename' => self::TestFile,
             ]);
 
-        $this->assertNull(
-            DataImport::whereName(self::TestFile)
-                ->first()
-        );
+        $this->assertNull(DataImport::whereName(self::TestFile)->first());
     }
 
     /** @test */
@@ -81,16 +77,13 @@ class ValidationTest extends TestCase
                 'filename' => self::TestFile,
             ]);
 
-        $this->assertNull(
-            DataImport::whereName(self::TestFile)
-                ->first()
-        );
+        $this->assertNull(DataImport::whereName(self::TestFile)->first());
     }
 
     /** @test */
     public function cannot_import_invalid_params()
     {
-        config(['enso.imports.configs.userGroups' => [
+        Config::set(['enso.imports.configs.userGroups' => [
             'label' => 'User Groups',
             'template' => $this->template('paramsValidation'),
         ]]);
@@ -99,6 +92,7 @@ class ValidationTest extends TestCase
             'import' => $this->file('invalid_sheets.xlsx'),
             'type' => self::ImportType,
         ])->exception;
+
         $this->assertInstanceOf(ValidationException::class, $exception);
         $this->assertArrayHasKey('name', $exception->errors());
     }
@@ -126,7 +120,7 @@ class ValidationTest extends TestCase
 
     protected function template($template): string
     {
-        return Str::replaceFirst(base_path(), '', __DIR__ . DIRECTORY_SEPARATOR . 'templates'
-            . DIRECTORY_SEPARATOR . "{$template}.json");
+        return Str::replaceFirst(base_path(), '', __DIR__.DIRECTORY_SEPARATOR.'templates'
+            .DIRECTORY_SEPARATOR."{$template}.json");
     }
 }

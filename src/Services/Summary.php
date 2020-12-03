@@ -29,17 +29,17 @@ class Summary
         return $this->errors;
     }
 
-    public function addError(string $category, string $value): void
+    public function addError(string $type, string $value): void
     {
-        $this->category($this->errors, $category)->push($value);
+        $this->type($this->errors, $type)->push($value);
     }
 
-    private function category(Obj $container, string $category): Collection
+    private function type(Obj $layer, string $type): Collection
     {
-        if (! $container->has($category)) {
-            $container->set($category, new Collection());
+        if (! $layer->has($type)) {
+            $layer->set($type, new Collection());
         }
 
-        return $container->get($category);
+        return $layer->get($type);
     }
 }

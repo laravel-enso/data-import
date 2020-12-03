@@ -17,23 +17,23 @@ class DataImport
         }
     }
 
-    public function view(User $user, Model $dataImport)
+    public function view(User $user, Model $import)
     {
-        return $this->ownsDataImport($user, $dataImport);
+        return $this->ownsDataImport($user, $import);
     }
 
-    public function share(User $user, Model $dataImport)
+    public function share(User $user, Model $import)
     {
-        return $this->ownsDataImport($user, $dataImport);
+        return $this->ownsDataImport($user, $import);
     }
 
-    public function destroy(User $user, Model $dataImport)
+    public function destroy(User $user, Model $import)
     {
-        return $this->ownsDataImport($user, $dataImport);
+        return $this->ownsDataImport($user, $import);
     }
 
-    private function ownsDataImport(User $user, Model $dataImport)
+    private function ownsDataImport(User $user, Model $import)
     {
-        return $user->id === (int) $dataImport->created_by;
+        return $user->id === (int) $import->created_by;
     }
 }

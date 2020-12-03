@@ -13,15 +13,10 @@ class RejectedImport extends Model implements Attachable
 
     protected $guarded = ['id'];
 
+    protected $folder = 'imports';
+
     public function dataImport()
     {
         return $this->belongsTo(DataImport::class);
-    }
-
-    public function folder(): string
-    {
-        return 'imports'
-            .DIRECTORY_SEPARATOR
-            .'rejected_'.$this->data_import_id;
     }
 }

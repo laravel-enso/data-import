@@ -14,11 +14,11 @@ class ImportDone extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $dataImport;
+    public $import;
 
-    public function __construct(DataImport $dataImport)
+    public function __construct(DataImport $import)
     {
-        $this->dataImport = $dataImport;
+        $this->import = $import;
     }
 
     public function via()
@@ -43,7 +43,7 @@ class ImportDone extends Notification implements ShouldQueue
             ->markdown('laravel-enso/data-import::emails.import', [
                 'name' => $notifiable->person->appellative
                     ?? $notifiable->person->name,
-                'dataImport' => $this->dataImport,
+                'import' => $this->import,
             ]);
     }
 
@@ -57,12 +57,12 @@ class ImportDone extends Notification implements ShouldQueue
 
     private function title()
     {
-        return __(':name import done', ['name' => $this->dataImport->name()]);
+        return __(':name import done', ['name' => $this->import->name()]);
     }
 
     private function filename()
     {
-        return $this->dataImport->file->original_name;
+        return $this->import->file->original_name;
     }
 
     private function subject()

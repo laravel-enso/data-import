@@ -3,9 +3,9 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Attributes\Column as ColumnAttributes;
+use LaravelEnso\DataImport\Attributes\Column as Column;
 use LaravelEnso\DataImport\Attributes\Sheet;
-use LaravelEnso\DataImport\Attributes\Template as TemplateAttributes;
+use LaravelEnso\DataImport\Attributes\Template as Attributes;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
 use LaravelEnso\Helpers\Services\Obj;
@@ -28,7 +28,7 @@ class Template
 
     private function root(): self
     {
-        TemplateAttributes::missingAttributes($this->template->keys());
+        (new Attributes())->validateMandatory($this->template->keys());
 
         return $this;
     }
@@ -36,8 +36,9 @@ class Template
     private function sheets(): self
     {
         $this->template->get('sheets')
-            ->each(fn ($sheet) => Sheet::missingAttributes($sheet->keys())
-                ->unknownAttributes($sheet->keys()))
+            ->each(fn ($sheet) => (new Sheet())
+                ->validateMandatory($sheet->keys())
+                ->rejectUnknown($sheet->keys()))
             ->each(fn ($sheet) => $this->importer($sheet)
                 ->validator($sheet));
 
@@ -50,8 +51,10 @@ class Template
             throw Exception::missingImporterClass($sheet);
         }
 
-        if (! (new Collection(class_implements($sheet->get('importerClass'))))
-            ->contains(Importable::class)) {
+        $implements = class_implements($sheet->get('importerClass'));
+        $underContract = Collection::wrap($implements)->contains(Importable::class);
+
+        if (! $underContract) {
             throw Exception::importerMissingContract($sheet);
         }
 
@@ -77,7 +80,8 @@ class Template
     {
         $this->template->get('sheets')
             ->pluck('columns')->each(fn ($columns) => $columns
-                ->each(fn ($column) => ColumnAttributes::missingAttributes($column->keys())
-                    ->unknownAttributes($column->keys())));
+                ->each(fn ($column) => (new Column())
+                    ->validateMandatory($column->keys())
+                    ->rejectUnknown($column->keys())));
     }
 }

@@ -2,9 +2,10 @@
 
 namespace LaravelEnso\DataImport\Services\Validators\Params;
 
-use Illuminate\Support\Facades\Route;
-use LaravelEnso\DataImport\Attributes\Param as Attribute;
-use LaravelEnso\DataImport\Exceptions\Param as Exception;
+use Illuminate\Support\Facades\Route as Routes;
+use LaravelEnso\DataImport\Attributes\Params;
+use LaravelEnso\DataImport\Exceptions\Attributes;
+use LaravelEnso\DataImport\Exceptions\Route;
 use LaravelEnso\Helpers\Services\Obj;
 
 class Param
@@ -25,18 +26,21 @@ class Param
 
     private function attributes(): self
     {
-        Attribute::missingAttributes($this->param->keys())
-            ->unknownAttributes($this->param->keys());
+        (new Params())->validateMandatory($this->param->keys())
+            ->rejectUnknown($this->param->keys());
 
         return $this;
     }
 
     private function complementaryAttributes(): self
     {
-        $missing = Attribute::dependent($this->param->get('type'))
-            ->reject(fn ($attr) => $this->param->has($attr));
+        $attributes = (new Params());
 
-        throw_if($missing->isNotEmpty(), Exception::missingAttributes($missing));
+        $attributes->dependent($this->param->get('type'))
+            ->reject(fn ($attr) => $this->param->has($attr))
+            ->unlessEmpty(
+                fn ($missing) => Attributes::missing($missing, $attributes->class())
+            );
 
         return $this;
     }
@@ -45,8 +49,8 @@ class Param
     {
         $route = $this->param->get('route');
 
-        if ($route !== null && ! Route::has($route)) {
-            throw Exception::routeNotFound($route);
+        if ($route !== null && ! Routes::has($route)) {
+            throw Route::notFound($route);
         }
     }
 }

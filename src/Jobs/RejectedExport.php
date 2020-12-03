@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use LaravelEnso\Core\Models\User;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Exporters\Rejected;
 use LaravelEnso\DataImport\Services\Template;
@@ -19,20 +19,18 @@ class RejectedExport implements ShouldQueue
     public $queue;
     public $timeout;
 
-    private $dataImport;
-    private $user;
+    private DataImport $import;
 
-    public function __construct(DataImport $dataImport, User $user)
+    public function __construct(DataImport $import)
     {
-        $this->dataImport = $dataImport;
-        $this->user = $user;
+        $this->import = $import;
 
-        $this->queue = config('enso.imports.queues.rejected');
-        $this->timeout = (new Template($dataImport->type))->timeout();
+        $this->queue = Config::get('enso.imports.queues.rejected');
+        $this->timeout = (new Template($import->type))->timeout();
     }
 
     public function handle()
     {
-        (new Rejected($this->dataImport, $this->user))->run();
+        (new Rejected($this->import))->handle();
     }
 }

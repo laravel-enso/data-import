@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\Core\Models\User;
+use LaravelEnso\Core\Http\Resources\User;
 use LaravelEnso\Helpers\Services\Obj;
 
 abstract class Validator
@@ -17,23 +17,18 @@ abstract class Validator
 
     abstract public function run(Obj $row, User $user, Obj $params);
 
+    public function errors(): Collection
+    {
+        return $this->errors;
+    }
+
     public function fails(): bool
     {
         return $this->errors->isNotEmpty();
     }
 
-    public function message(): string
-    {
-        return $this->errors->implode(' | ');
-    }
-
     public function addError(string $error): void
     {
         $this->errors->push($error);
-    }
-
-    public function clearErrors(): void
-    {
-        $this->errors->splice(0);
     }
 }

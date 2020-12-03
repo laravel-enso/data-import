@@ -11,6 +11,6 @@ class Cancel extends Controller
     {
         $dataImport->cancel();
 
-        return ['message' => __('The import was canceled successfully')];
+        return ['message' => __('The import was cancelled successfully')];
     }
 }

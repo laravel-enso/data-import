@@ -27,13 +27,11 @@ class ImportTemplate implements ExportsExcel
 
     public function rows(string $sheet): array
     {
-        return [
-            $this->template->descriptions($sheet)->toArray(),
-        ];
+        return [$this->template->descriptions($sheet)->toArray()];
     }
 
     public function sheets(): array
     {
-        return $this->template->sheetNames()->toArray();
+        return $this->template->sheets()->pluck('name')->toArray();
     }
 }

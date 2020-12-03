@@ -8,7 +8,7 @@ class Statuses extends IOStatuses
 {
     public const Processed = 23;
     public const ExportingRejected = 26;
-    public const Canceled = 40;
+    public const Cancelled = 40;
 
     protected static array $data = [
         IOStatuses::Waiting => 'Waiting',
@@ -16,13 +16,11 @@ class Statuses extends IOStatuses
         self::Processed => 'Processed',
         self::ExportingRejected => 'Exporting Rejected',
         IOStatuses::Finalized => 'Finalized',
-        self::Canceled => 'Canceled',
+        self::Cancelled => 'Cancelled',
     ];
 
-    public static function cancelable($status): bool
+    public static function cancellable($status): bool
     {
-        return in_array($status, [
-            static::Waiting, static::Processing,
-        ]);
+        return in_array($status, [static::Waiting, static::Processing]);
     }
 }

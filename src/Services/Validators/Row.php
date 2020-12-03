@@ -2,37 +2,23 @@
 
 namespace LaravelEnso\DataImport\Services\Validators;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator as Facade;
-use LaravelEnso\Core\Models\User;
+use Illuminate\Support\Facades\Validator;
+use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Services\DTOs\Row as DTO;
 use LaravelEnso\Helpers\Services\Obj;
 
-class Row extends Validator
+class Row
 {
-    private array $rules;
-    private $validator;
-
-    public function __construct(array $rules)
+    public static function run(DTO $row, DataImport $import, string $sheet): void
     {
-        parent::__construct();
+        $rules = $import->template()->columnRules($sheet);
+        $implicit = Validator::make($row->content()->all(), $rules);
+        $row->errors()->push(...$implicit->errors()->all());
+        $custom = $import->template()->customValidator($sheet);
 
-        $this->rules = $rules;
-    }
-
-    public function run(Obj $row, User $user, Obj $params): void
-    {
-        $this->validator = Facade::make($row->all(), $this->rules);
-
-        if ($this->validator->fails()) {
-            $this->addErrors();
+        if ($custom) {
+            $custom->run($row->content(), $import->createdBy, new Obj($import->params));
+            $row->errors()->push(...$custom->errors());
         }
-    }
-
-    private function addErrors(): void
-    {
-        (new Collection($this->rules))->keys()
-            ->filter(fn ($column) => $this->validator->errors()->has($column))
-            ->each(fn ($column) => (new Collection($this->validator->errors()->get($column)))
-                ->each(fn ($error) => $this->addError($error)));
     }
 }

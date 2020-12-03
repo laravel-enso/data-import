@@ -10,7 +10,6 @@ use LaravelEnso\Core\Models\User;
 use LaravelEnso\Core\Models\UserGroup;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Services\Import;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use Tests\TestCase;
 
@@ -32,14 +31,12 @@ class DataImportTest extends TestCase
     {
         parent::setUp();
 
-        // $this->withoutExceptionHandling();
-
         $this->seed()
             ->actingAs(User::first());
 
-        config(['enso.imports.configs.userGroups' => [
+        Config::set(['enso.imports.configs.userGroups' => [
             'label' => 'User Groupss',
-            'template' => Str::replaceFirst(base_path(), '', self::Template),
+            'template' => Str::of(self::Template)->replace(base_path(), ''),
         ]]);
     }
 
@@ -53,7 +50,7 @@ class DataImportTest extends TestCase
     public function can_import()
     {
         $this->post(route('import.store', [], false), [
-            'import' => $this->importFile(self::ImportFile),
+            'import' => $this->uploadedFile(self::ImportFile),
             'type' => self::ImportType,
         ])->assertStatus(200)
             ->assertJsonFragment([
@@ -61,46 +58,44 @@ class DataImportTest extends TestCase
                 'filename' => self::ImportTestFile,
             ]);
 
-        $this->model = DataImport::whereHas('file', fn ($query) => ($query->whereOriginalName(self::ImportTestFile)))->first();
+        $this->model = DataImport::whereHas('file', fn ($file) => $file
+            ->whereOriginalName(self::ImportTestFile))->first();
 
         $this->assertNotNull($this->model);
+        $this->assertNotNull(UserGroup::whereName('ImportTestName')->first());
 
-        $this->assertNotNull(
-            UserGroup::whereName('ImportTestName')
-                ->first()
-        );
-
-        Storage::assertExists(
-            $this->model->folder().DIRECTORY_SEPARATOR.$this->model->file->saved_name
-        );
+        Storage::assertExists($this->model->file->path);
     }
 
     /** @test */
     public function generates_rejected()
     {
-        $this->createImport(self::ContentErrorsFile);
-        $this->updateStatus();
+        $this->attach(self::ContentErrorsFile);
+        $this->model->refresh();
 
         $this->assertNotNull($this->model->rejected);
         $this->assertNotNull($this->model->rejected->file);
+        Storage::assertExists($this->model->rejected->file->path);
     }
 
     /** @test */
     public function can_download_rejected()
     {
-        $this->createImport(self::ContentErrorsFile);
-        $this->updateStatus();
+        $this->attach(self::ContentErrorsFile);
+        $this->model->refresh();
 
-        $resp = $this->get(route('import.rejected', [$this->model->rejected->id], false));
+        $resp = $this->get(route('import.rejected', [
+            $this->model->rejected->id,
+        ], false));
 
-            $resp->assertStatus(200);
+        $resp->assertStatus(200);
     }
 
     /** @test */
     public function download()
     {
-        $this->createImport(self::ImportFile);
-        $this->updateStatus();
+        $this->attach(self::ImportFile);
+        $this->model->refresh();
 
         $this->get(route('import.download', [$this->model->id], false))
             ->assertStatus(200)
@@ -113,20 +108,20 @@ class DataImportTest extends TestCase
     /** @test */
     public function cant_destroy_while_running()
     {
-        $this->createImport(self::ImportFile);
+        $this->attach(self::ImportFile);
         $this->model->update(['status' => Statuses::Processing]);
 
         $response = $this->delete(route('import.destroy', [$this->model->id], false));
         $response->assertStatus(488);
 
-        $this->updateStatus();
+        $this->model->update(['status' => Statuses::Finalized]);
     }
 
     /** @test */
     public function destroy()
     {
-        $this->createImport(self::ImportFile);
-        $this->updateStatus();
+        $this->attach(self::ImportFile);
+        $this->model->refresh();
 
         Storage::assertExists($this->model->file->path);
 
@@ -138,35 +133,23 @@ class DataImportTest extends TestCase
         Storage::assertMissing($this->model->file->path);
     }
 
-    private function createImport($file = null)
+    private function attach(string $file)
     {
-        if ($file) {
-            $this->model = (new Import(static::ImportType, $this->importFile($file)))
-                ->handle()
-                ->dataImport();
-
-            return;
-        }
-
         $this->model = DataImport::factory()->create([
             'type' => self::ImportType,
         ]);
+
+        $path = "{$this->model->folder()}/{$file}";
+
+        File::copy(self::Path.$file, Storage::path($path));
+
+        $this->model->attach($path, self::ImportTestFile);
     }
 
-    private function updateStatus()
+    private function uploadedFile($file)
     {
-        $this->model->update(['status' => Statuses::Finalized]);
-    }
-
-    private function importFile($file)
-    {
-        File::copy(
-            self::Path.$file,
-            self::Path.self::ImportTestFile
-        );
-
         return new UploadedFile(
-            self::Path.self::ImportTestFile,
+            self::Path.$file,
             self::ImportTestFile,
             null,
             null,

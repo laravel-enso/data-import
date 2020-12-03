@@ -2,22 +2,38 @@
 
 namespace LaravelEnso\DataImport\Services\DTOs;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\Helpers\Services\Obj;
 
-class Row extends Obj
+class Row
 {
-    public function hasContent(): bool
+    private Obj $content;
+    private Collection $errors;
+
+    public function __construct($items = [])
     {
-        return $this->filter()->isNotEmpty();
+        $this->content = new Obj($items);
+        $this->errors = new Collection();
     }
 
-    public function isImportable(): bool
+    public function content(): Obj
     {
-        return ! $this->isRejected();
+        return $this->content;
     }
 
-    public function isRejected(): bool
+    public function errors(): Collection
     {
-        return $this->has(config('enso.imports.errorColumn'));
+        return $this->errors;
+    }
+
+    public function valid(): bool
+    {
+        return $this->errors->isEmpty();
+    }
+
+    public function unknownError(): void
+    {
+        $this->errors->push(Config::get('enso.imports.unknownError'));
     }
 }

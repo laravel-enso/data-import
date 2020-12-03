@@ -7,13 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Auth;
-use LaravelEnso\DataImport\Enums\Statuses;
+use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Services\DTOs\Sheets;
 use LaravelEnso\DataImport\Services\Importers\Import as Service;
-use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Services\Obj;
 
 class Import implements ShouldQueue
 {
@@ -22,36 +18,23 @@ class Import implements ShouldQueue
     public $queue;
     public $timeout;
 
-    private DataImport $dataImport;
-    private Template $template;
-    private Sheets $sheets;
-    private Obj $params;
-    private $user;
+    private DataImport $import;
 
-    public function __construct(DataImport $dataImport, Template $template, Sheets $sheets, Obj $params)
+    private string $sheet;
+
+    public function __construct(DataImport $import, string $sheet)
     {
-        $this->dataImport = $dataImport;
-        $this->template = $template;
-        $this->user = Auth::user();
-        $this->sheets = $sheets;
-        $this->params = $params;
+        $this->import = $import;
+        $this->sheet = $sheet;
 
-        $this->queue = config('enso.imports.queues.splitting');
-        $this->timeout = $template->timeout();
+        $this->queue = Config::get('enso.imports.queues.splitting');
+        $this->timeout = $this->import->template()->timeout();
     }
 
     public function handle()
     {
-        if ($this->dataImport->status === Statuses::Canceled) {
-            return;
+        if (! $this->import->cancelled()) {
+            (new Service($this->import, $this->sheet))->handle();
         }
-
-        (new Service(
-            $this->dataImport,
-            $this->template,
-            $this->sheets,
-            $this->user,
-            $this->params
-        ))->run();
     }
 }

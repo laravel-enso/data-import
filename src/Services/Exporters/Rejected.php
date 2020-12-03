@@ -9,48 +9,42 @@ use Box\Spout\Writer\XLSX\Writer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\RejectedChunk;
+use LaravelEnso\DataImport\Models\RejectedImport;
 
 class Rejected
 {
-    private DataImport $dataImport;
-    private User $user;
-    private Writer $writer;
+    private DataImport $import;
+    private RejectedImport $rejected;
+    private Writer $xlsx;
     private Collection $sheets;
-    private string $hashFilename;
+    private string $path;
+    private bool $firstChunk;
 
-    public function __construct(DataImport $dataImport, User $user)
+    public function __construct(DataImport $import)
     {
-        $this->dataImport = $dataImport;
-        $this->user = $user;
+        $this->import = $import;
+        $this->rejected = $this->import->rejected()->make();
         $this->sheets = new Collection();
-        $this->hashFilename = $this->hashFilename();
+        $this->path = $this->path();
+        $this->firstChunk = true;
     }
 
-    public function run(): void
+    public function handle(): void
     {
-        $this->dumps()
-            ->whenNotEmpty(fn ($dumps) => $this->process($dumps));
-    }
+        $this->import->setStatus(Statuses::ExportingRejected);
 
-    private function process(Collection $dumps): void
-    {
-        $this->exportStatus()
-            ->initWriter();
+        $this->initWriter();
 
-        $dumps->each(fn ($file) => $this->export($file));
+        $this->import->rejectedChunks
+            ->unlessEmpty(fn ($chunks) => $chunks->sortBy('sheet')
+                ->each(fn ($chunk) => $this->export($chunk)));
 
         $this->closeWriter()
-            ->storeRejected();
-    }
-
-    private function exportStatus(): self
-    {
-        $this->dataImport->setStatus(Statuses::ExportingRejected);
-
-        return $this;
+            ->storeRejected()
+            ->cleanUp();
     }
 
     private function initWriter(): void
@@ -59,90 +53,80 @@ class Rejected
             ->setShouldWrapText(false)
             ->build();
 
-        $this->writer = WriterEntityFactory::createXLSXWriter();
+        $this->xlsx = WriterEntityFactory::createXLSXWriter();
 
-        $this->writer->setDefaultRowStyle($defaultStyle)
-            ->openToFile(Storage::path($this->hashFilename));
+        $this->xlsx->setDefaultRowStyle($defaultStyle)
+            ->openToFile(Storage::path($this->path));
     }
 
-    private function export(string $file): void
+    private function export(RejectedChunk $chunk): void
     {
-        $rejected = $this->content($file);
+        $this->prepare($chunk);
 
-        $this->prepare($rejected);
-
-        $rows = $rejected->map(fn ($row) => $this->row($row));
-
-        $this->writer->addRows($rows->toArray());
+        Collection::wrap($chunk->content)
+            ->each(fn ($row) => $this->xlsx->addRow($this->row($row)));
     }
 
-    private function prepare(Collection $rejected): void
+    private function prepare(RejectedChunk $chunk): void
     {
-        $sheetName = $rejected->shift();
-        $header = $rejected->shift();
-
-        if ($this->sheets->contains($sheetName)) {
-            return;
+        if ($this->needsNewSheet($chunk)) {
+            $this->xlsx->addNewSheetAndMakeItCurrent();
         }
 
-        if ($this->sheets->isNotEmpty()) {
-            $this->writer->addNewSheetAndMakeItCurrent();
-        }
+        $this->xlsx->getCurrentSheet()->setName($chunk->sheet);
 
-        $this->writer->getCurrentSheet()->setName($sheetName);
-        $this->writer->addRow($this->row($header));
+        $this->xlsx->addRow($this->row($chunk->header));
 
-        $this->sheets->push($sheetName);
+        $this->sheets->push($chunk->sheet);
     }
 
     private function closeWriter(): self
     {
-        $this->writer->close();
-        unset($this->writer);
+        $this->xlsx->close();
+        unset($this->xlsx);
 
         return $this;
     }
 
     private function storeRejected(): self
     {
-        $this->dataImport->rejected()
-            ->create(['data_import_id' => $this->dataImport->id])
-            ->attach($this->hashFilename, $this->filename(), $this->user);
+        tap($this->rejected)->save()
+            ->file->attach($this->path, $this->filename(), $this->import->createdBy);
 
         return $this;
     }
 
-    private function content(string $file): Collection
+    private function cleanUp(): void
     {
-        return new Collection(json_decode(Storage::get($file), true));
-    }
-
-    private function dumps(): Collection
-    {
-        return new Collection(Storage::files(
-            $this->dataImport->rejectedFolder()
-        ));
+        $this->import->rejectedChunks()->delete();
     }
 
     private function filename(): string
     {
-        [$baseName] = explode('.', $this->dataImport->file->original_name);
+        [$baseName] = explode('.', $this->import->file->original_name);
 
         return "{$baseName}_rejected.xlsx";
     }
 
-    private function hashFilename(): string
+    private function path(): string
     {
         $hash = Str::random(40);
-        $path = $this->dataImport->rejectedFolder()
-            .DIRECTORY_SEPARATOR
-            ."{$hash}.xlsx";
 
-        return $path;
+        return "{$this->rejected->folder()}/{$hash}.xlsx";
     }
 
     private function row($row): Row
     {
         return WriterEntityFactory::createRowFromArray($row);
+    }
+
+    private function needsNewSheet(RejectedChunk $chunk): bool
+    {
+        if ($this->firstChunk) {
+            return $this->firstChunk = false;
+        }
+
+        return $this->xlsx->getCurrentSheet()
+            ->getName() !== $chunk->sheet;
     }
 }

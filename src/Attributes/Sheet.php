@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\Attributes;
 
-class Sheet extends Attribute
+class Sheet extends Attributes
 {
-    public const Mandatory = ['name', 'columns', 'importerClass'];
+    protected array $mandatory = ['name', 'columns', 'importerClass'];
 
-    public const Optional = ['validatorClass', 'chunkSize', 'params'];
+    protected array $optional = ['validatorClass', 'chunkSize', 'params'];
 }

@@ -8,10 +8,12 @@
             "columns": [
                 {
                     "name": "name",
+                    "description": "user group name",
                     "validations": "string|required|unique:user_groups,name"
                 },
                 {
                     "name": "description",
+                    "description": "user group description",
                     "validations": "string|nullable"
                 }
             ]
