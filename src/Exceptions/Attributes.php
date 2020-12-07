@@ -7,19 +7,27 @@ use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Attributes extends EnsoException
 {
-    public static function missing(Collection $attributes, $class)
+    public static function missing(Collection $attrs, string $class)
     {
         return new static(__(
-            'The following attributes are mandatory for :class : ":attrs"',
-            ['attrs' => $attributes->implode('", "'), 'class' => $class],
+            'The following attrs are mandatory for :class : ":attrs"',
+            ['attrs' => $attrs->implode('", "'), 'class' => $class],
         ));
     }
 
-    public static function unknown(Collection $attributes, $class)
+    public static function unknown(Collection $attrs, string $class)
     {
         return new static(__(
-            'The following optional attributes are allowed for :class : ":attrs"',
-            ['attrs' => $attributes->implode('", "'), 'class' => $class]
+            'The following optional attrs are allowed for :class : ":attrs"',
+            ['attrs' => $attrs->implode('", "'), 'class' => $class]
+        ));
+    }
+
+    public static function invalidParam(Collection $attrs, string $class)
+    {
+        return new static(__(
+            'The following values are allowed for params types in :class : ":attrs"',
+            ['attrs' => $attrs->implode('", "'), 'class' => $class]
         ));
     }
 }

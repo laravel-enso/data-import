@@ -52,12 +52,13 @@ class ImportDone extends Notification implements ShouldQueue
         return [
             'body' => "{$this->title()}: {$this->filename()}",
             'icon' => 'file-excel',
+            'path' => '/import',
         ];
     }
 
     private function title()
     {
-        return __(':name import done', ['name' => $this->import->name()]);
+        return __(':type import done', ['type' => $this->import->type()]);
     }
 
     private function filename()
@@ -67,8 +68,8 @@ class ImportDone extends Notification implements ShouldQueue
 
     private function subject()
     {
-        $name = __(Config::get('app.name'));
+        $name = Config::get('app.name');
 
-        return "{$name}: {$this->title()}";
+        return "[ {$name} ] {$this->title()}";
     }
 }

@@ -2,23 +2,55 @@
 
 namespace LaravelEnso\DataImport\Services\Validators;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Services\DTOs\Row as DTO;
+use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\Helpers\Services\Obj;
 
 class Row
 {
-    public static function run(DTO $row, DataImport $import, string $sheet): void
+    private Obj $row;
+    private Chunk $chunk;
+    private Collection $errors;
+
+    public function __construct(Obj $row, Chunk $chunk)
     {
-        $rules = $import->template()->columnRules($sheet);
-        $implicit = Validator::make($row->content()->all(), $rules);
-        $row->errors()->push(...$implicit->errors()->all());
-        $custom = $import->template()->customValidator($sheet);
+        $this->row = $row;
+        $this->chunk = $chunk;
+        $this->errors = new Collection();
+    }
+
+    public function passes(): bool
+    {
+        $this->implicit()
+            ->custom();
+
+        return $this->errors->isEmpty();
+    }
+
+    public function errors(): Collection
+    {
+        return $this->errors;
+    }
+
+    private function implicit(): self
+    {
+        $rules = $this->chunk->template()->columnRules($this->chunk->sheet);
+        $implicit = Validator::make($this->row->all(), $rules);
+        $this->errors->push(...$implicit->errors()->all());
+
+        return $this;
+    }
+
+    private function custom(): void
+    {
+        $custom = $this->chunk->template()->customValidator($this->chunk->sheet);
 
         if ($custom) {
-            $custom->run($row->content(), $import->createdBy, new Obj($import->params));
-            $row->errors()->push(...$custom->errors());
+            $user = $this->chunk->import->createdBy;
+            $params = new Obj($this->chunk->import->params);
+            $custom->run($this->row, $user, $params);
+            $this->errors->push(...$custom->errors());
         }
     }
 }

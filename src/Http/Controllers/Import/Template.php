@@ -10,7 +10,6 @@ class Template extends Controller
 {
     public function __invoke(string $type)
     {
-        (new ExcelExport(new ImportTemplate($type)))
-            ->inline();
+        (new ExcelExport(new ImportTemplate($type)))->inline();
     }
 }

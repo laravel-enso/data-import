@@ -47,7 +47,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelEnso\\DataImport\\AppServiceProvider"
+                "LaravelEnso\\DataImport\\AppServiceProvider",
+                "LaravelEnso\\DataImport\\EnumServiceProvider"
             ],
             "aliases": {}
         }

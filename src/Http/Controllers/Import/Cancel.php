@@ -7,9 +7,9 @@ use LaravelEnso\DataImport\Models\DataImport;
 
 class Cancel extends Controller
 {
-    public function __invoke(DataImport $dataImport)
+    public function __invoke(DataImport $import)
     {
-        $dataImport->cancel();
+        $import->cancel();
 
         return ['message' => __('The import was cancelled successfully')];
     }

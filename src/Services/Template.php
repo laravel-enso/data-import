@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
+use LaravelEnso\DataImport\Services\Validators\Params;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
 use LaravelEnso\DataImport\Services\Validators\Validator as CustomValidator;
 use LaravelEnso\Helpers\Services\JsonReader;
@@ -43,19 +44,19 @@ class Template
             : Config::get('enso.imports.queues.processing');
     }
 
-    public function header(string $sheetName): Collection
+    public function header(string $sheet): Collection
     {
-        return $this->columns($sheetName)->pluck('name');
+        return $this->columns($sheet)->pluck('name');
     }
 
-    public function descriptions(string $sheetName): Collection
+    public function descriptions(string $sheet): Collection
     {
-        return $this->columns($sheetName)->pluck('description');
+        return $this->columns($sheet)->pluck('description');
     }
 
-    public function columnRules(string $sheetName): array
+    public function columnRules(string $sheet): array
     {
-        return $this->columnRules ??= $this->columns($sheetName)
+        return $this->columnRules ??= $this->columns($sheet)
             ->filter(fn ($column) => $column->has('validations'))
             ->mapWithKeys(fn ($column) => [
                 $column->get('name') => $column->get('validations'),
@@ -71,25 +72,25 @@ class Template
             ])->toArray();
     }
 
-    public function chunkSize($sheetName): int
+    public function chunkSize(string $sheet): int
     {
-        return $this->chunkSizes[$sheetName]
-            ??= $this->sheet($sheetName)->has('chunkSize')
-            ? $this->sheet($sheetName)->get('chunkSize')
+        return $this->chunkSizes[$sheet]
+            ??= $this->sheet($sheet)->has('chunkSize')
+            ? $this->sheet($sheet)->get('chunkSize')
             : (int) Config::get('enso.imports.chunkSize');
     }
 
-    public function importer($sheetName): Importable
+    public function importer(string $sheet): Importable
     {
-        $class = $this->sheet($sheetName)->get('importerClass');
+        $class = $this->sheet($sheet)->get('importerClass');
 
         return new $class();
     }
 
-    public function customValidator($sheetName): ?CustomValidator
+    public function customValidator(string $sheet): ?CustomValidator
     {
-        if ($this->sheet($sheetName)->has('validatorClass')) {
-            $class = $this->sheet($sheetName)->get('validatorClass');
+        if ($this->sheet($sheet)->has('validatorClass')) {
+            $class = $this->sheet($sheet)->get('validatorClass');
 
             return new $class();
         }
@@ -97,9 +98,11 @@ class Template
         return null;
     }
 
-    public function params(): Obj
+    public function params(bool $validations = true): Obj
     {
-        return new Obj($this->template->get('params', []));
+        return (new Obj($this->template->get('params', [])))
+            ->when(! $validations, fn ($params) => $params
+                ->map->except('validations'));
     }
 
     public function sheets(): Obj
@@ -114,20 +117,21 @@ class Template
         return $this->sheets()->get($index + 1);
     }
 
-    private function columns(string $sheetName): Obj
+    private function columns(string $sheet): Obj
     {
-        return $this->sheet($sheetName)->get('columns');
+        return $this->sheet($sheet)->get('columns');
     }
 
-    private function sheet(string $sheetName): Obj
+    private function sheet(string $name): Obj
     {
         return $this->sheets()
-            ->first(fn ($sheet) => $sheet->get('name') === $sheetName);
+            ->first(fn ($sheet) => $sheet->get('name') === $name);
     }
 
     private function validate(): void
     {
         (new Validator($this->template))->run();
+        (new Params($this->template))->run();
     }
 
     private function shouldValidate(): bool

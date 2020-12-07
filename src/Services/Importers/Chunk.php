@@ -2,7 +2,9 @@
 
 namespace LaravelEnso\DataImport\Services\Importers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use LaravelEnso\Core\Models\User;
@@ -10,29 +12,28 @@ use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\Authorizes;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
+use LaravelEnso\DataImport\Models\Chunk as Model;
 use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Services\DTOs\Chunk as DTO;
-use LaravelEnso\DataImport\Services\DTOs\Row;
-use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\DataImport\Services\Validators\Row as Validator;
+use LaravelEnso\DataImport\Models\RejectedChunk;
+use LaravelEnso\DataImport\Services\Validators\Row;
 use LaravelEnso\Helpers\Services\Obj;
 use Throwable;
 
 class Chunk
 {
     private DataImport $import;
-    private Template $template;
     private User $user;
-    private DTO $chunk;
+    private Model $chunk;
+    private RejectedChunk $rejectedChunk;
     private Importable $importer;
 
-    public function __construct(DataImport $import, DTO $chunk)
+    public function __construct(Model $chunk)
     {
-        $this->import = $import;
-        $this->template = $import->template();
-        $this->user = $import->createdBy;
         $this->chunk = $chunk;
-        $this->importer = $this->template->importer($chunk->sheet());
+        $this->import = $chunk->import;
+        $this->user = $chunk->import->createdBy;
+        $this->importer = $chunk->importer();
+        $this->rejectedChunk = $this->rejectedChunk();
     }
 
     public function handle(): void
@@ -40,16 +41,19 @@ class Chunk
         $this->authorize()
             ->authenticate();
 
-        $this->chunk->each(fn ($row) => $this->process($row));
+        Collection::wrap($this->chunk->rows)
+            ->each(fn ($row) => $this->process($row));
 
         $this->dumpRejected()
             ->updateProgress();
+
+        $this->chunk->delete();
     }
 
     private function authorize(): self
     {
-        $unauthorized = $this->importer instanceof Authorizes && ! $this->importer
-            ->authorizes($this->import->createdBy, $this->import->params);
+        $unauthorized = $this->importer instanceof Authorizes
+            && ! $this->importer->authorizes($this->user, $this->import->params);
 
         if ($unauthorized) {
             throw Exception::unauthorized();
@@ -65,37 +69,41 @@ class Chunk
         }
     }
 
-    private function process(Row $row): void
+    private function process(array $row): void
     {
-        Validator::run($row, $this->import, $this->chunk->sheet());
+        $rowObj = $this->row($row);
+        $validator = new Row($rowObj, $this->chunk);
 
-        if ($row->valid()) {
-            $this->import($row);
+        if ($validator->passes()) {
+            $this->import($rowObj);
         } else {
-            $this->chunk->reject($row);
+            $row[] = $validator->errors()->implode(' | ');
+            $this->rejectedChunk->add($row);
         }
     }
 
-    private function import(Row $row): void
+    private function row(array $row): Obj
+    {
+        return new Obj(array_combine($this->chunk->header, $row));
+    }
+
+    private function import(Obj $row): void
     {
         try {
-            $this->importer->run(
-                $row->content(),
-                $this->import->createdBy,
-                new Obj($this->import->params)
-            );
+            $params = new Obj($this->import->params);
+            $this->importer->run($row, $this->user, $params);
         } catch (Throwable $exception) {
-            $row->unknownError();
-            $this->chunk->reject($row);
+            $row = $row->values()->toArray();
+            $row[] = Config::get('enso.imports.unknownError');
+            $this->rejectedChunk->rows->push($row);
             Log::debug($exception->getMessage());
         }
     }
 
     private function dumpRejected(): self
     {
-        if (! $this->chunk->rejected()->empty()) {
-            $this->import->rejectedChunks()
-                ->save($this->chunk->rejected());
+        if (! $this->rejectedChunk->empty()) {
+            $this->rejectedChunk->save();
         }
 
         return $this;
@@ -103,9 +111,20 @@ class Chunk
 
     private function updateProgress(): void
     {
-        DB::transaction(fn () => DataImport::query()
-            ->whereId($this->import->id)
-            ->lockForUpdate()->first()
-            ->updateProgress($this->chunk));
+        $total = $this->chunk->count();
+        $failed = $this->rejectedChunk->count();
+
+        DB::transaction(fn () => DataImport::lockForUpdate()
+            ->whereId($this->import->id)->first()
+            ->updateProgress($total - $failed, $failed));
+    }
+
+    private function rejectedChunk(): RejectedChunk
+    {
+        return RejectedChunk::factory()->make([
+            'import_id' => $this->import->id,
+            'sheet' => $this->chunk->sheet,
+            'header' => $this->chunk->header,
+        ]);
     }
 }

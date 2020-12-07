@@ -8,24 +8,26 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use LaravelEnso\DataImport\Models\Chunk as Model;
-use LaravelEnso\DataImport\Services\Importers\Chunk as Service;
+use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Services\Importers\Sheet as Service;
 
-class Chunk implements ShouldQueue
+class Sheet implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private Model $chunk;
+    private DataImport $import;
+    private string $sheet;
 
-    public function __construct(Model $chunk)
+    public function __construct(DataImport $import, string $sheet)
     {
-        $this->chunk = $chunk;
+        $this->import = $import;
+        $this->sheet = $sheet;
     }
 
     public function handle()
     {
         if (! $this->batch()->cancelled()) {
-            (new Service($this->chunk))->handle();
+            (new Service($this->batch(), $this->import, $this->sheet))->handle();
         }
     }
 }

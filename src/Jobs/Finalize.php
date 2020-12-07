@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
+use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Notifications\ImportDone;
 
@@ -29,7 +30,7 @@ class Finalize implements ShouldQueue
 
     public function handle()
     {
-        $this->import->endOperation();
+        $this->import->update(['status' => Statuses::Finalized]);
 
         $this->notify();
     }

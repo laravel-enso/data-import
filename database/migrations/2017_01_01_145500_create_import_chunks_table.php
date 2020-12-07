@@ -4,11 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRejectedImportChunksTable extends Migration
+class CreateImportChunksTable extends Migration
 {
     public function up()
     {
-        Schema::create('rejected_import_chunks', function (Blueprint $table) {
+        Schema::create('import_chunks', function (Blueprint $table) {
             $table->increments('id');
 
             $table->integer('import_id')->unsigned();
@@ -25,6 +25,6 @@ class CreateRejectedImportChunksTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('rejected_import_chunks');
+        Schema::dropIfExists('import_chunks');
     }
 }

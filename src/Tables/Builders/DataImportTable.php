@@ -17,15 +17,15 @@ class DataImportTable implements Table, ConditionalActions
     public function query(): Builder
     {
         return DataImport::selectRaw("
-            data_imports.id, data_imports.type, data_imports.status, files.original_name as name,
-            data_imports.successful, data_imports.failed, data_imports.created_at,
-            {$this->rawTime()} as time, people.name as createdBy,
-            rejected_imports.id as rejectedId, {$this->rawDuration()} as duration
-        ")->join('files', fn ($join) => $join
-            ->on('files.attachable_id', 'data_imports.id')
-            ->where('files.attachable_type', DataImport::morphMapKey()))
-            ->join('users', 'files.created_by', '=', 'users.id')
-            ->join('people', 'users.person_id', '=', 'people.id')
+            data_imports.id, data_imports.type, data_imports.status,
+            files.original_name as name, data_imports.successful,
+            data_imports.failed, data_imports.created_at,
+            {$this->rawTime()} as time, rejected_imports.id as rejectedId,
+            {$this->rawDuration()} as duration, data_imports.created_by
+        ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
+            ->join('files', fn ($join) => $join
+                ->on('files.attachable_id', 'data_imports.id')
+                ->where('files.attachable_type', DataImport::morphMapKey()))
             ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
             ->leftJoin('files as rejected_files', fn ($join) => $join
                 ->on('rejected_files.attachable_id', 'rejected_imports.id')
@@ -82,14 +82,15 @@ class DataImportTable implements Table, ConditionalActions
 
     public function render(array $row, string $action): bool
     {
-        if ($action === 'download-rejected' && $row['failed'] === 0) {
-            return false;
+        switch ($action) {
+            case 'download-rejected':
+                return $row['rejectedId'] !== null;
+            case 'cancel':
+                return Statuses::isCancellable($row['status']);
+            case 'restart':
+                return $row['status'] === Statuses::Cancelled;
+            default:
+                return true;
         }
-
-        if ($action === 'cancel' && ! Statuses::cancellable($row['status'])) {
-            return false;
-        }
-
-        return true;
     }
 }

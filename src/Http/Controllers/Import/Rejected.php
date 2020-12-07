@@ -7,8 +7,8 @@ use LaravelEnso\DataImport\Models\RejectedImport;
 
 class Rejected extends Controller
 {
-    public function __invoke(RejectedImport $rejectedImport)
+    public function __invoke(RejectedImport $rejected)
     {
-        return $rejectedImport->file->download();
+        return $rejected->file->download();
     }
 }

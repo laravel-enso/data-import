@@ -16,12 +16,10 @@ class DataImportFactory extends Factory
     {
         return [
             'type' => $this->type(),
+            'batch' => null,
             'params' => [],
             'successful' => 0,
             'failed' => 0,
-            'chunks' => 0,
-            'processed_chunks' => 0,
-            'file_parsed' => false,
             'status' => Statuses::values()->random(),
         ];
     }

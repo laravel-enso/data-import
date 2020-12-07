@@ -2,17 +2,18 @@
 
 namespace LaravelEnso\DataImport\Models;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
-use LaravelEnso\DataImport\Enums\ImportTypes;
+use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
 use LaravelEnso\DataImport\Jobs\Import;
-use LaravelEnso\DataImport\Services\DTOs\Chunk;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Structure;
 use LaravelEnso\Files\Contracts\Attachable;
@@ -22,27 +23,16 @@ use LaravelEnso\Files\Traits\HasFile;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
-use LaravelEnso\IO\Traits\HasIOStatuses;
 use LaravelEnso\Tables\Traits\TableCache;
 use LaravelEnso\TrackWho\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use CascadesMorphMap,
-        CreatedBy,
-        HasIOStatuses,
-        HasFactory,
-        HasFile,
-        FilePolicies,
-        TableCache;
+    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache;
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'status' => 'integer',
-        'file_parsed' => 'boolean',
-        'params' => 'array',
-    ];
+    protected $casts = ['status' => 'integer', 'params' => 'array'];
 
     protected $extensions = ['xlsx'];
 
@@ -55,30 +45,67 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return $this->hasOne(RejectedImport::class);
     }
 
+    public function chunks()
+    {
+        return $this->hasMany(Chunk::class, 'import_id');
+    }
+
     public function rejectedChunks()
     {
-        return $this->hasMany(RejectedChunk::class);
+        return $this->hasMany(RejectedChunk::class, 'import_id');
     }
 
-    public function batch(): Batch
+    public function batch(): ?Batch
     {
-        return Bus::findBatch($this->batch);
+        return $this->batch ? Bus::findBatch($this->batch) : null;
     }
 
-    public function isFinalized(): bool //TODO remove, incl file parsed & processed_chunks
+    public function getEntriesAttribute()
     {
-        return $this->file_parsed
-            && $this->chunks === $this->processed_chunks;
+        return $this->entries();
     }
 
-    public function name(): string
+    public function entries()
     {
-        return ImportTypes::get($this->type);
+        return $this->successful + $this->failed;
     }
 
-    public function type(): int
+    public function type(): string
+    {
+        return Types::get($this->type);
+    }
+
+    public function operationType(): int
     {
         return IOTypes::Import;
+    }
+
+    public function progress(): ?int
+    {
+        return optional($this->batch())->progress();
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'type' => Str::lower(Types::get($this->type)),
+            'filename' => $this->file->original_name,
+            'sheet' => optional($this->batch())->name,
+            'successful' => $this->successful,
+            'failed' => $this->failed,
+        ];
+    }
+
+    public function createdAt(): Carbon
+    {
+        return $this->created_at;
+    }
+
+    public function status(): int
+    {
+        return Statuses::isCancellable($this->status)
+            ? $this->status
+            : Statuses::Finalized;
     }
 
     public function waiting(): bool
@@ -103,8 +130,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function template(): Template
     {
-        return $this->template
-            ?? $this->template = new Template($this->type);
+        return $this->template ??= new Template($this->type);
     }
 
     public function attach(string $path, string $filename): array
@@ -137,19 +163,9 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return $structure->summary();
     }
 
-    public function getEntriesAttribute()
-    {
-        return $this->entries();
-    }
-
-    public function entries()
-    {
-        return $this->successful + $this->failed;
-    }
-
     public function delete()
     {
-        if (! $this->finalized()) {
+        if (! Statuses::isDeletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 
@@ -160,17 +176,19 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function cancel()
     {
-        if (! Statuses::cancellable($this->status)) {
+        if (! Statuses::isCancellable($this->status)) {
             throw Exception::cannotBeCancelled();
         }
+
+        optional($this->batch())->cancel();
 
         $this->update(['status' => Statuses::Cancelled]);
     }
 
-    public function updateProgress(Chunk $chunk)
+    public function updateProgress(int $successful, int $failed)
     {
-        $this->successful += $chunk->successful();
-        $this->failed += $chunk->failed();
+        $this->successful += $successful;
+        $this->failed += $failed;
         $this->save();
     }
 

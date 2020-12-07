@@ -14,6 +14,8 @@ class Attributes
 
     protected array $dependent = [];
 
+    protected array $values = [];
+
     public function allowed(): Collection
     {
         return $this->mandatory()->concat($this->optional());
@@ -21,20 +23,27 @@ class Attributes
 
     public function validateMandatory(Collection $attributes): self
     {
-        $this->mandatory()->diff($attributes)->unlessEmpty(
-            fn ($missing) => Exception::missing($missing, $this->class())
-        );
+        $this->mandatory()->diff($attributes)
+            ->unlessEmpty(function ($missing) {
+                throw Exception::missing($missing, $this->class());
+            });
 
         return $this;
     }
 
     public function rejectUnknown(Collection $attributes): self
     {
-        $attributes->diff($this->allowed())->unlessEmpty(
-            fn ($unknown) => Exception::unknown($unknown, $this->class())
-        );
+        $attributes->diff($this->allowed())
+            ->unlessEmpty(function ($unknown) {
+                throw Exception::unknown($unknown, $this->class());
+            });
 
         return $this;
+    }
+
+    public function values($type): Collection
+    {
+        return new Collection($this->values[$type] ?? []);
     }
 
     public function dependent($type): Collection

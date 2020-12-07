@@ -4,6 +4,7 @@
     "appends": [
         "entries"
     ],
+    "strip": ["created_by"],
     "buttons": [
         "excel",
         {
@@ -17,6 +18,16 @@
             "confirmation": true
         },
         {
+            "name": "restart",
+            "type": "row",
+            "icon": "sync",
+            "method": "PATCH",
+            "class": "is-row-button",
+            "fullRoute": "import.restart",
+            "action": "ajax",
+            "confirmation": true
+        },
+        {
             "name": "download-rejected",
             "type": "row",
             "icon": "cloud-download-alt",
@@ -26,13 +37,25 @@
         "download",
         "destroy"
     ],
-    "columns": [{
+    "filters": [
+        {
+            "label": "Users",
+            "data": "data_imports.created_by",
+            "type": "select",
+            "value": [],
+            "selectLabel": "person.name",
+            "route": "administration.users.options",
+            "multiple": true
+        }
+    ],
+    "columns": [
+        {
             "label": "Type",
             "name": "type",
             "data": "data_imports.type",
-            "enum": "LaravelEnso\\DataImport\\Enums\\ImportTypes",
+            "enum": "LaravelEnso\\DataImport\\Enums\\Types",
             "meta": [
-                "sortable"
+                "sortable", "slot"
             ]
         },
         {
@@ -103,12 +126,21 @@
             ]
         },
         {
-            "label": "Imported By",
+            "label": "By",
             "name": "createdBy",
-            "data": "people.name",
+            "data": "data_imports.createdBy",
+            "resource": "LaravelEnso\\Core\\Http\\Resources\\User",
             "meta": [
-                "searchable",
-                "sortable"
+                "slot",
+                "notExportable"
+            ]
+        },
+        {
+            "label": "Created By",
+            "name": "createdBy.person.name",
+            "data": "data_imports.createdBy",
+            "meta": [
+                "rogue"
             ]
         }
     ]

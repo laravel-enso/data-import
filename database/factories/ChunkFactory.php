@@ -3,11 +3,11 @@
 namespace LaravelEnso\DataImport\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use LaravelEnso\DataImport\Models\RejectedChunk;
+use LaravelEnso\DataImport\Models\Chunk;
 
-class RejectedChunkFactory extends Factory
+class ChunkFactory extends Factory
 {
-    protected $model = RejectedChunk::class;
+    protected $model = Chunk::class;
 
     public function definition()
     {

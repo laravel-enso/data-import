@@ -4,12 +4,14 @@ namespace LaravelEnso\DataImport\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use LaravelEnso\DataImport\Contracts\Importable;
+use LaravelEnso\DataImport\Services\Template;
 
-class RejectedChunk extends Model
+class Chunk extends Model
 {
     use HasFactory;
 
-    protected $table = 'rejected_import_chunks';
+    protected $table = 'import_chunks';
 
     protected $guarded = ['id'];
 
@@ -18,6 +20,16 @@ class RejectedChunk extends Model
     public function import()
     {
         return $this->belongsTo(DataImport::class);
+    }
+
+    public function template(): Template
+    {
+        return $this->import->template();
+    }
+
+    public function importer(): Importable
+    {
+        return $this->template()->importer($this->sheet);
     }
 
     public function add(array $row): void
@@ -30,10 +42,5 @@ class RejectedChunk extends Model
     public function count(): int
     {
         return count($this->rows);
-    }
-
-    public function empty(): bool
-    {
-        return count($this->rows) === 0;
     }
 }

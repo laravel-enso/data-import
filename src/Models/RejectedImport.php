@@ -15,7 +15,7 @@ class RejectedImport extends Model implements Attachable
 
     protected $folder = 'imports';
 
-    public function dataImport()
+    public function import()
     {
         return $this->belongsTo(DataImport::class);
     }

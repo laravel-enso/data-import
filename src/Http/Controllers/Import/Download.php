@@ -7,8 +7,8 @@ use LaravelEnso\DataImport\Models\DataImport;
 
 class Download extends Controller
 {
-    public function __invoke(DataImport $dataImport)
+    public function __invoke(DataImport $import)
     {
-        return $dataImport->file->download();
+        return $import->file->download();
     }
 }

@@ -7,9 +7,9 @@ use LaravelEnso\DataImport\Models\DataImport;
 
 class Destroy extends Controller
 {
-    public function __invoke(DataImport $dataImport)
+    public function __invoke(DataImport $import)
     {
-        $dataImport->delete();
+        $import->delete();
 
         return ['message' => __('The import record was successfully deleted')];
     }

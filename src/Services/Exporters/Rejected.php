@@ -7,6 +7,7 @@ use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\XLSX\Writer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
@@ -19,7 +20,6 @@ class Rejected
     private DataImport $import;
     private RejectedImport $rejected;
     private Writer $xlsx;
-    private Collection $sheets;
     private string $path;
     private bool $firstChunk;
 
@@ -27,20 +27,18 @@ class Rejected
     {
         $this->import = $import;
         $this->rejected = $this->import->rejected()->make();
-        $this->sheets = new Collection();
         $this->path = $this->path();
         $this->firstChunk = true;
     }
 
     public function handle(): void
     {
-        $this->import->setStatus(Statuses::ExportingRejected);
+        $this->import->update(['status' => Statuses::ExportingRejected]);
 
         $this->initWriter();
 
-        $this->import->rejectedChunks
-            ->unlessEmpty(fn ($chunks) => $chunks->sortBy('sheet')
-                ->each(fn ($chunk) => $this->export($chunk)));
+        $this->import->rejectedChunks->sortBy('sheet')
+            ->each(fn ($chunk) => $this->export($chunk));
 
         $this->closeWriter()
             ->storeRejected()
@@ -63,21 +61,32 @@ class Rejected
     {
         $this->prepare($chunk);
 
-        Collection::wrap($chunk->content)
+        Collection::wrap($chunk->rows)
             ->each(fn ($row) => $this->xlsx->addRow($this->row($row)));
     }
 
     private function prepare(RejectedChunk $chunk): void
     {
-        if ($this->needsNewSheet($chunk)) {
+        if ($this->firstChunk) {
+            $this->firstChunk = false;
+            $this->initSheet($chunk);
+        } elseif ($this->needsNewSheet($chunk->sheet)) {
             $this->xlsx->addNewSheetAndMakeItCurrent();
+            $this->initSheet($chunk);
         }
+    }
 
+    private function initSheet(RejectedChunk $chunk): void
+    {
         $this->xlsx->getCurrentSheet()->setName($chunk->sheet);
+        $this->addHeader($chunk);
+    }
 
-        $this->xlsx->addRow($this->row($chunk->header));
-
-        $this->sheets->push($chunk->sheet);
+    private function addHeader(RejectedChunk $chunk)
+    {
+        $header = $chunk->header;
+        $header[] = Config::get('enso.imports.errorColumn');
+        $this->xlsx->addRow($this->row($header));
     }
 
     private function closeWriter(): self
@@ -115,18 +124,13 @@ class Rejected
         return "{$this->rejected->folder()}/{$hash}.xlsx";
     }
 
-    private function row($row): Row
+    private function row(array $row): Row
     {
         return WriterEntityFactory::createRowFromArray($row);
     }
 
-    private function needsNewSheet(RejectedChunk $chunk): bool
+    private function needsNewSheet(string $sheet): bool
     {
-        if ($this->firstChunk) {
-            return $this->firstChunk = false;
-        }
-
-        return $this->xlsx->getCurrentSheet()
-            ->getName() !== $chunk->sheet;
+        return $this->xlsx->getCurrentSheet()->getName() !== $sheet;
     }
 }

@@ -21,11 +21,6 @@ class CreateDataImportsTable extends Migration
             $table->integer('successful');
             $table->integer('failed');
 
-            $table->integer('chunks');
-            $table->integer('processed_chunks');
-
-            $table->boolean('file_parsed');
-
             $table->tinyInteger('status');
 
             $table->integer('created_by')->unsigned()->nullable();

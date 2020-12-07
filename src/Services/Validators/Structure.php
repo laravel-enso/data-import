@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
+use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\DataImport\Services\Summary;
 use LaravelEnso\DataImport\Services\Template;
 
@@ -25,9 +26,8 @@ class Structure
         $this->handleSheets();
 
         if ($this->summary->errors()->isEmpty()) {
-            $this->template->sheets()
-                ->each(fn ($sheet) => $this
-                    ->handleColumns($sheet->get('name')));
+            $this->xlsx->sheets()->each(fn ($sheet) => $this
+                ->handleColumns($sheet));
         }
 
         return $this->summary->errors()->isEmpty();
@@ -63,8 +63,9 @@ class Structure
 
     private function handleColumns(string $sheet): void
     {
+        $iterator = $this->xlsx->rowIterator($sheet);
+        $xlsx = Sanitize::header($iterator->current());
         $template = $this->template->header($sheet);
-        $xlsx = $this->xlsx->header($sheet);
 
         $this->missingColumns($sheet, $xlsx, $template)
             ->extraColumns($sheet, $xlsx, $template);
