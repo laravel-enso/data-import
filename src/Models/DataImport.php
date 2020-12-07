@@ -30,7 +30,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 {
     use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     protected $casts = ['status' => 'integer', 'params' => 'array'];
 

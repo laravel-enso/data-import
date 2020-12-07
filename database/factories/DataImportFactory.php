@@ -20,7 +20,7 @@ class DataImportFactory extends Factory
             'params' => [],
             'successful' => 0,
             'failed' => 0,
-            'status' => Statuses::values()->random(),
+            'status' => Statuses::Waiting,
         ];
     }
 

@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
-use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Http\Requests\ValidateImportRequest;
 use LaravelEnso\DataImport\Models\DataImport;
 
@@ -15,7 +14,6 @@ class Store extends Controller
         $dataImport = DataImport::factory()->make([
             'type' => $request->get('type'),
             'params' => $request->except(['import', 'type']),
-            'status' => Statuses::Waiting,
         ]);
 
         $rules = $dataImport->template()->paramRules();

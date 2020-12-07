@@ -10,12 +10,12 @@ class ExcelSeeder extends Seeder
 {
     protected string $type;
     protected string $filename;
-    protected array $params;
+    protected array $params = [];
 
     public function run()
     {
         DataImport::factory()
-            ->make(['type' => $this->type])
-            ->importAttached(Config::get('enso.imports.seederPath'), $this->filename);
+            ->make(['type' => $this->type, 'params' => $this->params])
+            ->attach(Config::get('enso.imports.seederPath'), $this->filename);
     }
 }
