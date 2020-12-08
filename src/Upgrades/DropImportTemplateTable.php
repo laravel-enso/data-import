@@ -7,12 +7,18 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\Files\Models\File;
 use LaravelEnso\Upgrade\Contracts\MigratesTable;
+use LaravelEnso\Upgrade\Contracts\Prioritization;
 
-class DropImportTemplateTable implements MigratesTable
+class DropImportTemplateTable implements MigratesTable, Prioritization
 {
     public function isMigrated(): bool
     {
         return ! Schema::hasTable('import_templates');
+    }
+
+    public function priority(): int
+    {
+        return 50;
     }
 
     public function migrateTable(): void
