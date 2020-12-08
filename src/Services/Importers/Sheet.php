@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services\Importers;
 
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Jobs\Chunk as Job;
 use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\DataImport\Models\DataImport;
@@ -27,7 +28,7 @@ class Sheet
         $this->import = $import;
         $this->sheet = $sheet;
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
-        $this->xlsx = new XLSX($import->file->path());
+        $this->xlsx = new XLSX(Storage::path($import->file->path));
     }
 
     public function handle()
