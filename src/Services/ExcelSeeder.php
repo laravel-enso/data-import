@@ -16,6 +16,6 @@ class ExcelSeeder extends Seeder
     {
         DataImport::factory()
             ->make(['type' => $this->type, 'params' => $this->params])
-            ->attach(Config::get('enso.imports.seederPath'), $this->filename);
+            ->file->attach(Config::get('enso.imports.seederPath'), $this->filename);
     }
 }
