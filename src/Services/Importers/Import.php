@@ -68,8 +68,8 @@ class Import
         $this->batch = Bus::batch([new Sheet($this->import, $this->sheet)])
             ->onQueue($this->template->queue())
             ->then(fn () => $import->update(['batch' => null]))
-            ->then(fn () => $afterHook())
-            ->then(fn () => $nextStep())
+            ->then(fn ($batch) => $batch->cancelled() ? null : $afterHook())
+            ->then(fn ($batch) => $batch->cancelled() ? null : $nextStep())
             ->name($this->sheet)
             ->dispatch();
 

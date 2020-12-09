@@ -95,7 +95,7 @@ class Chunk
         } catch (Throwable $exception) {
             $row = $row->values()->toArray();
             $row[] = Config::get('enso.imports.unknownError');
-            $this->rejectedChunk->rows->push($row);
+            $this->rejectedChunk->add($row);
             Log::debug($exception->getMessage());
         }
     }
