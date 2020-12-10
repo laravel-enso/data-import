@@ -1,7 +1,7 @@
 @component('mail::message')
 {{ __('Hi :name', ['name' => $name]) }},
 
-{{ __('Your :name import is done', ['name' => $import->type()]) }}:
+{{ __('The :name import is done', ['name' => $import->type()]) }}:
 {{ $import->file->original_name }}.
 
 @component('mail::table')
