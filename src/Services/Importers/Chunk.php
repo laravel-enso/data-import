@@ -92,11 +92,11 @@ class Chunk
         try {
             $params = new Obj($this->import->params);
             $this->importer->run($row, $this->user, $params);
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             $row = $row->values()->toArray();
             $row[] = Config::get('enso.imports.unknownError');
             $this->rejectedChunk->add($row);
-            Log::debug($exception->getMessage());
+            Log::debug($throwable->getMessage());
         }
     }
 

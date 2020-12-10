@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Contracts\BeforeHook;
+use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Notifications\ImportDone;
@@ -39,8 +39,8 @@ class Finalize implements ShouldQueue
     {
         $importer = $this->import->template()->importer($sheet);
 
-        if ($importer instanceof BeforeHook) {
-            $importer->before(
+        if ($importer instanceof AfterHook) {
+            $importer->after(
                 $this->import->createdBy,
                 $this->import->params
             );
