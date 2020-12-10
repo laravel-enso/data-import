@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\Core\Http\Resources\User;
+use LaravelEnso\Core\Models\User;
 use LaravelEnso\Helpers\Services\Obj;
 
 abstract class Validator
