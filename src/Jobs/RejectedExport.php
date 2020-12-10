@@ -31,6 +31,8 @@ class RejectedExport implements ShouldQueue
 
     public function handle()
     {
-        (new Rejected($this->import))->handle();
+        if ($this->import->failed > 0) {
+            (new Rejected($this->import))->handle();
+        }
     }
 }
