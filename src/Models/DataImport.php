@@ -175,7 +175,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function delete()
     {
-        if (! $this->deletable())) {
+        if (! $this->deletable()) {
             throw Exception::deleteRunningImport();
         }
 
