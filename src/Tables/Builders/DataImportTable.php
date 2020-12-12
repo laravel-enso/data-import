@@ -86,7 +86,7 @@ class DataImportTable implements Table, ConditionalActions
             case 'download-rejected':
                 return $row['rejectedId'] !== null;
             case 'cancel':
-                return Statuses::isCancellable($row['status']);
+                return in_array($row['status'], Statuses::running());
             case 'restart':
                 return $row['status'] === Statuses::Cancelled;
             default:

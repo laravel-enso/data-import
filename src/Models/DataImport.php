@@ -103,7 +103,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function status(): int
     {
-        return Statuses::isCancellable($this->status)
+        return $this->running()
             ? $this->status
             : Statuses::Finalized;
     }
@@ -126,6 +126,16 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function finalized(): bool
     {
         return $this->status === Statuses::Finalized;
+    }
+
+    public function running(): bool
+    {
+        return in_array($this->status, Statuses::running());
+    }
+
+    public function deletable(): bool
+    {
+        return in_array($this->status, Statuses::deletable());
     }
 
     public function template(): Template
@@ -165,7 +175,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function delete()
     {
-        if (! Statuses::isDeletable($this->status)) {
+        if (! $this->deletable())) {
             throw Exception::deleteRunningImport();
         }
 
@@ -176,7 +186,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function cancel()
     {
-        if (! Statuses::isCancellable($this->status)) {
+        if (! $this->running()) {
             throw Exception::cannotBeCancelled();
         }
 

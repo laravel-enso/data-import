@@ -22,19 +22,9 @@ class Statuses extends Enum
         self::Cancelled => 'cancelled',
     ];
 
-    public static function isCancellable(int $status): bool
-    {
-        return in_array($status, self::cancellable());
-    }
-
-    public static function cancellable(): array
+    public static function running(): array
     {
         return [static::Waiting, static::Processing];
-    }
-
-    public static function isDeletable(int $status): bool
-    {
-        return in_array($status, self::deletable());
     }
 
     public static function deletable(): array
