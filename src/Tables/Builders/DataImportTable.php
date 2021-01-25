@@ -20,7 +20,7 @@ class DataImportTable implements Table, ConditionalActions
             data_imports.id, data_imports.type, data_imports.status,
             files.original_name as name, data_imports.successful,
             data_imports.failed, data_imports.created_at,
-            {$this->rawTime()} as time, rejected_imports.id as rejectedId,
+            {$this->rawTime()} as time, rejected_imports.id as rejected_id,
             {$this->rawDuration()} as duration, data_imports.created_by
         ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
             ->join('files', fn ($join) => $join
@@ -84,7 +84,7 @@ class DataImportTable implements Table, ConditionalActions
     {
         switch ($action) {
             case 'download-rejected':
-                return $row['rejectedId'] !== null;
+                return $row['rejected_id'] !== null;
             case 'cancel':
                 return in_array($row['status'], Statuses::running());
             case 'restart':
