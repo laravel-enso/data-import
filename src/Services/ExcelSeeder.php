@@ -18,18 +18,25 @@ class ExcelSeeder extends Seeder
 
     public function run()
     {
-        File::copy(
-            Config::get('enso.imports.seederPath').DIRECTORY_SEPARATOR.$this->filename,
-            Storage::path($this->filePath())
-        );
+        File::copy($this->source(), $this->hash());
 
         DataImport::factory()
             ->make(['type' => $this->type, 'params' => $this->params])
-            ->attach($this->filePath(), $this->filename);
+            ->attach($this->path(), $this->filename);
     }
 
-    private function filePath()
+    private function source(): string
     {
-        return $this->filePath ??= 'imports'.DIRECTORY_SEPARATOR.Str::random(40).'.xlsx';
+        return Config::get('enso.imports.seederPath').'/'.$this->filename;
+    }
+
+    private function hash(): string
+    {
+        return Storage::path($this->path());
+    }
+
+    private function path(): string
+    {
+        return $this->filePath ??= 'imports'.'/'.Str::random(40).'.xlsx';
     }
 }
