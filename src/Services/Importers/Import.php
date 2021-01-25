@@ -82,10 +82,10 @@ class Import
     {
         $importer = $this->template->importer($this->sheet);
         $user = $this->import->createdBy;
-        $params = new Obj($this->import->params);
+        $params = $this->import->params;
 
         return fn () => $importer instanceof AfterHook
-            ? $importer->after($user, $params)
+            ? $importer->after($user, new Obj($params))
             : null;
     }
 
