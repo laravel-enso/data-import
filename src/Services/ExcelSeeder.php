@@ -36,7 +36,7 @@ class ExcelSeeder extends Seeder
     {
         return $this->filePath ??= "imports/{$this->hash()}.xlsx";
     }
-    
+
     private function hash(): string
     {
         return Str::random(40);
