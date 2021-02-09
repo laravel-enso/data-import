@@ -3,7 +3,6 @@
 namespace LaravelEnso\DataImport\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
-use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 
 class Restart extends Controller
