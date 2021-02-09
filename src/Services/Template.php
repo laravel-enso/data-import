@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Contracts\Importable;
+use LaravelEnso\DataImport\Enums\ImportType;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
 use LaravelEnso\DataImport\Services\Validators\Params;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
@@ -35,6 +36,13 @@ class Template
         return $this->template->has('timeout')
             ? $this->template->get('timeout')
             : (int) Config::get('enso.imports.timeout');
+    }
+
+    public function type(): string
+    {
+        return $this->template->has('type')
+            ? $this->template->get('type')
+            : ImportType::Insert;
     }
 
     public function queue(): string

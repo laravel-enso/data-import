@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use LaravelEnso\DataImport\Enums\ImportType;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
@@ -21,6 +22,7 @@ use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
+use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
@@ -28,7 +30,7 @@ use LaravelEnso\TrackWho\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache;
+    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache, When;
 
     protected $guarded = [];
 
@@ -209,5 +211,17 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         }
 
         Import::dispatch($this, $sheet);
+    }
+
+    public function restart(): self
+    {
+        $this->when(
+            $this->template()->type() === ImportType::Insert,
+            fn () => $this->fill(['failed' => -1 * $this->successful]),
+            fn () => $this->fill(['successful' => 0, 'failed' => 0])
+        )->fill(['status' => Statuses::Waiting])
+            ->save();
+
+        return $this;
     }
 }
