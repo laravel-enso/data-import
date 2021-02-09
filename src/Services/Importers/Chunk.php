@@ -18,8 +18,8 @@ use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Services\Validators\Row;
 use LaravelEnso\Helpers\Services\Obj;
-use Throwable;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Throwable;
 
 class Chunk
 {
