@@ -10,7 +10,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\Enums\ImportType;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
