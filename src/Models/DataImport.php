@@ -215,12 +215,11 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function restart(): self
     {
-        $this->when(
-            $this->template()->type() === ImportType::Insert,
-            fn () => $this->fill(['failed' => -1 * $this->successful]),
-            fn () => $this->fill(['successful' => 0, 'failed' => 0])
-        )->fill(['status' => Statuses::Waiting])
-            ->save();
+        $this->update([
+            'successful' => 0,
+            'failed' => 0,
+            'status' => Statuses::Waiting,
+        ]);
 
         return $this;
     }

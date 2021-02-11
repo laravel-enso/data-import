@@ -1,6 +1,5 @@
 {
     "timeout": 500,
-    "type": "insert",
     "sheets": [{
         "name": "groups",
         "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
