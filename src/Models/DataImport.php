@@ -21,6 +21,7 @@ use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
+use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
@@ -28,7 +29,7 @@ use LaravelEnso\TrackWho\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache;
+    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache, When;
 
     protected $guarded = [];
 
@@ -209,5 +210,16 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         }
 
         Import::dispatch($this, $sheet);
+    }
+
+    public function restart(): self
+    {
+        $this->update([
+            'successful' => 0,
+            'failed' => 0,
+            'status' => Statuses::Waiting,
+        ]);
+
+        return $this;
     }
 }
