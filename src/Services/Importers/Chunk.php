@@ -18,8 +18,8 @@ use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Services\Validators\Row;
 use LaravelEnso\Helpers\Services\Obj;
-use Throwable;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Throwable;
 
 class Chunk
 {
@@ -99,6 +99,7 @@ class Chunk
             $row[] = Config::get('enso.imports.unknownError');
             $this->rejectedChunk->add($row);
             Log::debug($throwable->getMessage());
+
             if (App::runningInConsole()) {
                 (new ConsoleOutput())->writeln("<error>{$throwable->getMessage()}</error>");
             }
