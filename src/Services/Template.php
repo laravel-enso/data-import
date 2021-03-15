@@ -54,6 +54,11 @@ class Template
         return $this->columns($sheet)->pluck('description');
     }
 
+    public function validations(string $sheet): Collection
+    {
+        return $this->columns($sheet)->pluck('validations');
+    }
+
     public function columnRules(string $sheet): array
     {
         return $this->columnRules ??= $this->columns($sheet)
