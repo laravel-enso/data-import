@@ -51,9 +51,8 @@ class Finalize implements ShouldQueue
 
     private function notify()
     {
-        $this->import->file->createdBy->notify(
-            (new ImportDone($this->import))
-                ->onQueue(config('enso.imports.queues.notifications'))
-        );
+        $this->import->file->createdBy
+            ->notify((new ImportDone($this->import))
+                ->onQueue(config('enso.imports.queues.notifications')));
     }
 }
