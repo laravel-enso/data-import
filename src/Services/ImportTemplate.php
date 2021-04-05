@@ -27,7 +27,10 @@ class ImportTemplate implements ExportsExcel
 
     public function rows(string $sheet): array
     {
-        return [$this->template->descriptions($sheet)->toArray()];
+        return [
+            $this->template->validations($sheet)->toArray(),
+            $this->template->descriptions($sheet)->toArray(),
+        ];
     }
 
     public function sheets(): array
