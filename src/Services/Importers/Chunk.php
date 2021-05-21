@@ -98,7 +98,12 @@ class Chunk
             $row = $row->values()->toArray();
             $row[] = Config::get('enso.imports.unknownError');
             $this->rejectedChunk->add($row);
-            Log::debug($throwable->getMessage());
+
+            $error = App::isProduction()
+                ? $throwable->getMessage()
+                : "{$throwable->getMessage()}  {$throwable->getTraceAsString()}";
+
+            Log::debug($error);
 
             if (App::runningInConsole()) {
                 (new ConsoleOutput())->writeln("<error>{$throwable->getMessage()}</error>");
