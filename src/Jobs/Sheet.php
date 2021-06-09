@@ -15,13 +15,10 @@ class Sheet implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private DataImport $import;
-    private string $sheet;
-
-    public function __construct(DataImport $import, string $sheet)
-    {
-        $this->import = $import;
-        $this->sheet = $sheet;
+    public function __construct(
+        private DataImport $import,
+        private string $sheet
+    ) {
     }
 
     public function handle()

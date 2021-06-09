@@ -3,8 +3,8 @@
 namespace LaravelEnso\DataImport\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Models\DataImport as Model;
+use LaravelEnso\Users\Models\User;
 
 class DataImport
 {

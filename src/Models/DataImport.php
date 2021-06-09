@@ -20,6 +20,7 @@ use LaravelEnso\Files\Contracts\Attachable;
 use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
+use LaravelEnso\Helpers\Casts\Obj;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
@@ -33,7 +34,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     protected $guarded = [];
 
-    protected $casts = ['status' => 'integer', 'params' => 'array'];
+    protected $casts = ['status' => 'integer', 'params' => Obj::class];
 
     protected $extensions = ['xlsx'];
 
@@ -83,7 +84,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function progress(): ?int
     {
-        return optional($this->batch())->progress();
+        return $this->batch()?->progress();
     }
 
     public function broadcastWith(): array
@@ -91,7 +92,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return [
             'type' => Str::lower(Types::get($this->type)),
             'filename' => $this->file->original_name,
-            'sheet' => optional($this->batch())->name,
+            'sheet' => $this->batch()?->name,
             'successful' => $this->successful,
             'failed' => $this->failed,
         ];
@@ -180,7 +181,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
             throw Exception::deleteRunningImport();
         }
 
-        optional($this->rejected)->delete();
+        $this->rejected?->delete();
 
         return parent::delete();
     }
@@ -191,7 +192,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
             throw Exception::cannotBeCancelled();
         }
 
-        optional($this->batch())->cancel();
+        $this->batch()?->cancel();
 
         $this->update(['status' => Statuses::Cancelled]);
     }

@@ -9,11 +9,8 @@ use ReflectionClass;
 class Attributes
 {
     protected array $mandatory = [];
-
     protected array $optional = [];
-
     protected array $dependent = [];
-
     protected array $values = [];
 
     public function allowed(): Collection
@@ -24,9 +21,7 @@ class Attributes
     public function validateMandatory(Collection $attributes): self
     {
         $this->mandatory()->diff($attributes)
-            ->unlessEmpty(function ($missing) {
-                throw Exception::missing($missing, $this->class());
-            });
+            ->unlessEmpty(fn ($missing) => throw Exception::missing($missing, $this->class()));
 
         return $this;
     }
@@ -34,9 +29,7 @@ class Attributes
     public function rejectUnknown(Collection $attributes): self
     {
         $attributes->diff($this->allowed())
-            ->unlessEmpty(function ($unknown) {
-                throw Exception::unknown($unknown, $this->class());
-            });
+            ->unlessEmpty(fn ($unknown) => throw Exception::unknown($unknown, $this->class()));
 
         return $this;
     }

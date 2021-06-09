@@ -18,7 +18,7 @@ class Types extends Enum
                 array_keys($configs),
                 array_column($configs, 'label')
             );
-        } catch (Throwable $exception) {
+        } catch (Throwable) {
             throw DataImport::configNotReadable();
         }
     }

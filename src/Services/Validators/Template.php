@@ -12,11 +12,8 @@ use LaravelEnso\Helpers\Services\Obj;
 
 class Template
 {
-    private Obj $template;
-
-    public function __construct(Obj $template)
+    public function __construct(private Obj $template)
     {
-        $this->template = $template;
     }
 
     public function run(): void

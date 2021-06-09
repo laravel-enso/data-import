@@ -16,15 +16,10 @@ class RejectedExport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue;
     public $timeout;
 
-    private DataImport $import;
-
-    public function __construct(DataImport $import)
+    public function __construct(private DataImport $import)
     {
-        $this->import = $import;
-
         $this->queue = Config::get('enso.imports.queues.rejected');
         $this->timeout = (new Template($import->type))->timeout();
     }

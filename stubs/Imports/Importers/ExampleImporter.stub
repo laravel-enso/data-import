@@ -6,20 +6,21 @@ use LaravelEnso\Helpers\Services\Obj;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Contracts\AfterHook; // optional
 use LaravelEnso\DataImport\Contracts\BeforeHook; // optional
+use LaravelEnso\DataImport\Models\DataImport;
 
 class ExampleImporter implements Importable, BeforeHook, AfterHook
 {
-    public function before(Obj $params) // optional
+    public function before(DataImport $import) // optional
     {
         // optional logic to be executed only once, before the import is started
     }
 
-    public function run(Obj $row, Obj $param)
+    public function run(Obj $row, DataImport $import)
     {
         // required import logic for each row
     }
 
-    public function after(Obj $params) // optional
+    public function after(DataImport $import) // optional
     {
         // optional logic to be executed only once, after the import has finished
     }

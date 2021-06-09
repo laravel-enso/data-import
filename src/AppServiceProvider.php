@@ -54,11 +54,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $stubPrefix = __DIR__.'/../stubs/';
 
-        $stubs = (new Collection([
+        $stubs = Collection::wrap([
             'Imports/Importers/ExampleImporter',
             'Imports/Templates/exampleTemplate',
             'Imports/Validators/CustomValidator',
-        ]))->reduce(fn ($stubs, $stub) => $stubs
+        ])->reduce(fn ($stubs, $stub) => $stubs
             ->put("{$stubPrefix}{$stub}.stub", app_path("{$stub}.php")), new Collection());
 
         $this->publishes($stubs->all(), 'data-import-examples');

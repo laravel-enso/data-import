@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\Authorizes;
 use LaravelEnso\DataImport\Contracts\Importable;
@@ -24,18 +23,16 @@ use Throwable;
 class Chunk
 {
     private DataImport $import;
-    private User $user;
-    private Model $chunk;
-    private RejectedChunk $rejectedChunk;
     private Importable $importer;
+    private RejectedChunk $rejectedChunk;
+    private ConsoleOutput $output;
 
-    public function __construct(Model $chunk)
+    public function __construct(private Model $chunk)
     {
-        $this->chunk = $chunk;
-        $this->import = $chunk->import;
-        $this->user = $chunk->import->createdBy;
-        $this->importer = $chunk->importer();
+        $this->import = $this->chunk->import;
+        $this->importer = $this->chunk->importer();
         $this->rejectedChunk = $this->rejectedChunk();
+        $this->output = new ConsoleOutput();
     }
 
     public function handle(): void
@@ -55,7 +52,7 @@ class Chunk
     private function authorize(): self
     {
         $unauthorized = $this->importer instanceof Authorizes
-            && ! $this->importer->authorizes($this->user, $this->import->params);
+            && ! $this->importer->authorizes($this->import);
 
         if ($unauthorized) {
             throw Exception::unauthorized();
@@ -67,7 +64,7 @@ class Chunk
     private function authenticate(): void
     {
         if ($this->importer instanceof Authenticates) {
-            Auth::setUser($this->user);
+            Auth::setUser($this->import->user);
         }
     }
 
@@ -92,21 +89,20 @@ class Chunk
     private function import(Obj $row): void
     {
         try {
-            $params = new Obj($this->import->params);
-            $this->importer->run($row, $this->user, $params);
+            $this->importer->run($row, $this->import);
         } catch (Throwable $throwable) {
             $row = $row->values()->toArray();
             $row[] = Config::get('enso.imports.unknownError');
             $this->rejectedChunk->add($row);
 
-            $error = App::isProduction()
+            $error = App::isProduction() || App::runningInConsole()
                 ? $throwable->getMessage()
-                : "{$throwable->getMessage()}  {$throwable->getTraceAsString()}";
+                : "{$throwable->getMessage()} {$throwable->getTraceAsString()}";
 
             Log::debug($error);
 
             if (App::runningInConsole()) {
-                (new ConsoleOutput())->writeln("<error>{$throwable->getMessage()}</error>");
+                $this->output->writeln("<error>{$throwable->getMessage()}</error>");
             }
         }
     }

@@ -8,9 +8,6 @@ class Route extends EnsoException
 {
     public static function notFound(string $route)
     {
-        return new static(__(
-            'route does not exist: ":route"',
-            ['route' => $route]
-        ));
+        return new static(__('route does not exist: ":route"', ['route' => $route]));
     }
 }

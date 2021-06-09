@@ -7,12 +7,10 @@ use LaravelEnso\Helpers\Services\Obj;
 
 class Summary
 {
-    private string $filename;
     private Obj $errors;
 
-    public function __construct(string $filename)
+    public function __construct(private string $filename)
     {
-        $this->filename = $filename;
         $this->errors = new Obj();
     }
 

@@ -7,12 +7,10 @@ use LaravelEnso\Excel\Contracts\ExportsExcel;
 class ImportTemplate implements ExportsExcel
 {
     private Template $template;
-    private string $type;
 
-    public function __construct(string $type)
+    public function __construct(private string $type)
     {
-        $this->template = new Template($type);
-        $this->type = $type;
+        $this->template = new Template($this->type);
     }
 
     public function filename(): string

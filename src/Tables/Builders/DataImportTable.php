@@ -39,16 +39,12 @@ class DataImportTable implements Table, ConditionalActions
 
     private function rawDuration(): string
     {
-        switch (DB::getDriverName()) {
-            case 'sqlite':
-                return $this->sqliteDuration();
-            case 'mysql':
-                return $this->mysqlDuration();
-            case 'pgsql':
-                return $this->postgresDuration();
-            default:
-                return 'N/A';
-        }
+        return match (DB::getDriverName()) {
+            'sqlite' => $this->sqliteDuration(),
+            'mysql' => $this->mysqlDuration(),
+            'pgsql' => $this->postgresDuration(),
+            default => 'N/A',
+        };
     }
 
     private function rawTime(): string
@@ -82,15 +78,11 @@ class DataImportTable implements Table, ConditionalActions
 
     public function render(array $row, string $action): bool
     {
-        switch ($action) {
-            case 'download-rejected':
-                return $row['rejected_id'] !== null;
-            case 'cancel':
-                return in_array($row['status'], Statuses::running());
-            case 'restart':
-                return $row['status'] === Statuses::Cancelled;
-            default:
-                return true;
-        }
+        return match ($action) {
+            'download-rejected' => $row['rejected_id'] !== null,
+            'cancel' => in_array($row['status'], Statuses::running()),
+            'restart' => $row['status'] === Statuses::Cancelled,
+            default => true,
+        };
     }
 }

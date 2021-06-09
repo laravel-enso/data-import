@@ -13,7 +13,7 @@ class ChunkFactory extends Factory
     {
         return [
             'import_id' => null,
-            'sheet' => $this->faker->name,
+            'sheet' => null,
             'header' => [],
             'rows' => [],
         ];

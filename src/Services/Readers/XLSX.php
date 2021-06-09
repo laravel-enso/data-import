@@ -14,13 +14,11 @@ use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
 class XLSX
 {
-    private string $file;
     private bool $open;
     private Reader $reader;
 
-    public function __construct(string $file)
+    public function __construct(private string $file)
     {
-        $this->file = $file;
         $this->open = false;
         $this->reader = ReaderEntityFactory::createXLSXReader();
     }
@@ -86,7 +84,7 @@ class XLSX
     {
         try {
             $this->reader->open($this->file);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             throw DataImport::fileNotReadable($this->file);
         }
 

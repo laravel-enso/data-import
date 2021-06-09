@@ -2,10 +2,9 @@
 
 namespace LaravelEnso\DataImport\Contracts;
 
-use LaravelEnso\Core\Models\User;
-use LaravelEnso\Helpers\Services\Obj;
+use LaravelEnso\DataImport\Models\DataImport;
 
 interface Authorizes extends Authenticates
 {
-    public function authorizes(User $user, Obj $params): bool;
+    public function authorizes(DataImport $import): bool;
 }

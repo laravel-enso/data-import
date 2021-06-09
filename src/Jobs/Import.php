@@ -15,18 +15,12 @@ class Import implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue;
     public $timeout;
 
-    private DataImport $import;
-
-    private string $sheet;
-
-    public function __construct(DataImport $import, string $sheet)
-    {
-        $this->import = $import;
-        $this->sheet = $sheet;
-
+    public function __construct(
+        private DataImport $import,
+        private string $sheet
+    ) {
         $this->queue = Config::get('enso.imports.queues.splitting');
         $this->timeout = $this->import->template()->timeout();
     }

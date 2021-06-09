@@ -21,8 +21,7 @@ class Params
 
     public function run(): void
     {
-        optional($this->params)
-            ->each(fn ($param) => $this->validate($param));
+        $this->params?->each(fn ($param) => $this->validate($param));
     }
 
     public function validate(Obj $param): void
@@ -45,9 +44,7 @@ class Params
     {
         $this->attributes->dependent($param->get('type'))
             ->reject(fn ($attr) => $param->has($attr))
-            ->unlessEmpty(function ($missing) {
-                throw Exception::missing($missing, $this->attributes->class());
-            });
+            ->unlessEmpty(fn ($missing) => throw Exception::missing($missing, $this->attributes->class()));
 
         return $this;
     }

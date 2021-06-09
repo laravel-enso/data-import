@@ -2,10 +2,10 @@
 
 namespace LaravelEnso\DataImport\Contracts;
 
-use LaravelEnso\Core\Models\User;
+use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\Helpers\Services\Obj;
 
 interface Importable
 {
-    public function run(Obj $row, User $user, Obj $params);
+    public function run(Obj $row, DataImport $import);
 }

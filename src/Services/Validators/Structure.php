@@ -26,8 +26,8 @@ class Structure
         $this->handleSheets();
 
         if ($this->summary->errors()->isEmpty()) {
-            $this->xlsx->sheets()->each(fn ($sheet) => $this
-                ->handleColumns($sheet));
+            $this->xlsx->sheets()
+                ->each(fn ($sheet) => $this->handleColumns($sheet));
         }
 
         return $this->summary->errors()->isEmpty();

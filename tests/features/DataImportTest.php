@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\Core\Models\User;
-use LaravelEnso\Core\Models\UserGroup;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
+use LaravelEnso\UserGroups\Models\UserGroup;
+use LaravelEnso\Users\Models\User;
 use Tests\TestCase;
 
 class DataImportTest extends TestCase
@@ -159,7 +159,7 @@ class DataImportTest extends TestCase
 
     private function cleanUp()
     {
-        optional($this->model)->delete();
+        $this->model?->delete();
 
         File::delete(self::Path.self::ImportTestFile);
         Storage::deleteDirectory(Config::get('enso.files.testingFolder'));

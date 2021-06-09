@@ -9,14 +9,12 @@ use LaravelEnso\Helpers\Services\Obj;
 
 class Row
 {
-    private Obj $row;
-    private Chunk $chunk;
     private Collection $errors;
 
-    public function __construct(Obj $row, Chunk $chunk)
-    {
-        $this->row = $row;
-        $this->chunk = $chunk;
+    public function __construct(
+        private Obj $row,
+        private Chunk $chunk
+    ) {
         $this->errors = new Collection();
     }
 
@@ -47,9 +45,7 @@ class Row
         $custom = $this->chunk->template()->customValidator($this->chunk->sheet);
 
         if ($custom) {
-            $user = $this->chunk->import->createdBy;
-            $params = new Obj($this->chunk->import->params);
-            $custom->run($this->row, $user, $params);
+            $custom->run($this->row, $this->chunk->import);
             $this->errors->push(...$custom->errors());
         }
     }

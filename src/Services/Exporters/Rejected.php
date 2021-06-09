@@ -17,15 +17,13 @@ use LaravelEnso\DataImport\Models\RejectedImport;
 
 class Rejected
 {
-    private DataImport $import;
     private RejectedImport $rejected;
-    private Writer $xlsx;
     private string $path;
     private bool $firstChunk;
+    private Writer $xlsx;
 
-    public function __construct(DataImport $import)
+    public function __construct(private DataImport $import)
     {
-        $this->import = $import;
         $this->rejected = $this->import->rejected()->make();
         $this->path = $this->path();
         $this->firstChunk = true;

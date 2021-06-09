@@ -11,14 +11,16 @@ class Store extends Controller
 {
     public function __invoke(ValidateImportRequest $request)
     {
+        $params = $request->except(['import', 'type']);
+
         $dataImport = DataImport::factory()->make([
             'type' => $request->get('type'),
-            'params' => $request->except(['import', 'type']),
+            'params' => $params,
         ]);
 
         $rules = $dataImport->template()->paramRules();
 
-        Validator::make($dataImport->params, $rules)->validate();
+        Validator::make($params, $rules)->validate();
 
         return $dataImport->upload($request->file('import'));
     }

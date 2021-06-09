@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use LaravelEnso\Core\Models\User;
 use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\Users\Models\User;
 use Tests\TestCase;
 
 class ValidationTest extends TestCase

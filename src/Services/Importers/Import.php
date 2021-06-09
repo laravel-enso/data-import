@@ -3,7 +3,6 @@
 namespace LaravelEnso\DataImport\Services\Importers;
 
 use Closure;
-use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
@@ -13,19 +12,15 @@ use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Jobs\Sheet;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Services\Obj;
 
 class Import
 {
-    private DataImport $import;
-    private string $sheet;
     private Template $template;
-    private Batch $batch;
 
-    public function __construct(DataImport $import, string $sheet)
-    {
-        $this->import = $import;
-        $this->sheet = $sheet;
+    public function __construct(
+        private DataImport $import,
+        private string $sheet
+    ) {
         $this->template = $import->template();
     }
 
@@ -50,10 +45,7 @@ class Import
         $importer = $this->template->importer($this->sheet);
 
         if ($importer instanceof BeforeHook) {
-            $importer->before(
-                $this->import->createdBy,
-                new Obj($this->import->params)
-            );
+            $importer->before($this->import);
         }
 
         return $this;
@@ -65,7 +57,7 @@ class Import
         $afterHook = $this->afterHook();
         $nextStep = $this->nextStep();
 
-        $this->batch = Bus::batch([new Sheet($this->import, $this->sheet)])
+        $batch = Bus::batch([new Sheet($this->import, $this->sheet)])
             ->onQueue($this->template->queue())
             ->then(fn () => $import->update(['batch' => null]))
             ->then(fn ($batch) => $batch->cancelled() ? null : $afterHook())
@@ -73,7 +65,7 @@ class Import
             ->name($this->sheet)
             ->dispatch();
 
-        $this->import->update(['batch' => $this->batch->id]);
+        $this->import->update(['batch' => $batch->id]);
 
         return $this;
     }
@@ -81,11 +73,9 @@ class Import
     private function afterHook(): Closure
     {
         $importer = $this->template->importer($this->sheet);
-        $user = $this->import->createdBy;
-        $params = $this->import->params;
 
         return fn () => $importer instanceof AfterHook
-            ? $importer->after($user, new Obj($params))
+            ? $importer->after($this->import)
             : null;
     }
 
@@ -93,7 +83,7 @@ class Import
     {
         $import = $this->import;
         $sheet = $this->sheet;
-        $nextSheet = $import->template()->nextSheet($sheet);
+        $nextSheet = $this->template->nextSheet($sheet);
 
         if ($nextSheet) {
             return fn () => $import->import($nextSheet->get('name'));

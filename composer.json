@@ -11,7 +11,8 @@
     "homepage": "https://github.com/laravel-enso/data-import",
     "type": "library",
     "license": "MIT",
-    "authors": [{
+    "authors": [
+        {
             "name": "Adrian Ocneanu",
             "email": "aocneanu@gmail.com",
             "homepage": "https://laravel-enso.com",
@@ -26,7 +27,7 @@
     ],
     "require": {
         "box/spout": "^3.0",
-        "laravel-enso/core": "^6.0",
+        "laravel-enso/core": "^7.0",
         "laravel-enso/dynamic-methods": "^2.0",
         "laravel-enso/enums": "^2.0",
         "laravel-enso/excel": "^3.0",

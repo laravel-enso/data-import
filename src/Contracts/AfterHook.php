@@ -2,10 +2,9 @@
 
 namespace LaravelEnso\DataImport\Contracts;
 
-use LaravelEnso\Core\Models\User;
-use LaravelEnso\Helpers\Services\Obj;
+use LaravelEnso\DataImport\Models\DataImport;
 
 interface AfterHook
 {
-    public function after(User $user, Obj $params);
+    public function after(DataImport $import);
 }

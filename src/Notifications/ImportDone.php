@@ -14,16 +14,13 @@ class ImportDone extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $import;
-
-    public function __construct(DataImport $import)
+    public function __construct(public DataImport $import)
     {
-        $this->import = $import;
     }
 
     public function via()
     {
-        return array_merge(['mail'], config('enso.imports.notifications'));
+        return ['mail', ...Config::get('enso.imports.notifications')];
     }
 
     public function toBroadcast()
