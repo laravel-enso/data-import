@@ -4,7 +4,9 @@
     "appends": [
         "entries"
     ],
-    "strip": ["created_by"],
+    "strip": [
+        "created_by"
+    ],
     "buttons": [
         "excel",
         {
@@ -55,7 +57,8 @@
             "data": "data_imports.type",
             "enum": "LaravelEnso\\DataImport\\Enums\\Types",
             "meta": [
-                "sortable", "slot"
+                "sortable",
+                "slot"
             ]
         },
         {
@@ -129,7 +132,7 @@
             "label": "By",
             "name": "createdBy",
             "data": "data_imports.createdBy",
-            "resource": "LaravelEnso\\Core\\Http\\Resources\\User",
+            "resource": "LaravelEnso\\Users\\Http\\Resources\\User",
             "meta": [
                 "slot",
                 "notExportable"
