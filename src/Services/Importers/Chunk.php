@@ -64,7 +64,7 @@ class Chunk
     private function authenticate(): void
     {
         if ($this->importer instanceof Authenticates) {
-            Auth::setUser($this->import->user);
+            Auth::setUser($this->import->createdBy);
         }
     }
 
