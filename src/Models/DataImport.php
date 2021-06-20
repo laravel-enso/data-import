@@ -21,6 +21,7 @@ use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
 use LaravelEnso\Helpers\Casts\Obj;
+use LaravelEnso\Helpers\Traits\AvoidsDeletionConflicts;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
@@ -30,7 +31,8 @@ use LaravelEnso\TrackWho\Traits\CreatedBy;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache, When;
+    use AvoidsDeletionConflicts, CascadesMorphMap, CreatedBy, HasFactory;
+    use HasFile, FilePolicies, TableCache, When;
 
     protected $guarded = [];
 
