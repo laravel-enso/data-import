@@ -6,8 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
@@ -21,18 +23,17 @@ use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
 use LaravelEnso\Files\Traits\FilePolicies;
 use LaravelEnso\Files\Traits\HasFile;
 use LaravelEnso\Helpers\Casts\Obj;
-use LaravelEnso\Helpers\Traits\AvoidsDeletionConflicts;
 use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
 use LaravelEnso\TrackWho\Traits\CreatedBy;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
 {
-    use AvoidsDeletionConflicts, CascadesMorphMap, CreatedBy, HasFactory;
-    use HasFile, FilePolicies, TableCache, When;
+    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache, When;
 
     protected $guarded = [];
 
@@ -183,9 +184,17 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
             throw Exception::deleteRunningImport();
         }
 
-        $this->rejected?->delete();
+        try {
+            return DB::transaction(function () {
+                $this->rejected?->delete();
 
-        return parent::delete();
+                return parent::delete();
+            });
+        } catch (QueryException) {
+            throw new ConflictHttpException(__(
+                'The import is being used in the system and cannot be deleted',
+            ));
+        }
     }
 
     public function cancel()
