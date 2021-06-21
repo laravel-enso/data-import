@@ -15,7 +15,7 @@ class Store extends Controller
 
         $dataImport = DataImport::factory()->make([
             'type' => $request->get('type'),
-            'params' => $params,
+            'params' => new Obj($params),
         ]);
 
         $rules = $dataImport->template()->paramRules();
