@@ -85,11 +85,9 @@ class Import
         $sheet = $this->sheet;
         $nextSheet = $this->template->nextSheet($sheet);
 
-        if ($nextSheet) {
-            return fn () => $import->import($nextSheet->get('name'));
-        } else {
-            return fn () => RejectedExport::withChain([new Finalize($import)])
+        return $nextSheet
+            ? fn () => $import->import($nextSheet->get('name'))
+            : fn () => RejectedExport::withChain([new Finalize($import)])
                 ->dispatch($import);
-        }
     }
 }

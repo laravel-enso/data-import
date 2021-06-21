@@ -25,7 +25,8 @@ class Template
 
     private function root(): self
     {
-        (new Attributes())->validateMandatory($this->template->keys());
+        (new Attributes())->validateMandatory($this->template->keys())
+            ->rejectUnknown($this->template->keys());
 
         return $this;
     }

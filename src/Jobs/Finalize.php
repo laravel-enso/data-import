@@ -8,10 +8,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\DataImport;
 use LaravelEnso\DataImport\Notifications\ImportDone;
+use LaravelEnso\DataImport\Services\Notifiables;
 
 class Finalize implements ShouldQueue
 {
@@ -29,21 +29,14 @@ class Finalize implements ShouldQueue
         $this->notify();
     }
 
-    private function after(string $sheet): self
-    {
-        $importer = $this->import->template()->importer($sheet);
-
-        if ($importer instanceof AfterHook) {
-            $importer->after($this->import);
-        }
-
-        return $this;
-    }
-
     private function notify(): void
     {
         $queue = Config::get('enso.imports.queues.notifications');
         $notification = (new ImportDone($this->import))->onQueue($queue);
         $this->import->file->createdBy->notify($notification);
+
+        if ($this->import->template()->notifies()) {
+            Notifiables::get($this->import)->each->notify($notification);
+        }
     }
 }

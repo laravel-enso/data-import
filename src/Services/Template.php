@@ -37,6 +37,12 @@ class Template
             : (int) Config::get('enso.imports.timeout');
     }
 
+    public function notifies(): bool
+    {
+        return $this->template->has('notifies')
+            && $this->template->get('timeout');
+    }
+
     public function queue(): string
     {
         return $this->template->has('queue')

@@ -98,6 +98,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Notifiable Ids
+    |--------------------------------------------------------------------------
+    | You can add here user ids separated by comma if you want to use post
+    | finalize notifications to other users than the importer.
+    |
+    */
+
+    'notifiableIds' => env('DATA_IMPORT_NOTIFIABLE_IDS', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Configurations
     |--------------------------------------------------------------------------
     | Holds your import configuration. 'label' is used for the main page select
