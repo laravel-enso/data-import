@@ -6,5 +6,5 @@ class Template extends Attributes
 {
     protected array $mandatory = ['sheets', 'timeout'];
 
-    protected array $optional = ['notifies', 'params'];
+    protected array $optional = ['notifies', 'params', 'queue'];
 }
