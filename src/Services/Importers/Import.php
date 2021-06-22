@@ -47,7 +47,7 @@ class Import
         $importer = $this->template->importer($this->sheet);
 
         if ($importer instanceof BeforeHook) {
-            if ($this->importer instanceof Authenticates) {
+            if ($importer instanceof Authenticates) {
                 Auth::setUser($this->import->createdBy);
             }
 
