@@ -3,8 +3,10 @@
 namespace LaravelEnso\DataImport\Services\Importers;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
 use LaravelEnso\DataImport\Contracts\AfterHook;
+use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\Finalize;
@@ -45,6 +47,10 @@ class Import
         $importer = $this->template->importer($this->sheet);
 
         if ($importer instanceof BeforeHook) {
+            if ($this->importer instanceof Authenticates) {
+                Auth::setUser($this->import->createdBy);
+            }
+
             $importer->before($this->import);
         }
 
