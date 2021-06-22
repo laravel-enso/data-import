@@ -91,9 +91,11 @@ class Import
         $sheet = $this->sheet;
         $nextSheet = $this->template->nextSheet($sheet);
 
-        return $nextSheet
-            ? fn () => $import->import($nextSheet->get('name'))
-            : fn () => RejectedExport::withChain([new Finalize($import)])
-                ->dispatch($import);
+        if ($nextSheet) {
+            return fn () => $import->import($nextSheet->get('name'));
+        }
+
+        return fn () => RejectedExport::withChain([new Finalize($import)])
+            ->dispatch($import);
     }
 }
