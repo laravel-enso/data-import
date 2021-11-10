@@ -40,7 +40,7 @@ class Template
     public function notifies(): bool
     {
         return $this->template->has('notifies')
-            && $this->template->get('timeout');
+            && $this->template->get('notifies');
     }
 
     public function queue(): string
