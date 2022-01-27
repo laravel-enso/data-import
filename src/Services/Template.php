@@ -111,9 +111,18 @@ class Template
 
     public function params(bool $validations = true): Obj
     {
-        return (new Obj($this->template->get('params', [])))
+        $params = (new Obj($this->template->get('params', [])))
             ->when(! $validations, fn ($params) => $params
                 ->map->except('validations'));
+
+        $params->each(function ($param) {
+            if($param->has('options')) {
+                $enumClass = $param->get('options');
+                $param->put('options', $enumClass::select());
+            }
+        });
+
+        return $params;
     }
 
     public function sheets(): Obj
