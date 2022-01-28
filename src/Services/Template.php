@@ -111,18 +111,10 @@ class Template
 
     public function params(bool $validations = true): Obj
     {
-        $params = (new Obj($this->template->get('params', [])))
+        return (new Obj($this->template->get('params', [])))
             ->when(! $validations, fn ($params) => $params
-                ->map->except('validations'));
-
-        $params->each(function ($param) {
-            if($param->has('options')) {
-                $enumClass = $param->get('options');
-                $param->put('options', $enumClass::select());
-            }
-        });
-
-        return $params;
+                ->map->except('validations'))
+            ->each(fn ($param) => $this->prepareOptions($param));
     }
 
     public function sheets(): Obj
@@ -171,5 +163,14 @@ class Template
         }
 
         return (new JsonReader(base_path($template)))->obj();
+    }
+
+    private function prepareOptions($param)
+    {
+        $options = $param->get('options');
+
+        if ($options && class_exists($options)) {
+            $param->put('options', $options::select());
+        }
     }
 }

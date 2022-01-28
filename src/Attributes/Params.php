@@ -8,7 +8,7 @@ class Params extends Attributes
 
     protected array $optional = [
         'validations', 'multiple', 'route', 'params', 'custom',
-        'label',  'value', 'selectLabel', 'placeholder', 'options'
+        'label',  'value', 'selectLabel', 'placeholder', 'options',
     ];
 
     protected array $dependent = ['select' => ['route|options']];
