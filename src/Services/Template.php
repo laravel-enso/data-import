@@ -113,7 +113,8 @@ class Template
     {
         return (new Obj($this->template->get('params', [])))
             ->when(! $validations, fn ($params) => $params
-                ->map->except('validations'));
+                ->map->except('validations'))
+            ->each(fn ($param) => $this->optionallySetOptions($param));
     }
 
     public function sheets(): Obj
@@ -162,5 +163,14 @@ class Template
         }
 
         return (new JsonReader(base_path($template)))->obj();
+    }
+
+    private function optionallySetOptions($param)
+    {
+        $options = $param->get('options');
+
+        if ($options && class_exists($options)) {
+            $param->put('options', $options::select());
+        }
     }
 }
