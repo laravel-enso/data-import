@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Facades\Route as Routes;
+use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Attributes\Params as Attributes;
 use LaravelEnso\DataImport\Exceptions\Attributes as Exception;
 use LaravelEnso\DataImport\Exceptions\Route;
@@ -43,7 +44,8 @@ class Params
     private function complementaryAttributes(Obj $param): self
     {
         $this->attributes->dependent($param->get('type'))
-            ->reject(fn ($attr) => $param->has($attr))
+            ->reject(fn ($attr) => Str::of($attr)->explode('|')
+                ->first(fn ($elem) => $param->has($elem)))
             ->unlessEmpty(fn ($missing) => throw Exception::missing($missing, $this->attributes->class()));
 
         return $this;
