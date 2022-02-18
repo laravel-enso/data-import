@@ -49,6 +49,15 @@ class Chunk
         $this->chunk->delete();
     }
 
+    private function authenticate(): self
+    {
+        if ($this->importer instanceof Authenticates) {
+            Auth::setUser($this->import->createdBy);
+        }
+
+        return $this;
+    }
+
     private function authorize(): void
     {
         $unauthorized = $this->importer instanceof Authorizes
@@ -57,15 +66,6 @@ class Chunk
         if ($unauthorized) {
             throw Exception::unauthorized();
         }
-    }
-
-    private function authenticate(): self
-    {
-        if ($this->importer instanceof Authenticates) {
-            Auth::setUser($this->import->createdBy);
-        }
-
-        return $this;
     }
 
     private function process(array $row): void
