@@ -37,8 +37,8 @@ class Chunk
 
     public function handle(): void
     {
-        $this->authorize()
-            ->authenticate();
+        $this->authenticate()
+            ->authorize();
 
         Collection::wrap($this->chunk->rows)
             ->each(fn ($row) => $this->process($row));
@@ -49,23 +49,23 @@ class Chunk
         $this->chunk->delete();
     }
 
-    private function authorize(): self
+    private function authorize(): void
     {
         $unauthorized = $this->importer instanceof Authorizes
-            && ! $this->importer->authorizes($this->import);
+            && !$this->importer->authorizes($this->import);
 
         if ($unauthorized) {
             throw Exception::unauthorized();
         }
-
-        return $this;
     }
 
-    private function authenticate(): void
+    private function authenticate(): self
     {
         if ($this->importer instanceof Authenticates) {
             Auth::setUser($this->import->createdBy);
         }
+
+        return $this;
     }
 
     private function process(array $row): void
@@ -109,7 +109,7 @@ class Chunk
 
     private function dumpRejected(): self
     {
-        if (! $this->rejectedChunk->empty()) {
+        if (!$this->rejectedChunk->empty()) {
             $this->rejectedChunk->save();
         }
 
