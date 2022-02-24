@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Notifications\ImportDone;
 use LaravelEnso\DataImport\Services\Notifiables;
 
@@ -17,7 +17,7 @@ class Finalize implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private DataImport $import)
+    public function __construct(private Import $import)
     {
         $this->queue = Config::get('enso.imports.queues.processing');
     }

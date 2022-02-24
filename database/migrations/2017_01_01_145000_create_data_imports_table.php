@@ -11,6 +11,10 @@ class CreateDataImportsTable extends Migration
         Schema::create('data_imports', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->unsignedBigInteger('file_id')->nullable();
+            $table->foreign('file_id')->references('id')->on('files')
+                ->onUpdate('restrict')->onDelete('cascade');
+
             $table->string('batch')->nullable();
             $table->foreign('batch')->references('id')->on('job_batches');
 

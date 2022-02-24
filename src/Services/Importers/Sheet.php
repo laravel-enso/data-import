@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Jobs\Chunk as Job;
 use LaravelEnso\DataImport\Models\Chunk;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
@@ -21,7 +21,7 @@ class Sheet
 
     public function __construct(
         private Batch $batch,
-        private DataImport $import,
+        private Import $import,
         private string $sheet
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);

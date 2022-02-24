@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Models\RejectedImport;
+use LaravelEnso\Files\Models\File;
 
 class Rejected
 {
@@ -22,7 +23,7 @@ class Rejected
     private bool $firstChunk;
     private Writer $xlsx;
 
-    public function __construct(private DataImport $import)
+    public function __construct(private Import $import)
     {
         $this->rejected = $this->import->rejected()->make();
         $this->path = $this->path();
@@ -97,8 +98,14 @@ class Rejected
 
     private function storeRejected(): self
     {
-        tap($this->rejected)->save()
-            ->file->attach($this->path, $this->filename(), $this->import->createdBy);
+        $args = [$this->rejected, $this->path, $this->filename(), $this->import->created_by];
+
+        $file = File::attach(...$args);
+
+        $this->rejected
+            ->fill(['status' => Statuses::Finalized])
+            ->file()->associate($file)
+            ->save();
 
         return $this;
     }

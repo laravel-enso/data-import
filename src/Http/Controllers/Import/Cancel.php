@@ -3,11 +3,11 @@
 namespace LaravelEnso\DataImport\Http\Controllers\Import;
 
 use Illuminate\Routing\Controller;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 
 class Cancel extends Controller
 {
-    public function __invoke(DataImport $import)
+    public function __invoke(Import $import)
     {
         $import->cancel();
 

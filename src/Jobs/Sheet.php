@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Importers\Sheet as Service;
 
 class Sheet implements ShouldQueue
@@ -16,7 +16,7 @@ class Sheet implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private DataImport $import,
+        private Import $import,
         private string $sheet
     ) {
     }

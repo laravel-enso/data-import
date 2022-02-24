@@ -4,12 +4,12 @@ namespace LaravelEnso\DataImport\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Users\Models\User;
 
 class Notifiables
 {
-    public static function get(DataImport $import): Collection
+    public static function get(Import $import): Collection
     {
         $ids = explode(',', Config::get('enso.imports.notifiableIds'));
 

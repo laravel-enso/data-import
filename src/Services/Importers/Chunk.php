@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Log;
 use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\Authorizes;
 use LaravelEnso\DataImport\Contracts\Importable;
-use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
+use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Models\Chunk as Model;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Services\Validators\Row;
 use LaravelEnso\Helpers\Services\Obj;
@@ -22,7 +22,7 @@ use Throwable;
 
 class Chunk
 {
-    private DataImport $import;
+    private Import $import;
     private Importable $importer;
     private RejectedChunk $rejectedChunk;
     private ConsoleOutput $output;
@@ -121,7 +121,7 @@ class Chunk
         $total = $this->chunk->count();
         $failed = $this->rejectedChunk->count();
 
-        DB::transaction(fn () => DataImport::lockForUpdate()
+        DB::transaction(fn () => Import::lockForUpdate()
             ->whereId($this->import->id)->first()
             ->updateProgress($total - $failed, $failed));
     }

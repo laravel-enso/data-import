@@ -12,7 +12,7 @@ use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Jobs\Finalize;
 use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Jobs\Sheet;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Services\Template;
 
 class Import
@@ -20,7 +20,7 @@ class Import
     private Template $template;
 
     public function __construct(
-        private DataImport $import,
+        private Model $import,
         private string $sheet
     ) {
         $this->template = $import->template();

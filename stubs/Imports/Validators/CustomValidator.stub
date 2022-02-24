@@ -2,12 +2,12 @@
 
 namespace App\Imports\Validators;
 
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Validators\Validator;
 
 class CustomValidator extends Validator
 {
-    public function run(DataImport $import)
+    public function run(Import $import)
     {
         // do custom validation logic
         // $this->addError(string $error) to register errors as many times as you need

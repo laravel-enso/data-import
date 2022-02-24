@@ -2,9 +2,9 @@
 
 namespace LaravelEnso\DataImport\Contracts;
 
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 
 interface BeforeHook
 {
-    public function before(DataImport $import);
+    public function before(Import $import);
 }

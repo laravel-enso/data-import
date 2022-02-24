@@ -11,6 +11,10 @@ class CreateRejectedImportsTable extends Migration
         Schema::create('rejected_imports', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->unsignedBigInteger('file_id')->nullable();
+            $table->foreign('file_id')->references('id')->on('files')
+                ->onUpdate('restrict')->onDelete('cascade');
+
             $table->integer('data_import_id')->unsigned();
             $table->foreign('data_import_id')->references('id')->on('data_imports')
                 ->onDelete('cascade');

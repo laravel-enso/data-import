@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
 use LaravelEnso\Users\Models\User;
@@ -58,7 +58,7 @@ class DataImportTest extends TestCase
                 'filename' => self::ImportTestFile,
             ]);
 
-        $this->model = DataImport::whereHas('file', fn ($file) => $file
+        $this->model = Import::whereHas('file', fn ($file) => $file
             ->whereOriginalName(self::ImportTestFile))->first();
 
         $this->assertNotNull($this->model);
@@ -135,7 +135,7 @@ class DataImportTest extends TestCase
 
     private function attach(string $file)
     {
-        $this->model = DataImport::factory()->create([
+        $this->model = Import::factory()->create([
             'type' => self::ImportType,
         ]);
 
