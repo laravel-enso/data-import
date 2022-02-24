@@ -16,7 +16,7 @@ class ValidateImport extends FormRequest
     {
         return [
             'import' => 'required|file',
-            'type' => 'string|in:' . Types::keys()->implode(','),
+            'type' => 'string|in:'.Types::keys()->implode(','),
         ];
     }
 }

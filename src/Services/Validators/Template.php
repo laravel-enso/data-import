@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Attributes\Column as Column;
+use LaravelEnso\DataImport\Attributes\Column;
 use LaravelEnso\DataImport\Attributes\Sheet;
 use LaravelEnso\DataImport\Attributes\Template as Attributes;
 use LaravelEnso\DataImport\Contracts\Importable;

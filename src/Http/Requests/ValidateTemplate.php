@@ -16,7 +16,7 @@ class ValidateTemplate extends FormRequest
     {
         return [
             'template' => 'required|file',
-            'type' => 'string|in:' . Types::keys()->implode(','),
+            'type' => 'string|in:'.Types::keys()->implode(','),
         ];
     }
 }
