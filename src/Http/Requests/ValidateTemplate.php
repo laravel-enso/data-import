@@ -5,7 +5,7 @@ namespace LaravelEnso\DataImport\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use LaravelEnso\DataImport\Enums\Types;
 
-class ValidateTemplateRequest extends FormRequest
+class ValidateTemplate extends FormRequest
 {
     public function authorize()
     {
@@ -16,7 +16,7 @@ class ValidateTemplateRequest extends FormRequest
     {
         return [
             'template' => 'required|file',
-            'type' => 'string|in:'.Types::keys()->implode(','),
+            'type' => 'string|in:' . Types::keys()->implode(','),
         ];
     }
 }
