@@ -5,7 +5,7 @@ namespace LaravelEnso\DataImport\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use LaravelEnso\DataImport\Enums\Types;
 
-class ValidateImportRequest extends FormRequest
+class ValidateImport extends FormRequest
 {
     public function authorize()
     {

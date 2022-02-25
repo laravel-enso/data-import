@@ -5,18 +5,18 @@ namespace LaravelEnso\DataImport\Tables\Builders;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Models\RejectedImport;
 use LaravelEnso\Tables\Contracts\ConditionalActions;
 use LaravelEnso\Tables\Contracts\Table;
 
-class ImportTable implements Table, ConditionalActions
+class Import implements Table, ConditionalActions
 {
-    protected const TemplatePath = __DIR__.'/../Templates/imports.json';
+    private const TemplatePath = __DIR__.'/../Templates/dataImports.json';
 
     public function query(): Builder
     {
-        return Import::selectRaw("
+        return Model::selectRaw("
             data_imports.id, data_imports.type, data_imports.status,
             files.original_name as name, data_imports.successful,
             data_imports.failed, data_imports.created_at,
@@ -24,7 +24,8 @@ class ImportTable implements Table, ConditionalActions
             {$this->rawDuration()} as duration, data_imports.created_by
         ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
             ->join('files', fn ($join) => $join
-                ->on('files.id', 'data_imports.file_id'))
+                ->on('files.attachable_id', 'data_imports.id')
+                ->where('files.attachable_type', Model::morphMapKey()))
             ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
             ->leftJoin('files as rejected_files', fn ($join) => $join
                 ->on('rejected_files.attachable_id', 'rejected_imports.id')
