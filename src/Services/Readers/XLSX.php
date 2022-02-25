@@ -9,7 +9,7 @@ use Box\Spout\Reader\XLSX\Sheet;
 use Box\Spout\Reader\XLSX\SheetIterator;
 use Exception;
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Exceptions\DataImport;
+use LaravelEnso\DataImport\Exceptions\Import;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
 class XLSX
@@ -85,7 +85,7 @@ class XLSX
         try {
             $this->reader->open($this->file);
         } catch (Exception) {
-            throw DataImport::fileNotReadable($this->file);
+            throw Import::fileNotReadable($this->file);
         }
 
         $this->open = true;

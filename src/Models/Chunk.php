@@ -19,7 +19,7 @@ class Chunk extends Model
 
     public function import()
     {
-        return $this->belongsTo(DataImport::class);
+        return $this->belongsTo(Import::class);
     }
 
     public function template(): Template

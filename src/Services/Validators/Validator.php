@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Helpers\Services\Obj;
 
 abstract class Validator
@@ -15,7 +15,7 @@ abstract class Validator
         $this->errors = new Collection();
     }
 
-    abstract public function run(Obj $row, DataImport $import);
+    abstract public function run(Obj $row, Import $import);
 
     public function errors(): Collection
     {

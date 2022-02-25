@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Services\Importers\Import as Service;
 
 class Import implements ShouldQueue
@@ -18,7 +18,7 @@ class Import implements ShouldQueue
     public $timeout;
 
     public function __construct(
-        private DataImport $import,
+        private Model $import,
         private string $sheet
     ) {
         $this->queue = Config::get('enso.imports.queues.splitting');

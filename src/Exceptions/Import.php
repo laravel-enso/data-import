@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\Exceptions;
 
 use LaravelEnso\Helpers\Exceptions\EnsoException;
 
-class DataImport extends EnsoException
+class Import extends EnsoException
 {
     public static function configNotReadable()
     {

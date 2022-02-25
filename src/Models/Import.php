@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
@@ -14,16 +15,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Enums\Types;
-use LaravelEnso\DataImport\Exceptions\DataImport as Exception;
-use LaravelEnso\DataImport\Jobs\Import;
+use LaravelEnso\DataImport\Exceptions\Import as Exception;
+use LaravelEnso\DataImport\Jobs\Import as Job;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Structure;
 use LaravelEnso\Files\Contracts\Attachable;
-use LaravelEnso\Files\Contracts\AuthorizesFileAccess;
-use LaravelEnso\Files\Traits\FilePolicies;
-use LaravelEnso\Files\Traits\HasFile;
+use LaravelEnso\Files\Contracts\Extensions;
+use LaravelEnso\Files\Models\File;
 use LaravelEnso\Helpers\Casts\Obj;
-use LaravelEnso\Helpers\Traits\CascadesMorphMap;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
@@ -31,19 +30,22 @@ use LaravelEnso\Tables\Traits\TableCache;
 use LaravelEnso\TrackWho\Traits\CreatedBy;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
-class DataImport extends Model implements Attachable, IOOperation, AuthorizesFileAccess
+class Import extends Model implements Attachable, Extensions, IOOperation
 {
-    use CascadesMorphMap, CreatedBy, HasFactory, HasFile, FilePolicies, TableCache, When;
+    use CreatedBy, HasFactory, TableCache, When;
+
+    protected $table = 'data_imports';
 
     protected $guarded = [];
 
     protected $casts = ['status' => 'integer', 'params' => Obj::class];
 
-    protected $extensions = ['xlsx'];
-
-    protected $folder = 'imports';
-
     protected $template;
+
+    public function file(): Relation
+    {
+        return $this->belongsTo(File::class);
+    }
 
     public function rejected()
     {
@@ -58,6 +60,11 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
     public function rejectedChunks()
     {
         return $this->hasMany(RejectedChunk::class, 'import_id');
+    }
+
+    public function extensions(): array
+    {
+        return ['xlsx'];
     }
 
     public function batch(): ?Batch
@@ -138,11 +145,6 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         return in_array($this->status, Statuses::running());
     }
 
-    public function deletable(): bool
-    {
-        return in_array($this->status, Statuses::deletable());
-    }
-
     public function template(): Template
     {
         return $this->template ??= new Template($this->type);
@@ -153,8 +155,9 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
         $structure = new Structure($this->template(), Storage::path($path), $filename);
 
         if ($structure->validates()) {
-            tap($this)->save()
-                ->file->attach($path, $filename);
+            $file = File::attach($this, $path, $filename, $this->created_by);
+
+            $this->file()->associate($file)->save();
 
             $this->import();
         }
@@ -180,7 +183,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
 
     public function delete()
     {
-        if (! $this->deletable()) {
+        if (! Statuses::deletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 
@@ -221,7 +224,7 @@ class DataImport extends Model implements Attachable, IOOperation, AuthorizesFil
             $sheet = $this->template()->sheets()->first()->get('name');
         }
 
-        Import::dispatch($this, $sheet);
+        Job::dispatch($this, $sheet);
     }
 
     public function restart(): self

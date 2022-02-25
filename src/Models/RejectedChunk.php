@@ -17,7 +17,7 @@ class RejectedChunk extends Model
 
     public function import()
     {
-        return $this->belongsTo(DataImport::class);
+        return $this->belongsTo(Import::class);
     }
 
     public function add(array $row): void

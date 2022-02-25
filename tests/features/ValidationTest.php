@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Users\Models\User;
 use Tests\TestCase;
 
@@ -54,7 +54,7 @@ class ValidationTest extends TestCase
                 'filename' => self::TestFile,
             ]);
 
-        $this->assertNull(DataImport::whereName(self::TestFile)->first());
+        $this->assertNull(Import::whereName(self::TestFile)->first());
     }
 
     /** @test */
@@ -77,7 +77,7 @@ class ValidationTest extends TestCase
                 'filename' => self::TestFile,
             ]);
 
-        $this->assertNull(DataImport::whereName(self::TestFile)->first());
+        $this->assertNull(Import::whereName(self::TestFile)->first());
     }
 
     /** @test */

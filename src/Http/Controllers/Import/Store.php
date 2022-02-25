@@ -5,7 +5,7 @@ namespace LaravelEnso\DataImport\Http\Controllers\Import;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use LaravelEnso\DataImport\Http\Requests\ValidateImport;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Helpers\Services\Obj;
 
 class Store extends Controller
@@ -14,15 +14,15 @@ class Store extends Controller
     {
         $params = $request->except(['import', 'type']);
 
-        $dataImport = DataImport::factory()->make([
+        $import = Import::factory()->make([
             'type' => $request->get('type'),
             'params' => new Obj($params),
         ]);
 
-        $rules = $dataImport->template()->paramRules();
+        $rules = $import->template()->paramRules();
 
         Validator::make($params, $rules)->validate();
 
-        return $dataImport->upload($request->file('import'));
+        return $import->upload($request->file('import'));
     }
 }

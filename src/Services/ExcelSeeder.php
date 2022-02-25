@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 
 class ExcelSeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class ExcelSeeder extends Seeder
     {
         File::copy($this->source(), Storage::path($this->path()));
 
-        DataImport::factory()
+        Import::factory()
             ->make(['type' => $this->type, 'params' => $this->params])
             ->attach($this->path(), $this->filename);
     }

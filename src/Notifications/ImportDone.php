@@ -8,13 +8,13 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Models\DataImport;
+use LaravelEnso\DataImport\Models\Import;
 
 class ImportDone extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public DataImport $import)
+    public function __construct(public Import $import)
     {
     }
 

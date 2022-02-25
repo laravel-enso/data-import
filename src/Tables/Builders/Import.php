@@ -5,12 +5,12 @@ namespace LaravelEnso\DataImport\Tables\Builders;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Models\DataImport as Model;
+use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Models\RejectedImport;
 use LaravelEnso\Tables\Contracts\ConditionalActions;
 use LaravelEnso\Tables\Contracts\Table;
 
-class DataImport implements Table, ConditionalActions
+class Import implements Table, ConditionalActions
 {
     private const TemplatePath = __DIR__.'/../Templates/dataImports.json';
 

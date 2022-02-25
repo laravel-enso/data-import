@@ -3,10 +3,10 @@
 namespace LaravelEnso\DataImport\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use LaravelEnso\DataImport\Models\DataImport as Model;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Users\Models\User;
 
-class DataImport
+class Policy
 {
     use HandlesAuthorization;
 
@@ -17,22 +17,22 @@ class DataImport
         }
     }
 
-    public function view(User $user, Model $import)
+    public function view(User $user, Import $import)
     {
         return $this->ownsDataImport($user, $import);
     }
 
-    public function share(User $user, Model $import)
+    public function share(User $user, Import $import)
     {
         return $this->ownsDataImport($user, $import);
     }
 
-    public function destroy(User $user, Model $import)
+    public function destroy(User $user, Import $import)
     {
         return $this->ownsDataImport($user, $import);
     }
 
-    private function ownsDataImport(User $user, Model $import)
+    private function ownsDataImport(User $user, Import $import)
     {
         return $user->id === (int) $import->created_by;
     }

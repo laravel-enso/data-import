@@ -4,20 +4,18 @@ namespace LaravelEnso\DataImport;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use LaravelEnso\DataImport\Models\DataImport;
-use LaravelEnso\DataImport\Models\RejectedImport;
+use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\IO\Observers\IOObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        DataImport::observe(IOObserver::class);
+        Import::observe(IOObserver::class);
 
         $this->load()
             ->publishAssets()
-            ->publishExamples()
-            ->mapMorphs();
+            ->publishExamples();
     }
 
     private function load()
@@ -62,14 +60,6 @@ class AppServiceProvider extends ServiceProvider
             ->put("{$stubPrefix}{$stub}.stub", app_path("{$stub}.php")), new Collection());
 
         $this->publishes($stubs->all(), 'data-import-examples');
-
-        return $this;
-    }
-
-    private function mapMorphs()
-    {
-        DataImport::morphMap();
-        RejectedImport::morphMap();
 
         return $this;
     }
