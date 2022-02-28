@@ -2,12 +2,8 @@
 
 namespace LaravelEnso\DataImport\Upgrades;
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use LaravelEnso\DataImport\Models\Import;
-use LaravelEnso\Upgrade\Contracts\MigratesData;
 use LaravelEnso\Upgrade\Contracts\MigratesTable;
 use LaravelEnso\Upgrade\Contracts\Prioritization;
 use LaravelEnso\Upgrade\Helpers\Table;
