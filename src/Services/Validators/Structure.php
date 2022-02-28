@@ -13,12 +13,14 @@ class Structure
     private Template $template;
     private XLSX $xlsx;
     private Summary $summary;
+    private string $filename;
 
     public function __construct(Template $template, string $path, string $filename)
     {
         $this->template = $template;
         $this->xlsx = new XLSX($path);
-        $this->summary = new Summary($filename);
+        $this->filename = $filename;
+        $this->summary = new Summary();
     }
 
     public function validates(): bool
@@ -35,7 +37,10 @@ class Structure
 
     public function summary(): array
     {
-        return $this->summary->toArray();
+        return [
+            'filename' => $this->filename,
+            'errors' => $this->summary->toArray(),
+        ];
     }
 
     private function handleSheets(): void

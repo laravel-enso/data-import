@@ -15,8 +15,8 @@ class CreateRejectedImportsTable extends Migration
             $table->foreign('file_id')->references('id')->on('files')
                 ->onUpdate('restrict')->onDelete('cascade');
 
-            $table->integer('data_import_id')->unsigned();
-            $table->foreign('data_import_id')->references('id')->on('data_imports')
+            $table->integer('import_id')->unsigned();
+            $table->foreign('import_id')->references('id')->on('data_imports')
                 ->onDelete('cascade');
 
             $table->timestamps();

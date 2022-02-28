@@ -9,17 +9,14 @@ class Summary
 {
     private Obj $errors;
 
-    public function __construct(private string $filename)
+    public function __construct()
     {
         $this->errors = new Obj();
     }
 
     public function toArray(): array
     {
-        return [
-            'filename' => $this->filename,
-            'errors' => $this->errors,
-        ];
+        return $this->errors->toArray();
     }
 
     public function errors(): Obj

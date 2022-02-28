@@ -12,7 +12,7 @@ use LaravelEnso\Tables\Contracts\Table;
 
 class Import implements Table, ConditionalActions
 {
-    private const TemplatePath = __DIR__.'/../Templates/dataImports.json';
+    private const TemplatePath = __DIR__.'/../Templates/imports.json';
 
     public function query(): Builder
     {
@@ -24,12 +24,10 @@ class Import implements Table, ConditionalActions
             {$this->rawDuration()} as duration, data_imports.created_by
         ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
             ->join('files', fn ($join) => $join
-                ->on('files.attachable_id', 'data_imports.id')
-                ->where('files.attachable_type', Model::morphMapKey()))
-            ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.data_import_id')
+                ->on('files.id', 'data_imports.file_id'))
+            ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.import_id')
             ->leftJoin('files as rejected_files', fn ($join) => $join
-                ->on('rejected_files.attachable_id', 'rejected_imports.id')
-                ->where('rejected_files.attachable_type', RejectedImport::morphMapKey()));
+                ->on('rejected_files.id', 'rejected_imports.file_id'));
     }
 
     public function templatePath(): string

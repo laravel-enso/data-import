@@ -25,7 +25,7 @@ class Sheet
         private string $sheet
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
-        $this->xlsx = new XLSX(Storage::path($import->file->path));
+        $this->xlsx = new XLSX(Storage::path($import->file->path()));
     }
 
     public function handle()

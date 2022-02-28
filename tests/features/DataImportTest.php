@@ -24,7 +24,7 @@ class DataImportTest extends TestCase
     private const ContentErrorsFile = 'content_errors.xlsx';
     private const ImportTestFile = 'userGroups_import_test.xlsx';
 
-    private $permissionGroup = 'import';
+    private string $permissionGroup = 'import';
     private $model;
 
     protected function setUp(): void
@@ -64,7 +64,7 @@ class DataImportTest extends TestCase
         $this->assertNotNull($this->model);
         $this->assertNotNull(UserGroup::whereName('ImportTestName')->first());
 
-        Storage::assertExists($this->model->file->path);
+        Storage::assertExists($this->model->file->path());
     }
 
     /** @test */
@@ -75,7 +75,7 @@ class DataImportTest extends TestCase
 
         $this->assertNotNull($this->model->rejected);
         $this->assertNotNull($this->model->rejected->file);
-        Storage::assertExists($this->model->rejected->file->path);
+        Storage::assertExists($this->model->rejected->file->path());
     }
 
     /** @test */
@@ -123,14 +123,14 @@ class DataImportTest extends TestCase
         $this->attach(self::ImportFile);
         $this->model->refresh();
 
-        Storage::assertExists($this->model->file->path);
+        Storage::assertExists($this->model->file->path());
 
         $this->delete(route('import.destroy', [$this->model->id], false))
             ->assertStatus(200);
 
         $this->assertNull($this->model->fresh());
 
-        Storage::assertMissing($this->model->file->path);
+        Storage::assertMissing($this->model->file->path());
     }
 
     private function attach(string $file)
@@ -139,14 +139,15 @@ class DataImportTest extends TestCase
             'type' => self::ImportType,
         ]);
 
-        $path = "{$this->model->folder()}/{$file}";
+        $folder = Config::get('enso.files.testingFolder');
+        $path = "{$folder}/$file";
 
         File::copy(self::Path.$file, Storage::path($path));
 
-        $this->model->attach($path, self::ImportTestFile);
+        $this->model->attach($file, self::ImportTestFile);
     }
 
-    private function uploadedFile($file)
+    private function uploadedFile($file): UploadedFile
     {
         return new UploadedFile(
             self::Path.$file,

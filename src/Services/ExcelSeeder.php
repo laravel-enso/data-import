@@ -8,13 +8,19 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\Files\Models\Type;
 
-class ExcelSeeder extends Seeder
+abstract class ExcelSeeder extends Seeder
 {
     protected string $type;
     protected string $filename;
     protected string $filePath;
     protected array $params = [];
+
+    public function __construct()
+    {
+        $this->savedName = "{$this->hash()}.xlsx";
+    }
 
     public function run()
     {
@@ -22,7 +28,16 @@ class ExcelSeeder extends Seeder
 
         Import::factory()
             ->make(['type' => $this->type, 'params' => $this->params])
-            ->attach($this->path(), $this->filename);
+            ->attach($this->savedName, $this->filename);
+    }
+
+    abstract protected function type(): string;
+
+    abstract protected function filename(): string;
+
+    protected function params(): array
+    {
+        return [];
     }
 
     private function source(): string
@@ -34,7 +49,7 @@ class ExcelSeeder extends Seeder
 
     private function path(): string
     {
-        return $this->filePath ??= "imports/{$this->hash()}.xlsx";
+        return Type::for(Import::class)->path($this->savedName);
     }
 
     private function hash(): string

@@ -15,18 +15,19 @@ use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Models\RejectedImport;
 use LaravelEnso\Files\Models\File;
+use LaravelEnso\Files\Models\Type;
 
 class Rejected
 {
     private RejectedImport $rejected;
-    private string $path;
+    private string $savedName;
     private bool $firstChunk;
     private Writer $xlsx;
 
     public function __construct(private Import $import)
     {
         $this->rejected = $this->import->rejected()->make();
-        $this->path = $this->path();
+        $this->savedName = $this->savedName();
         $this->firstChunk = true;
     }
 
@@ -52,8 +53,10 @@ class Rejected
 
         $this->xlsx = WriterEntityFactory::createXLSXWriter();
 
+        $path = Type::for($this->rejected)->path($this->savedName);
+
         $this->xlsx->setDefaultRowStyle($defaultStyle)
-            ->openToFile(Storage::path($this->path));
+            ->openToFile(Storage::path($path));
     }
 
     private function export(RejectedChunk $chunk): void
@@ -98,14 +101,11 @@ class Rejected
 
     private function storeRejected(): self
     {
-        $args = [$this->rejected, $this->path, $this->filename(), $this->import->created_by];
+        $args = [$this->rejected, $this->savedName, $this->filename()];
 
         $file = File::attach(...$args);
 
-        $this->rejected
-            ->fill(['status' => Statuses::Finalized])
-            ->file()->associate($file)
-            ->save();
+        $this->rejected->file()->associate($file)->save();
 
         return $this;
     }
@@ -122,11 +122,11 @@ class Rejected
         return "{$baseName}_rejected.xlsx";
     }
 
-    private function path(): string
+    private function savedName(): string
     {
         $hash = Str::random(40);
 
-        return "{$this->rejected->folder()}/{$hash}.xlsx";
+        return "{$hash}.xlsx";
     }
 
     private function row(array $row): Row

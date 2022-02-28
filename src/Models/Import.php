@@ -22,6 +22,7 @@ use LaravelEnso\DataImport\Services\Validators\Structure;
 use LaravelEnso\Files\Contracts\Attachable;
 use LaravelEnso\Files\Contracts\Extensions;
 use LaravelEnso\Files\Models\File;
+use LaravelEnso\Files\Models\Type;
 use LaravelEnso\Helpers\Casts\Obj;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
@@ -101,7 +102,7 @@ class Import extends Model implements Attachable, Extensions, IOOperation
     {
         return [
             'type' => Str::lower(Types::get($this->type)),
-            'filename' => $this->file->original_name,
+            'filename' => $this->file?->original_name,
             'sheet' => $this->batch()?->name,
             'successful' => $this->successful,
             'failed' => $this->failed,
@@ -150,13 +151,13 @@ class Import extends Model implements Attachable, Extensions, IOOperation
         return $this->template ??= new Template($this->type);
     }
 
-    public function attach(string $path, string $filename): array
+    public function attach(string $savedName, string $filename): array
     {
+        $path = Type::for($this::class)->path($savedName);
         $structure = new Structure($this->template(), Storage::path($path), $filename);
 
         if ($structure->validates()) {
-            $file = File::attach($this, $path, $filename, $this->created_by);
-
+            $file = File::attach($this, $savedName, $filename);
             $this->file()->associate($file)->save();
 
             $this->import();
@@ -172,8 +173,10 @@ class Import extends Model implements Attachable, Extensions, IOOperation
         $structure = new Structure($this->template(), $path, $filename);
 
         if ($structure->validates()) {
-            tap($this)->save()
-                ->file->upload($file);
+            $this->save();
+
+            $file = File::upload($this, $file);
+            $this->file()->associate($file)->save();
 
             $this->import();
         }
@@ -191,9 +194,10 @@ class Import extends Model implements Attachable, Extensions, IOOperation
             return DB::transaction(function () {
                 $this->rejected?->delete();
 
-                return parent::delete();
+                parent::delete();
+                $this->file->delete();
             });
-        } catch (QueryException) {
+        } catch (QueryException $e) {
             throw new ConflictHttpException(__(
                 'The import is being used in the system and cannot be deleted',
             ));
