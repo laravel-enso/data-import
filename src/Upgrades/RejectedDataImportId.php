@@ -17,7 +17,7 @@ class RejectedDataImportId implements MigratesTable, Prioritization
 
     public function migrateTable(): void
     {
-        Schema::create('rejected_imports', function (Blueprint $table) {
+        Schema::table('rejected_imports', function (Blueprint $table) {
             $table->renameColumn('data_import_id', 'import_id');
         });
     }
