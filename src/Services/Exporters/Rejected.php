@@ -101,7 +101,10 @@ class Rejected
 
     private function storeRejected(): self
     {
-        $args = [$this->rejected, $this->savedName, $this->filename()];
+        $args = [
+            $this->rejected, $this->savedName,
+            $this->filename(), $this->import->created_by,
+        ];
 
         $file = File::attach(...$args);
 
