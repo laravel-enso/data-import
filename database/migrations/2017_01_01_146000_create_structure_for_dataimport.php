@@ -2,7 +2,7 @@
 
 use LaravelEnso\Migrator\Database\Migration;
 
-class CreateStructureForDataImport extends Migration
+return new class extends Migration
 {
     protected array $permissions = [
         ['name' => 'import.index', 'description' => 'Imports index', 'is_default' => false],
@@ -28,4 +28,4 @@ class CreateStructureForDataImport extends Migration
     protected array $menu = [
         'name' => 'Data Import', 'icon' => 'cloud-upload-alt', 'route' => 'import.index', 'order_index' => 800, 'has_children' => false,
     ];
-}
+};
