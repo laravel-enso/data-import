@@ -5,11 +5,16 @@ namespace LaravelEnso\DataImport\Upgrades;
 use Illuminate\Support\Facades\DB;
 use LaravelEnso\Upgrade\Contracts\BeforeMigration;
 use LaravelEnso\Upgrade\Contracts\MigratesData;
+use LaravelEnso\Upgrade\Helpers\Table;
 
 class RejectedFileCreatedBy implements MigratesData, BeforeMigration
 {
     public function isMigrated(): bool
     {
+        if (Table::hasColumn('rejected_imports', 'import_id')) {
+            return true;
+        }
+
         $result = DB::select("
             SELECT * FROM `files`
             JOIN rejected_imports ON rejected_imports.id = files.attachable_id
