@@ -22,4 +22,10 @@ class RejectedImport extends Model implements Attachable
     {
         return $this->belongsTo(File::class);
     }
+
+    public function delete()
+    {
+        parent::delete();
+        $this->file->delete();
+    }
 }

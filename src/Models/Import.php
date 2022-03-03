@@ -7,10 +7,8 @@ use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
@@ -29,7 +27,6 @@ use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
 use LaravelEnso\TrackWho\Traits\CreatedBy;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class Import extends Model implements Attachable, Extensions, IOOperation
 {
@@ -190,18 +187,9 @@ class Import extends Model implements Attachable, Extensions, IOOperation
             throw Exception::deleteRunningImport();
         }
 
-        try {
-            return DB::transaction(function () {
-                $this->rejected?->delete();
-
-                parent::delete();
-                $this->file->delete();
-            });
-        } catch (QueryException $e) {
-            throw new ConflictHttpException(__(
-                'The import is being used in the system and cannot be deleted',
-            ));
-        }
+        $this->rejected?->delete();
+        parent::delete();
+        $this->file->delete();
     }
 
     public function cancel()
