@@ -31,7 +31,7 @@ class Import implements Table, ConditionalActions
 
     public function templatePath(): string
     {
-        return static::TemplatePath;
+        return self::TemplatePath;
     }
 
     private function rawDuration(): string
