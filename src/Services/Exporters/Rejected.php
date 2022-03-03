@@ -53,7 +53,7 @@ class Rejected
 
         $this->xlsx = WriterEntityFactory::createXLSXWriter();
 
-        $path = Type::for($this->rejected)->path($this->savedName);
+        $path = Type::for($this->rejected::class)->path($this->savedName);
 
         $this->xlsx->setDefaultRowStyle($defaultStyle)
             ->openToFile(Storage::path($path));
