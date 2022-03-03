@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::create('data_imports', function (Blueprint $table) {
@@ -13,7 +12,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('file_id')->nullable();
             $table->foreign('file_id')->references('id')->on('files')
-                ->onUpdate('restrict')->onDelete('cascade');
+                ->onUpdate('restrict')->onDelete('restrict');
 
             $table->string('batch')->nullable();
             $table->foreign('batch')->references('id')->on('job_batches');
