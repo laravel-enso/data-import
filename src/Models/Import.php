@@ -47,17 +47,17 @@ class Import extends Model implements Attachable, Extensions, IOOperation
         return $this->belongsTo(File::class);
     }
 
-    public function rejected()
+    public function rejected(): Relation
     {
         return $this->hasOne(RejectedImport::class);
     }
 
-    public function chunks()
+    public function chunks(): Relation
     {
         return $this->hasMany(Chunk::class, 'import_id');
     }
 
-    public function rejectedChunks()
+    public function rejectedChunks(): Relation
     {
         return $this->hasMany(RejectedChunk::class, 'import_id');
     }
