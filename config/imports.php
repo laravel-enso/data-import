@@ -109,6 +109,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Retain exports for a number of days
+    |--------------------------------------------------------------------------
+    | Sets the default period in days for retaining exports. Must be used
+    | together with the Purge command.
+    |
+     */
+
+    'retainFor' => env('IMPORT_RETAIN_FOR', 180),
+
+    /*
+    |--------------------------------------------------------------------------
     | Configurations
     |--------------------------------------------------------------------------
     | Holds your import configuration. 'label' is used for the main page select
@@ -122,4 +133,5 @@ return [
             'template' => 'vendor/laravel-enso/data-import/src/Tests/userGroups.json',
         ],
     ],
+
 ];

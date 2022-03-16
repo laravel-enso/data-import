@@ -4,11 +4,13 @@ namespace LaravelEnso\DataImport\Models;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Batch;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
@@ -58,6 +60,19 @@ class Import extends Model implements Attachable, Extensions, IOOperation
     public function rejectedChunks()
     {
         return $this->hasMany(RejectedChunk::class, 'import_id');
+    }
+
+    public function scopeExpired(Builder $query): Builder
+    {
+        $retainFor = Config::get('enso.imports.retainFor');
+        $expired = Carbon::today()->subDays($retainFor);
+
+        return $query->where('created_at', '<', $expired);
+    }
+
+    public function scopeDeletable(Builder $query): Builder
+    {
+        return $query->whereIn('status', Statuses::deletable());
     }
 
     public function extensions(): array
@@ -183,7 +198,7 @@ class Import extends Model implements Attachable, Extensions, IOOperation
 
     public function delete()
     {
-        if (! Statuses::deletable($this->status)) {
+        if (! Statuses::isDeletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 

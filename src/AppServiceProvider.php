@@ -2,8 +2,10 @@
 
 namespace LaravelEnso\DataImport;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\DataImport\Commands\Purge;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\IO\Observers\IOObserver;
 
@@ -15,10 +17,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->load()
             ->publishAssets()
-            ->publishExamples();
+            ->publishExamples()
+            ->command();
     }
 
-    private function load()
+    private function load(): self
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
@@ -31,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         return $this;
     }
 
-    private function publishAssets()
+    private function publishAssets(): self
     {
         $this->publishes([
             __DIR__.'/../config' => config_path('enso'),
@@ -48,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
         return $this;
     }
 
-    private function publishExamples()
+    private function publishExamples(): self
     {
         $stubPrefix = __DIR__.'/../stubs/';
 
@@ -62,5 +65,13 @@ class AppServiceProvider extends ServiceProvider
         $this->publishes($stubs->all(), 'data-import-examples');
 
         return $this;
+    }
+
+    private function command(): void
+    {
+        $this->commands(Purge::class);
+
+        $this->app->booted(fn () => $this->app->make(Schedule::class)
+            ->command('enso:data-import:purge')->daily());
     }
 }
