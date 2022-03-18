@@ -27,13 +27,8 @@ class Statuses extends Enum
         return [static::Waiting, static::Processing];
     }
 
-    public static function deletable(): array
+    public static function deletable(int $status): bool
     {
-        return [static::Finalized, static::Cancelled];
-    }
-
-    public static function isDeletable(int $status): bool
-    {
-        return in_array($status, static::deletable());
+        return in_array($status, [static::Finalized, static::Cancelled]);
     }
 }

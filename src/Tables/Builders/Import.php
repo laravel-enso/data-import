@@ -22,8 +22,7 @@ class Import implements Table, ConditionalActions
             {$this->rawTime()} as time, rejected_imports.id as rejected_id,
             {$this->rawDuration()} as duration, data_imports.created_by
         ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
-            ->join('files', fn ($join) => $join
-                ->on('files.id', 'data_imports.file_id'))
+            ->join('files', 'files.id', 'data_imports.file_id')
             ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.import_id')
             ->leftJoin('files as rejected_files', fn ($join) => $join
                 ->on('rejected_files.id', 'rejected_imports.file_id'));

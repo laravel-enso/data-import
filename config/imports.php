@@ -116,7 +116,7 @@ return [
     |
      */
 
-    'retainFor' => env('IMPORT_RETAIN_FOR', 0),
+    'retainFor' => (int) env('IMPORT_RETAIN_FOR', 0),
 
     /*
     |--------------------------------------------------------------------------

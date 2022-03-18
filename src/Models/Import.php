@@ -65,14 +65,14 @@ class Import extends Model implements Attachable, Extensions, IOOperation
     public function scopeExpired(Builder $query): Builder
     {
         $retainFor = Config::get('enso.imports.retainFor');
+
+        if ($retainFor === 0) {
+            return $query->whereId(0);
+        }
+
         $expired = Carbon::today()->subDays($retainFor);
 
         return $query->where('created_at', '<', $expired);
-    }
-
-    public function scopeDeletable(Builder $query): Builder
-    {
-        return $query->whereIn('status', Statuses::deletable());
     }
 
     public function extensions(): array
@@ -196,9 +196,18 @@ class Import extends Model implements Attachable, Extensions, IOOperation
         return $structure->summary();
     }
 
+    public function forceDelete()
+    {
+        if (! Statuses::deletable($this->status)) {
+            $this->update(['status' => Statuses::Cancelled]);
+        }
+
+        $this->delete();
+    }
+
     public function delete()
     {
-        if (! Statuses::isDeletable($this->status)) {
+        if (! Statuses::deletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 

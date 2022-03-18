@@ -13,6 +13,6 @@ class Purge extends Command
 
     public function handle()
     {
-        Import::expired()->deletable()->get()->each->delete();
+        Import::expired()->get()->each->forceDelete();
     }
 }
