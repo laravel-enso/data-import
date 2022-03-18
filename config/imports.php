@@ -111,12 +111,12 @@ return [
     |--------------------------------------------------------------------------
     | Retain imports for a number of days
     |--------------------------------------------------------------------------
-    | Sets the default period in days for retaining imports. Must be used
-    | together with the Purge command.
+    | The default period in days for retaining imports. Is used by the Purge
+    | command. Leave it 0 if you want to retain files forever. 
     |
      */
 
-    'retainFor' => env('IMPORT_RETAIN_FOR', 180),
+    'retainFor' => env('IMPORT_RETAIN_FOR', 0),
 
     /*
     |--------------------------------------------------------------------------
