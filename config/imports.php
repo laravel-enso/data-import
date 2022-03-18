@@ -112,7 +112,7 @@ return [
     | Retain imports for a number of days
     |--------------------------------------------------------------------------
     | The default period in days for retaining imports. Is used by the Purge
-    | command. Leave it 0 if you want to retain files forever. 
+    | command. Leave it 0 if you want to retain files forever.
     |
      */
 
