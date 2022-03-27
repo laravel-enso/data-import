@@ -33,7 +33,17 @@ class Import implements Table, ConditionalActions
         return self::TemplatePath;
     }
 
-    private function rawDuration(): string
+    public function render(array $row, string $action): bool
+    {
+        return match ($action) {
+            'download-rejected' => $row['rejected_id'] !== null,
+            'cancel' => in_array($row['status'], Statuses::running()),
+            'restart' => $row['status'] === Statuses::Cancelled,
+            default => true,
+        };
+    }
+
+    protected function rawDuration(): string
     {
         return match (DB::getDriverName()) {
             'sqlite' => $this->sqliteDuration(),
@@ -43,14 +53,14 @@ class Import implements Table, ConditionalActions
         };
     }
 
-    private function rawTime(): string
+    protected function rawTime(): string
     {
         return DB::getDriverName() === 'pgsql'
             ? 'data_imports.created_at::time'
             : 'TIME(data_imports.created_at)';
     }
 
-    private function sqliteDuration()
+    protected function sqliteDuration()
     {
         $days = 'julianday(data_imports.updated_at) - julianday(data_imports.created_at)';
         $seconds = "({$days}) * 86400.0";
@@ -58,27 +68,17 @@ class Import implements Table, ConditionalActions
         return "time({$seconds}, 'unixepoch')";
     }
 
-    private function mysqlDuration()
+    protected function mysqlDuration()
     {
         $seconds = 'timestampdiff(second, data_imports.created_at, data_imports.updated_at)';
 
         return "sec_to_time({$seconds})";
     }
 
-    private function postgresDuration()
+    protected function postgresDuration()
     {
         $seconds = 'EXTRACT(EPOCH FROM (data_imports.updated_at::timestamp- data_imports.created_at::timestamp ))';
 
         return "($seconds || ' second')::interval";
-    }
-
-    public function render(array $row, string $action): bool
-    {
-        return match ($action) {
-            'download-rejected' => $row['rejected_id'] !== null,
-            'cancel' => in_array($row['status'], Statuses::running()),
-            'restart' => $row['status'] === Statuses::Cancelled,
-            default => true,
-        };
     }
 }
