@@ -24,6 +24,7 @@ use LaravelEnso\Files\Contracts\Extensions;
 use LaravelEnso\Files\Models\File;
 use LaravelEnso\Files\Models\Type;
 use LaravelEnso\Helpers\Casts\Obj;
+use LaravelEnso\Helpers\Traits\AvoidsDeletionConflicts;
 use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
@@ -32,7 +33,7 @@ use LaravelEnso\TrackWho\Traits\CreatedBy;
 
 class Import extends Model implements Attachable, Extensions, IOOperation
 {
-    use CreatedBy, HasFactory, TableCache, When;
+    use AvoidsDeletionConflicts, CreatedBy, HasFactory, TableCache, When;
 
     protected $table = 'data_imports';
 
