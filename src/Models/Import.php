@@ -225,7 +225,10 @@ class Import extends Model implements Attachable, Extensions, IOOperation
 
         $this->batch()?->cancel();
 
-        $this->update(['status' => Statuses::Cancelled]);
+        $this->update([
+            'status' => Statuses::Cancelled,
+            'batch' => null,
+        ]);
     }
 
     public function updateProgress(int $successful, int $failed)

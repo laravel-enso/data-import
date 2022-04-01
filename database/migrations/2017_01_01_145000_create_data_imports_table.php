@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('batch')->nullable();
             $table->foreign('batch')->references('id')->on('job_batches')
-                ->onUpdate('restrict')->onDelete('SET NULL');
+                ->onUpdate('restrict')->onDelete('restrict');
 
             $table->string('type')->index();
 
