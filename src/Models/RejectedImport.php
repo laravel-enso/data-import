@@ -26,7 +26,7 @@ class RejectedImport extends Model implements Attachable, CascadesFileDeletion
 
     public static function cascadeFileDeletion(File $file): void
     {
-        self::whereFileId($file->id)->get()->delete();
+        self::whereFileId($file->id)->first()?->delete();
     }
 
     public function delete()

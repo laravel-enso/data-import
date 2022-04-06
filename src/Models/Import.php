@@ -171,7 +171,7 @@ class Import extends Model implements
 
     public static function cascadeFileDeletion(File $file): void
     {
-        self::whereFileId($file->id)->get()->delete();
+        self::whereFileId($file->id)->first()?->delete();
     }
 
     public function attach(string $savedName, string $filename): array
@@ -209,7 +209,7 @@ class Import extends Model implements
 
     public function forceDelete()
     {
-        if (! Statuses::deletable($this->status)) {
+        if (!Statuses::deletable($this->status)) {
             $this->update(['status' => Statuses::Cancelled]);
         }
 
@@ -218,7 +218,7 @@ class Import extends Model implements
 
     public function delete()
     {
-        if (! Statuses::deletable($this->status)) {
+        if (!Statuses::deletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 
@@ -229,7 +229,7 @@ class Import extends Model implements
 
     public function cancel()
     {
-        if (! $this->running()) {
+        if (!$this->running()) {
             throw Exception::cannotBeCancelled();
         }
 
