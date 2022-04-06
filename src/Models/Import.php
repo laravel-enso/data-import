@@ -169,7 +169,7 @@ class Import extends Model implements
         return $this->template ??= new Template($this->type);
     }
 
-    public static function cascadeDeletion(File $file): void
+    public static function cascadeFileDeletion(File $file): void
     {
         self::whereFileId($file->id)->get()->delete();
     }
