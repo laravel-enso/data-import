@@ -171,7 +171,7 @@ class Import extends Model implements
 
     public static function cascadeFileDeletion(File $file): void
     {
-        self::whereFileId($file->id)->first()?->delete();
+        self::whereFileId($file->id)->first()->delete();
     }
 
     public function attach(string $savedName, string $filename): array
