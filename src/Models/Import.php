@@ -20,6 +20,7 @@ use LaravelEnso\DataImport\Jobs\Import as Job;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Structure;
 use LaravelEnso\Files\Contracts\Attachable;
+use LaravelEnso\Files\Contracts\CascadesFileDeletion;
 use LaravelEnso\Files\Contracts\Extensions;
 use LaravelEnso\Files\Models\File;
 use LaravelEnso\Files\Models\Type;
@@ -31,7 +32,11 @@ use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
 use LaravelEnso\TrackWho\Traits\CreatedBy;
 
-class Import extends Model implements Attachable, Extensions, IOOperation
+class Import extends Model implements
+    Attachable,
+    Extensions,
+    IOOperation,
+    CascadesFileDeletion
 {
     use AvoidsDeletionConflicts, CreatedBy, HasFactory, TableCache, When;
 
@@ -162,6 +167,11 @@ class Import extends Model implements Attachable, Extensions, IOOperation
     public function template(): Template
     {
         return $this->template ??= new Template($this->type);
+    }
+
+    public static function cascadeDeletion(File $file): void
+    {
+        self::whereFileId($file->id)->get()->delete();
     }
 
     public function attach(string $savedName, string $filename): array
