@@ -259,6 +259,8 @@ class Import extends Model implements
 
     public function restart(): self
     {
+        $this->rejected?->delete();
+
         $this->update([
             'successful' => 0,
             'failed' => 0,
