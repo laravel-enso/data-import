@@ -31,7 +31,10 @@ class RejectedImport extends Model implements Attachable, CascadesFileDeletion
 
     public function delete()
     {
-        parent::delete();
+        $response = parent::delete();
+
         $this->file?->delete();
+
+        return $response;
     }
 }

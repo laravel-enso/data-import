@@ -81,6 +81,16 @@ class Import extends Model implements
         return $query->where('created_at', '<', $expired);
     }
 
+    public function scopeDeletable(Builder $query): Builder
+    {
+        return $query->whereIn('status', Statuses::deletable());
+    }
+
+    public function scopeNotDeletable(Builder $query): Builder
+    {
+        return $query->whereNotIn('status', Statuses::deletable());
+    }
+
     public function extensions(): array
     {
         return ['xlsx'];
@@ -231,8 +241,12 @@ class Import extends Model implements
         }
 
         $this->rejected?->delete();
-        parent::delete();
+
+        $response = parent::delete();
+
         $this->file?->delete();
+
+        return $response;
     }
 
     public function cancel()
