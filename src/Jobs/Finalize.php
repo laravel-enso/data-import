@@ -33,6 +33,7 @@ class Finalize implements ShouldQueue
     {
         $queue = Config::get('enso.imports.queues.notifications');
         $notification = (new ImportDone($this->import))->onQueue($queue);
+
         $this->import->file->createdBy->notify($notification);
 
         if ($this->import->template()->notifies()) {

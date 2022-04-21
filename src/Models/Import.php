@@ -219,7 +219,7 @@ class Import extends Model implements
 
     public function forceDelete()
     {
-        if (! Statuses::deletable($this->status)) {
+        if (! Statuses::isDeletable($this->status)) {
             $this->update(['status' => Statuses::Cancelled]);
         }
 
