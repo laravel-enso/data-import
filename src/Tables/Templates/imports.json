@@ -63,11 +63,10 @@
         },
         {
             "label": "File name",
-            "name": "name",
-            "data": "files.original_name",
+            "name": "file.original_name",
+            "data": "file.original_name",
             "meta": [
-                "searchable",
-                "sortable"
+                "searchable"
             ]
         },
         {

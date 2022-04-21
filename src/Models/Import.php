@@ -216,6 +216,14 @@ class Import extends Model implements
         $this->delete();
     }
 
+    public function purge(): void
+    {
+        $this->rejected?->delete();
+        $file = $this->file;
+        $this->file()->dissociate()->save();
+        $file?->delete();
+    }
+
     public function delete()
     {
         if (! Statuses::deletable($this->status)) {
@@ -224,7 +232,7 @@ class Import extends Model implements
 
         $this->rejected?->delete();
         parent::delete();
-        $this->file->delete();
+        $this->file?->delete();
     }
 
     public function cancel()

@@ -15,17 +15,8 @@ class Import implements Table, ConditionalActions
 
     public function query(): Builder
     {
-        return Model::selectRaw("
-            data_imports.id, data_imports.type, data_imports.status,
-            files.original_name as name, data_imports.successful,
-            data_imports.failed, data_imports.created_at,
-            {$this->rawTime()} as time, rejected_imports.id as rejected_id,
-            {$this->rawDuration()} as duration, data_imports.created_by
-        ")->with('createdBy.person:id,appellative,name', 'createdBy.avatar:id,user_id')
-            ->join('files', 'files.id', 'data_imports.file_id')
-            ->leftJoin('rejected_imports', 'data_imports.id', '=', 'rejected_imports.import_id')
-            ->leftJoin('files as rejected_files', fn ($join) => $join
-                ->on('rejected_files.id', 'rejected_imports.file_id'));
+        return Model::selectRaw(implode(', ', $this->select()))
+            ->with($this->with());
     }
 
     public function templatePath(): string
@@ -35,12 +26,34 @@ class Import implements Table, ConditionalActions
 
     public function render(array $row, string $action): bool
     {
+        $hasFile = $row['file_id'] !== null;
+
         return match ($action) {
-            'download-rejected' => $row['rejected_id'] !== null,
+            'download-rejected' => $row['rejected'] !== null,
+            'download' => $hasFile,
             'cancel' => in_array($row['status'], Statuses::running()),
-            'restart' => $row['status'] === Statuses::Cancelled,
+            'restart' => $hasFile && $row['status'] === Statuses::Cancelled,
             default => true,
         };
+    }
+
+    protected function select(): array
+    {
+        return [
+            'id', 'type', 'status', 'successful', 'failed', 'created_at',
+            'file_id', 'created_by', "{$this->rawTime()} as time",
+            "{$this->rawDuration()} as duration",
+        ];
+    }
+
+    protected function with(): array
+    {
+        return [
+            'file:id,original_name', 'rejected:import_id,file_id',
+            'createdBy' => fn ($user) => $user->with([
+                'person:id,appellative,name', 'avatar:id,user_id',
+            ]),
+        ];
     }
 
     protected function rawDuration(): string
@@ -56,13 +69,13 @@ class Import implements Table, ConditionalActions
     protected function rawTime(): string
     {
         return DB::getDriverName() === 'pgsql'
-            ? 'data_imports.created_at::time'
-            : 'TIME(data_imports.created_at)';
+            ? 'created_at::time'
+            : 'TIME(created_at)';
     }
 
     protected function sqliteDuration()
     {
-        $days = 'julianday(data_imports.updated_at) - julianday(data_imports.created_at)';
+        $days = 'julianday(updated_at) - julianday(created_at)';
         $seconds = "({$days}) * 86400.0";
 
         return "time({$seconds}, 'unixepoch')";
@@ -70,14 +83,14 @@ class Import implements Table, ConditionalActions
 
     protected function mysqlDuration()
     {
-        $seconds = 'timestampdiff(second, data_imports.created_at, data_imports.updated_at)';
+        $seconds = 'timestampdiff(second, created_at, updated_at)';
 
         return "sec_to_time({$seconds})";
     }
 
     protected function postgresDuration()
     {
-        $seconds = 'EXTRACT(EPOCH FROM (data_imports.updated_at::timestamp- data_imports.created_at::timestamp ))';
+        $seconds = 'EXTRACT(EPOCH FROM (updated_at::timestamp - created_at::timestamp ))';
 
         return "($seconds || ' second')::interval";
     }
