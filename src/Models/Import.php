@@ -236,7 +236,7 @@ class Import extends Model implements
 
     public function delete()
     {
-        if (! Statuses::deletable($this->status)) {
+        if (! Statuses::isDeletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 
