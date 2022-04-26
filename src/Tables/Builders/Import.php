@@ -49,7 +49,7 @@ class Import implements Table, ConditionalActions
     protected function with(): array
     {
         return [
-            'file:id,original_name', 'rejected:import_id,file_id',
+            'file:id,original_name', 'rejected:id,import_id',
             'createdBy' => fn ($user) => $user->with([
                 'person:id,appellative,name', 'avatar:id,user_id',
             ]),
