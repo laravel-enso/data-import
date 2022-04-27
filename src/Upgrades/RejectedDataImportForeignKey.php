@@ -5,9 +5,10 @@ namespace LaravelEnso\DataImport\Upgrades;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use LaravelEnso\Upgrade\Contracts\MigratesTable;
+use LaravelEnso\Upgrade\Contracts\Prioritization;
 use LaravelEnso\Upgrade\Helpers\Table;
 
-class RejectedDataImportForeignKey implements MigratesTable
+class RejectedDataImportForeignKey implements MigratesTable, Prioritization
 {
     private const Table = 'rejected_imports';
     private const ForeignKey = 'rejected_imports_data_import_id_foreign';
@@ -16,7 +17,7 @@ class RejectedDataImportForeignKey implements MigratesTable
     {
         return ! Table::hasForeignKey(self::Table, self::ForeignKey)
             || Table::foreignKey(self::Table, self::ForeignKey)
-            ->getOption('onDelete') !== 'CASCADE';
+                ->getOption('onDelete') !== 'CASCADE';
     }
 
     public function migrateTable(): void
@@ -26,5 +27,10 @@ class RejectedDataImportForeignKey implements MigratesTable
             $table->foreign('import_id')->references('id')->on('data_imports')
                 ->onDelete('restrict');
         });
+    }
+
+    public function priority(): int
+    {
+        return 152;
     }
 }
