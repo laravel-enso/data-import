@@ -94,7 +94,7 @@ return [
     |
     */
 
-    'seederPath' => database_path('seeds/xlsx'),
+    'seederPath' => database_path('seeders/xlsx'),
 
     /*
     |--------------------------------------------------------------------------
