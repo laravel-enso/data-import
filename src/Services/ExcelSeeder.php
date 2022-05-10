@@ -14,7 +14,6 @@ abstract class ExcelSeeder extends Seeder
 {
     protected string $type;
     protected string $filename;
-    protected string $filePath;
     protected array $params = [];
 
     public function __construct()
