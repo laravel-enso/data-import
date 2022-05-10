@@ -12,10 +12,6 @@ use LaravelEnso\Files\Models\Type;
 
 abstract class ExcelSeeder extends Seeder
 {
-    protected string $type;
-    protected string $filename;
-    protected array $params = [];
-
     public function __construct()
     {
         $this->savedName = "{$this->hash()}.xlsx";
@@ -26,8 +22,8 @@ abstract class ExcelSeeder extends Seeder
         File::copy($this->source(), Storage::path($this->path()));
 
         Import::factory()
-            ->make(['type' => $this->type, 'params' => $this->params])
-            ->attach($this->savedName, $this->filename);
+            ->make(['type' => $this->type(), 'params' => $this->params()])
+            ->attach($this->savedName, $this->filename());
     }
 
     abstract protected function type(): string;
@@ -43,7 +39,7 @@ abstract class ExcelSeeder extends Seeder
     {
         $path = Config::get('enso.imports.seederPath');
 
-        return "{$path}/{$this->filename}";
+        return "{$path}/{$this->filename()}";
     }
 
     private function path(): string
