@@ -16,7 +16,7 @@ class RejectedFileCreatedBy implements MigratesData, BeforeMigration
         }
 
         $table = DB::getDriverName() === 'pgsql'
-            ? "files" : "`files`";
+            ? 'files' : '`files`';
 
         $result = DB::select("
             SELECT * FROM {$table}
@@ -34,7 +34,7 @@ class RejectedFileCreatedBy implements MigratesData, BeforeMigration
     public function migrateData(): void
     {
         $table = DB::getDriverName() === 'pgsql'
-            ? "files" : "`files`";
+            ? 'files' : '`files`';
 
         DB::update("
             UPDATE {$table}
