@@ -15,8 +15,11 @@ class RejectedFileCreatedBy implements MigratesData, BeforeMigration
             return true;
         }
 
+        $table = DB::getDriverName() === 'pgsql'
+            ? "files" : "`files`";
+
         $result = DB::select("
-            SELECT * FROM `files`
+            SELECT * FROM {$table}
             JOIN rejected_imports ON rejected_imports.id = files.attachable_id
             JOIN data_imports ON data_imports.id = rejected_imports.data_import_id
             WHERE files.created_by IS NULL
@@ -30,8 +33,11 @@ class RejectedFileCreatedBy implements MigratesData, BeforeMigration
 
     public function migrateData(): void
     {
+        $table = DB::getDriverName() === 'pgsql'
+            ? "files" : "`files`";
+
         DB::update("
-            UPDATE `files`
+            UPDATE {$table}
             JOIN rejected_imports ON rejected_imports.id = files.attachable_id
             JOIN data_imports ON data_imports.id = rejected_imports.data_import_id
             SET  files.created_by = data_imports.created_by
