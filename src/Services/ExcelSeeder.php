@@ -12,9 +12,11 @@ use LaravelEnso\Files\Models\Type;
 
 abstract class ExcelSeeder extends Seeder
 {
+    protected string $savedName;
+
     public function __construct()
     {
-        $this->savedName = "{$this->hash()}.xlsx";
+        $this->savedName = $this->hashname();
     }
 
     public function run()
@@ -35,6 +37,13 @@ abstract class ExcelSeeder extends Seeder
         return [];
     }
 
+    protected function hashname(): string
+    {
+        $hash = Str::random(40);
+
+        return "{$hash}.xlsx";
+    }
+
     private function source(): string
     {
         $path = Config::get('enso.imports.seederPath');
@@ -45,10 +54,5 @@ abstract class ExcelSeeder extends Seeder
     private function path(): string
     {
         return Type::for(Import::class)->path($this->savedName);
-    }
-
-    private function hash(): string
-    {
-        return Str::random(40);
     }
 }
