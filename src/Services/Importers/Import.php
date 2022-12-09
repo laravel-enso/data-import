@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Bus;
 use LaravelEnso\DataImport\Contracts\AfterHook;
 use LaravelEnso\DataImport\Contracts\Authenticates;
 use LaravelEnso\DataImport\Contracts\BeforeHook;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Jobs\Finalize;
 use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Jobs\Sheet;
@@ -36,7 +36,7 @@ class Import
     private function prepare(): self
     {
         if ($this->import->waiting()) {
-            $this->import->update(['status' => Statuses::Processing]);
+            $this->import->update(['status' => Status::Processing]);
         }
 
         return $this;

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Jobs\Import as Job;
@@ -45,7 +45,10 @@ class Import extends Model implements
 
     protected $guarded = [];
 
-    protected $casts = ['status' => 'integer', 'params' => Obj::class];
+    protected $casts = [
+        'status' => Status::class,
+        'params' => Obj::class,
+    ];
 
     protected $template;
 
@@ -84,12 +87,12 @@ class Import extends Model implements
 
     public function scopeDeletable(Builder $query): Builder
     {
-        return $query->whereIn('status', Statuses::deletable());
+        return $query->whereIn('status', Status::deletable());
     }
 
     public function scopeNotDeletable(Builder $query): Builder
     {
-        return $query->whereNotIn('status', Statuses::deletable());
+        return $query->whereNotIn('status', Status::deletable());
     }
 
     public function extensions(): array
@@ -145,34 +148,34 @@ class Import extends Model implements
 
     public function status(): int
     {
-        return $this->running()
-            ? $this->status
-            : Statuses::Finalized;
+        $status = $this->running() ? $this->status : Status::Finalized;
+
+        return $status->value;
     }
 
     public function waiting(): bool
     {
-        return $this->status === Statuses::Waiting;
+        return $this->status === Status::Waiting;
     }
 
     public function cancelled(): bool
     {
-        return $this->status === Statuses::Cancelled;
+        return $this->status === Status::Cancelled;
     }
 
     public function processing(): bool
     {
-        return $this->status === Statuses::Processing;
+        return $this->status === Status::Processing;
     }
 
     public function finalized(): bool
     {
-        return $this->status === Statuses::Finalized;
+        return $this->status === Status::Finalized;
     }
 
     public function running(): bool
     {
-        return in_array($this->status, Statuses::running());
+        return $this->status->isRunning();
     }
 
     public function template(): Template
@@ -220,8 +223,8 @@ class Import extends Model implements
 
     public function forceDelete()
     {
-        if (! Statuses::isDeletable($this->status)) {
-            $this->update(['status' => Statuses::Cancelled]);
+        if (! $this->status->isDeletable()) {
+            $this->update(['status' => Status::Cancelled]);
         }
 
         $this->delete();
@@ -237,7 +240,7 @@ class Import extends Model implements
 
     public function delete()
     {
-        if (! Statuses::isDeletable($this->status)) {
+        if (! $this->status->isDeletable()) {
             throw Exception::deleteRunningImport();
         }
 
@@ -259,7 +262,7 @@ class Import extends Model implements
         $this->batch()?->cancel();
 
         $this->update([
-            'status' => Statuses::Cancelled,
+            'status' => Status::Cancelled,
             'batch' => null,
         ]);
     }
@@ -287,7 +290,7 @@ class Import extends Model implements
         $this->update([
             'successful' => 0,
             'failed' => 0,
-            'status' => Statuses::Waiting,
+            'status' => Status::Waiting,
         ]);
 
         return $this;

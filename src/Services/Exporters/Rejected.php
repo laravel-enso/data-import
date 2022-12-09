@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Models\RejectedImport;
@@ -33,7 +33,7 @@ class Rejected
 
     public function handle(): void
     {
-        $this->import->update(['status' => Statuses::ExportingRejected]);
+        $this->import->update(['status' => Status::ExportingRejected]);
 
         $this->initWriter();
 
