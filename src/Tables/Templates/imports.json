@@ -54,11 +54,9 @@
         {
             "label": "Type",
             "name": "type",
-            "data": "data_imports.type",
-            "enum": "LaravelEnso\\DataImport\\Enums\\Types",
+            "data": "type",
             "meta": [
-                "sortable",
-                "slot"
+                "method"
             ]
         },
         {

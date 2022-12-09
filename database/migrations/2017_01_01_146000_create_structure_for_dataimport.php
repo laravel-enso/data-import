@@ -2,8 +2,7 @@
 
 use LaravelEnso\Migrator\Database\Migration;
 
-return new class extends Migration
-{
+return new class extends Migration {
     protected array $permissions = [
         ['name' => 'import.index', 'description' => 'Imports index', 'is_default' => false],
 
@@ -23,6 +22,8 @@ return new class extends Migration
 
         ['name' => 'import.cancel', 'description' => 'Cancel import', 'is_default' => false],
         ['name' => 'import.restart', 'description' => 'Restart import', 'is_default' => false],
+
+        ['name' => 'import.options', 'description' => 'Get import options for select', 'is_default' => false],
     ];
 
     protected array $menu = [
