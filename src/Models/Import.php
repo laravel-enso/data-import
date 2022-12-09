@@ -17,6 +17,7 @@ use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Jobs\Import as Job;
+use LaravelEnso\DataImport\Services\Options;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Structure;
 use LaravelEnso\Files\Contracts\Attachable;
@@ -113,7 +114,7 @@ class Import extends Model implements
 
     public function type(): string
     {
-        return Types::get($this->type);
+        return Options::label($this->type);
     }
 
     public function operationType(): int

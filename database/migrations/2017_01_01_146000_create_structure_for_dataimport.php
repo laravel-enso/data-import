@@ -23,6 +23,8 @@ return new class extends Migration
 
         ['name' => 'import.cancel', 'description' => 'Cancel import', 'is_default' => false],
         ['name' => 'import.restart', 'description' => 'Restart import', 'is_default' => false],
+
+        ['name' => 'import.options', 'description' => 'Get import options for select', 'is_default' => false],
     ];
 
     protected array $menu = [

@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use LaravelEnso\DataImport\Enums\Types;
+use LaravelEnso\DataImport\Services\Options;
 
 class ValidateTemplate extends FormRequest
 {
@@ -16,7 +16,7 @@ class ValidateTemplate extends FormRequest
     {
         return [
             'template' => 'required|file',
-            'type' => 'string|in:'.Types::keys()->implode(','),
+            'type' => 'string|in:'.implode(',', Options::types()),
         ];
     }
 }

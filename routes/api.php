@@ -6,6 +6,7 @@ use LaravelEnso\DataImport\Http\Controllers\Import\Destroy;
 use LaravelEnso\DataImport\Http\Controllers\Import\Download;
 use LaravelEnso\DataImport\Http\Controllers\Import\ExportExcel;
 use LaravelEnso\DataImport\Http\Controllers\Import\InitTable;
+use LaravelEnso\DataImport\Http\Controllers\Import\Options;
 use LaravelEnso\DataImport\Http\Controllers\Import\Rejected;
 use LaravelEnso\DataImport\Http\Controllers\Import\Restart;
 use LaravelEnso\DataImport\Http\Controllers\Import\Show;
@@ -26,6 +27,8 @@ Route::middleware(['api', 'auth', 'core'])
 
         Route::patch('{import}/cancel', Cancel::class)->name('cancel');
         Route::patch('{import}/restart', Restart::class)->name('restart');
+
+        Route::get('options', Options::class)->name('options');
 
         Route::get('{type}', Show::class)->name('show');
 
