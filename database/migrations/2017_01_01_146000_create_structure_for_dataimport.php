@@ -2,7 +2,8 @@
 
 use LaravelEnso\Migrator\Database\Migration;
 
-return new class extends Migration {
+return new class extends Migration
+{
     protected array $permissions = [
         ['name' => 'import.index', 'description' => 'Imports index', 'is_default' => false],
 
