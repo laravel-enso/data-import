@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
-use LaravelEnso\DataImport\Enums\Types;
 use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Jobs\Import as Job;
 use LaravelEnso\DataImport\Services\Options;
@@ -129,8 +128,10 @@ class Import extends Model implements
 
     public function broadcastWith(): array
     {
+        $label = Config::get('enso.imports')['configs'][$this->type]['label'];
+
         return [
-            'type' => Str::lower(Types::get($this->type)),
+            'type' => Str::lower($label),
             'filename' => $this->file?->original_name,
             'sheet' => $this->batch()?->name,
             'successful' => $this->successful,
