@@ -5,6 +5,7 @@ namespace LaravelEnso\DataImport;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use LaravelEnso\DataImport\Commands\CancelStuck;
 use LaravelEnso\DataImport\Commands\Purge;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\IO\Observers\IOObserver;
@@ -69,9 +70,12 @@ class AppServiceProvider extends ServiceProvider
 
     private function command(): void
     {
-        $this->commands(Purge::class);
+        $this->commands(Purge::class, CancelStuck::class);
 
-        $this->app->booted(fn () => $this->app->make(Schedule::class)
-            ->command('enso:data-import:purge')->daily());
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->command('enso:data-import:purge')->daily();
+            $schedule->command('enso:data-import:cancel-stuck')->daily();
+        });
     }
 }

@@ -15,7 +15,10 @@ class Purge extends Command
     public function handle()
     {
         Import::expired()->notDeletable()
-            ->update(['status' => Statuses::Cancelled]);
+            ->update([
+                'status' => Statuses::Cancelled,
+                'batch' => null,
+            ]);
 
         Import::expired()->deletable()->get()->each->purge();
     }

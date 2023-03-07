@@ -111,12 +111,23 @@ return [
     |--------------------------------------------------------------------------
     | Retain imports for a number of days
     |--------------------------------------------------------------------------
-    | The default period in days for retaining imports. Is used by the Purge
-    | command. Leave it 0 if you want to retain files forever.
-    |
+    | The default period in days for retaining imports, used by the
+    | enso:data-import:purge command. Leave it 0 if you want to
+    | retain files forever.
      */
 
     'retainFor' => (int) env('IMPORT_RETAIN_FOR', 0),
+
+    /*
+    |--------------------------------------------------------------------------
+    | How many hours until cancelling stuck imports
+    |--------------------------------------------------------------------------
+    | The number of hours after the enso:data-import:reset-stuck command resets
+    | stuck imports to cancel.
+    |
+    */
+
+    'cancelStuckAfter' => (int) env('IMPORT_CANCEL_STUCK_AFTER', 24),
 
     /*
     |--------------------------------------------------------------------------
