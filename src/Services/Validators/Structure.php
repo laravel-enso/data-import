@@ -62,10 +62,10 @@ class Structure
     private function handleSheets(): void
     {
         $template = $this->template->sheets()->pluck('name');
-        $reader = $this->reader()->sheets();
+        $xlsx = $this->reader()->sheets();
 
-        $this->missingSheets($template, $reader)
-            ->extraSheets($template, $reader);
+        $this->missingSheets($template, $xlsx)
+            ->extraSheets($template, $xlsx);
     }
 
     private function missingSheets(Collection $template, Collection $xlsx): self
