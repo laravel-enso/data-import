@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Jobs\Chunk as Job;
 use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
 class Sheet
 {
     private int $chunkSize;
-    private XLSX $xlsx;
     private Collection $header;
     private int $rowLength;
     private Chunk $chunk;
@@ -25,7 +25,7 @@ class Sheet
         private string $sheet
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
-        $this->xlsx = new XLSX(Storage::path($import->file->path()));
+        $this->reader = $this->reader($this->import);
     }
 
     public function handle()
@@ -40,10 +40,20 @@ class Sheet
 
     private function init(): void
     {
-        $this->iterator = $this->xlsx->rowIterator($this->sheet);
+        $this->iterator = $this->reader->rowIterator($this->sheet);
         $this->header = Sanitize::header($this->iterator->current());
         $this->rowLength = $this->header->count();
         $this->iterator->next();
+    }
+
+    private function reader($import)
+    {
+        $file = Storage::path($import->file->path());
+        return match($import->file->extension()){
+            'csv' => new CSV($file),
+            default => new XLSX($file),
+
+        };
     }
 
     private function prepare(): self

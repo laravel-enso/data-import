@@ -216,7 +216,14 @@ class Import extends Model implements
         $filename = $file->getClientOriginalName();
         $structure = new Structure($this->template(), $path, $filename);
 
-        if ($structure->validates()) {
+        //        @todo: refactor
+        $validate = match($file->extension()){
+            'xlsx' => $structure->validates(),
+            default => true,
+
+        };
+
+        if ($validate) {
             $this->save();
 
             $file = File::upload($this, $file);
