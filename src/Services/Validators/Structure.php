@@ -12,7 +12,6 @@ use LaravelEnso\DataImport\Services\Template;
 class Structure
 {
     private Template $template;
-//    private XLSX $xlsx;
     private Summary $summary;
     private string $path;
     private string $filename;
@@ -21,7 +20,6 @@ class Structure
     public function __construct(Template $template, string $path, string $filename, string $extension)
     {
         $this->template = $template;
-//        $this->xlsx = new XLSX($path);
         $this->path = $path;
         $this->filename = $filename;
         $this->extension = $extension;
@@ -53,7 +51,7 @@ class Structure
         ];
     }
 
-    private function reader()
+    private function reader(): CSV|XLSX
     {
         return match ($this->extension) {
             'csv' => new CSV($this->path),
@@ -70,17 +68,17 @@ class Structure
             ->extraSheets($template, $reader);
     }
 
-    private function missingSheets(Collection $template, Collection $reader): self
+    private function missingSheets(Collection $template, Collection $xlsx): self
     {
-        $template->diff($reader)->each(fn ($name) => $this->summary
+        $template->diff($xlsx)->each(fn ($name) => $this->summary
             ->addError(__('Missing Sheets'), $name));
 
         return $this;
     }
 
-    private function extraSheets(Collection $template, Collection $reader): void
+    private function extraSheets(Collection $template, Collection $xlsx): void
     {
-        $reader->diff($template)->each(fn ($name) => $this->summary
+        $xlsx->diff($template)->each(fn ($name) => $this->summary
             ->addError(__('Extra Sheets'), $name));
     }
 
