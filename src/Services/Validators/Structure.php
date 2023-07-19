@@ -91,7 +91,6 @@ class Structure
             ->whereNotIn('status', [Statuses::Finalized, Statuses::Cancelled]);
     }
 
-
     private function handleColumns(string $sheet): void
     {
         $iterator = $this->reader()->rowIterator($sheet);
