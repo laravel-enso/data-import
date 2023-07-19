@@ -82,15 +82,6 @@ class Structure
             ->addError(__('Extra Sheets'), $name));
     }
 
-    public function scopeStuck(Builder $query): Builder
-    {
-        $cancelStuckAfter = Carbon::today()
-            ->subHours(Config::get('enso.imports.cancelStuckAfter'));
-
-        return $query->where('created_at', '<', $cancelStuckAfter)
-            ->whereNotIn('status', [Statuses::Finalized, Statuses::Cancelled]);
-    }
-
     private function handleColumns(string $sheet): void
     {
         $iterator = $this->reader()->rowIterator($sheet);
