@@ -8,9 +8,7 @@ use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
 use Box\Spout\Reader\CSV\SheetIterator;
 use Exception;
-use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Exceptions\Import;
-use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
 class CSV
 {
@@ -30,7 +28,6 @@ class CSV
             $this->open = false;
         }
     }
-
 
     public function rowIterator(string $sheet): RowIterator
     {

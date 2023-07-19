@@ -217,10 +217,9 @@ class Import extends Model implements
         $structure = new Structure($this->template(), $path, $filename);
 
         //        @todo: refactor
-        $validate = match($file->extension()){
+        $validate = match ($file->extension()) {
             'xlsx' => $structure->validates(),
             default => true,
-
         };
 
         if ($validate) {

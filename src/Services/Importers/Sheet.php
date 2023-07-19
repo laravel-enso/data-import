@@ -49,10 +49,10 @@ class Sheet
     private function reader($import)
     {
         $file = Storage::path($import->file->path());
-        return match($import->file->extension()){
+
+        return match ($import->file->extension()) {
             'csv' => new CSV($file),
             default => new XLSX($file),
-
         };
     }
 
