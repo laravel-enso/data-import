@@ -89,6 +89,7 @@ class Import extends Model implements
         return $query->where('created_at', '<', $cancelStuckAfter)
             ->whereNotIn('status', [Statuses::Finalized, Statuses::Cancelled]);
     }
+
     public function scopeDeletable(Builder $query): Builder
     {
         return $query->whereIn('status', Statuses::deletable());
