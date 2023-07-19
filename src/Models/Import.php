@@ -81,15 +81,6 @@ class Import extends Model implements
         return $query->where('created_at', '<', $expired);
     }
 
-    public function scopeStuck(Builder $query): Builder
-    {
-        $cancelStuckAfter = Carbon::today()
-            ->subHours(Config::get('enso.imports.cancelStuckAfter'));
-
-        return $query->where('created_at', '<', $cancelStuckAfter)
-            ->whereNotIn('status', [Statuses::Finalized, Statuses::Cancelled]);
-    }
-
     public function scopeDeletable(Builder $query): Builder
     {
         return $query->whereIn('status', Statuses::deletable());
@@ -102,7 +93,7 @@ class Import extends Model implements
 
     public function extensions(): array
     {
-        return ['xlsx'];
+        return ['xlsx','csv'];
     }
 
     public function batch(): ?Batch
@@ -214,15 +205,10 @@ class Import extends Model implements
     {
         $path = $file->getPathname();
         $filename = $file->getClientOriginalName();
-        $structure = new Structure($this->template(), $path, $filename);
 
-        //        @todo: refactor
-        $validate = match ($file->extension()) {
-            'xlsx' => $structure->validates(),
-            default => true,
-        };
+        $structure = new Structure($this->template(), $path, $filename, $file->extension());
 
-        if ($validate) {
+        if ($structure->validates()) {
             $this->save();
 
             $file = File::upload($this, $file);
