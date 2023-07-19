@@ -30,8 +30,9 @@ class Structure
 
     public function validates(): bool
     {
-        if (!$this->isCSV())
+        if (! $this->isCSV()) {
             $this->handleSheets();
+        }
 
         if ($this->summary->errors()->isEmpty()) {
             $this->isCSV()
@@ -54,7 +55,7 @@ class Structure
 
     private function reader()
     {
-        return match($this->extension){
+        return match ($this->extension) {
             'csv' => new CSV($this->path),
             default => new XLSX($this->path),
         };
