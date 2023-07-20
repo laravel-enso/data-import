@@ -57,7 +57,7 @@ class Structure
         return match ($this->extension) {
             'csv' => new CSV($this->path),
             'xlsx' => new XLSX($this->path),
-            default => throw new EnsoException("Unsupported import type"),
+            default => throw new EnsoException('Unsupported import type'),
         };
     }
 

@@ -55,7 +55,7 @@ class Sheet
         return match ($import->file->extension()) {
             'csv' => new CSV($file),
             'xlsx' => new XLSX($file),
-            default => throw new EnsoException("Unsupported import type"),
+            default => throw new EnsoException('Unsupported import type'),
         };
     }
 

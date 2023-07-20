@@ -18,7 +18,6 @@ class CSV extends Reader
         $this->reader = ReaderEntityFactory::createCSVReader();
     }
 
-
     public function rowIterator(): RowIterator
     {
         $iterator = $this->sheet()->getRowIterator();
