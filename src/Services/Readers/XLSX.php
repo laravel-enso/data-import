@@ -34,7 +34,6 @@ class XLSX extends ReaderInterface
         return Sanitize::sheets($sheets);
     }
 
-
     public function rowIterator(string $sheet): RowIterator
     {
         $iterator = $this->sheet($sheet)->getRowIterator();

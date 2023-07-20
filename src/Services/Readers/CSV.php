@@ -8,7 +8,6 @@ use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
 use LaravelEnso\DataImport\Services\Readers\Reader as ReaderInterface;
 
-
 class CSV extends ReaderInterface
 {
     protected bool $open;

@@ -28,7 +28,7 @@ abstract class Reader
 
     private function ensureIsOpen(): void
     {
-        if (!$this->open) {
+        if (! $this->open) {
             $this->open();
         }
     }
