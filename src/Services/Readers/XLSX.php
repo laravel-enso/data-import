@@ -6,29 +6,19 @@ use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Reader\XLSX\Reader;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Box\Spout\Reader\XLSX\Sheet;
-use Box\Spout\Reader\XLSX\SheetIterator;
-use Exception;
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Exceptions\Import;
+use LaravelEnso\DataImport\Services\Readers\Reader as ReaderInterface;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
-class XLSX
+class XLSX extends ReaderInterface
 {
-    private bool $open;
-    private Reader $reader;
+    protected bool $open;
+    protected Reader $reader;
 
-    public function __construct(private string $file)
+    public function __construct(protected string $file)
     {
         $this->open = false;
         $this->reader = ReaderEntityFactory::createXLSXReader();
-    }
-
-    public function __destruct()
-    {
-        if ($this->open) {
-            $this->reader->close();
-            $this->open = false;
-        }
     }
 
     public function sheets(): Collection
@@ -44,15 +34,6 @@ class XLSX
         return Sanitize::sheets($sheets);
     }
 
-    public function sheetIterator(): SheetIterator
-    {
-        $this->ensureIsOpen();
-
-        $iterator = $this->reader->getSheetIterator();
-        $iterator->rewind();
-
-        return $iterator;
-    }
 
     public function rowIterator(string $sheet): RowIterator
     {
@@ -71,23 +52,5 @@ class XLSX
         }
 
         return $iterator->current();
-    }
-
-    private function ensureIsOpen(): void
-    {
-        if (! $this->open) {
-            $this->open();
-        }
-    }
-
-    private function open(): void
-    {
-        try {
-            $this->reader->open($this->file);
-        } catch (Exception) {
-            throw Import::fileNotReadable($this->file);
-        }
-
-        $this->open = true;
     }
 }
