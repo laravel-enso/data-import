@@ -16,6 +16,8 @@ class Sheet
 {
     private int $chunkSize;
     private Collection $header;
+    private XLSX|CSV $reader;
+
     private int $rowLength;
     private Chunk $chunk;
 
@@ -52,7 +54,8 @@ class Sheet
 
         return match ($import->file->extension()) {
             'csv' => new CSV($file),
-            default => new XLSX($file),
+            'xlsx' => new XLSX($file),
+            default => throw new EnsoException("Unsupported import type"),
         };
     }
 

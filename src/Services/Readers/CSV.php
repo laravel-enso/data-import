@@ -3,15 +3,14 @@
 namespace LaravelEnso\DataImport\Services\Readers;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\CSV\Reader;
+use Box\Spout\Reader\CSV\Reader  as CSVReader;
 use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
-use LaravelEnso\DataImport\Services\Readers\Reader as ReaderInterface;
 
-class CSV extends ReaderInterface
+class CSV extends Reader
 {
     protected bool $open;
-    protected Reader $reader;
+    protected CSVReader $reader;
 
     public function __construct(protected string $file)
     {
@@ -19,13 +18,6 @@ class CSV extends ReaderInterface
         $this->reader = ReaderEntityFactory::createCSVReader();
     }
 
-    public function __destruct()
-    {
-        if ($this->open) {
-            $this->reader->close();
-            $this->open = false;
-        }
-    }
 
     public function rowIterator(): RowIterator
     {

@@ -8,6 +8,7 @@ use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\DataImport\Services\Summary;
 use LaravelEnso\DataImport\Services\Template;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Structure
 {
@@ -55,7 +56,8 @@ class Structure
     {
         return match ($this->extension) {
             'csv' => new CSV($this->path),
-            default => new XLSX($this->path),
+            'xlsx' => new XLSX($this->path),
+            default => throw new EnsoException("Unsupported import type"),
         };
     }
 

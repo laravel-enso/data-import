@@ -3,17 +3,16 @@
 namespace LaravelEnso\DataImport\Services\Readers;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\XLSX\Reader;
+use Box\Spout\Reader\XLSX\Reader as XLSXReader;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Box\Spout\Reader\XLSX\Sheet;
 use Illuminate\Support\Collection;
-use LaravelEnso\DataImport\Services\Readers\Reader as ReaderInterface;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 
-class XLSX extends ReaderInterface
+class XLSX extends Reader
 {
     protected bool $open;
-    protected Reader $reader;
+    protected XLSXReader $reader;
 
     public function __construct(protected string $file)
     {
