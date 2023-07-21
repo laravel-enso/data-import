@@ -2,20 +2,23 @@
 
 namespace LaravelEnso\DataImport\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Exceptions\Template as Exception;
 use LaravelEnso\DataImport\Services\Validators\Params;
 use LaravelEnso\DataImport\Services\Validators\Template as Validator;
+use LaravelEnso\DataImport\Services\Validators\Validator as CustomValidator;
 use LaravelEnso\Helpers\Services\JsonReader;
 use LaravelEnso\Helpers\Services\Obj;
 
-abstract class Template
+class Template
 {
-    protected Obj $template;
-    protected array $columnRules;
-    protected array $paramRules;
-    protected array $chunkSizes;
+    private Obj $template;
+    private array $columnRules;
+    private array $paramRules;
+    private array $chunkSizes;
 
     public function __construct(string $type)
     {
@@ -47,6 +50,36 @@ abstract class Template
             : Config::get('enso.imports.queues.processing');
     }
 
+    public function header(string $sheet): Collection
+    {
+        return $this->isXLSX()
+            ? $this->columns($sheet)->pluck('name')
+            : $this->template->get('columns')->pluck('name');
+    }
+
+    public function descriptions(string $sheet): Collection
+    {
+        return $this->isXLSX()
+            ? $this->columns($sheet)->pluck('description')
+            : $this->template->get('columns')->pluck('descriptions');
+    }
+
+    public function validations(string $sheet): Collection
+    {
+        return $this->isXLSX()
+            ? $this->columns($sheet)->pluck('validations')
+            : $this->template->get('columns')->pluck('validations');
+    }
+
+    public function columnRules(string $sheet): array
+    {
+        return $this->columnRules ??= $this->columns($sheet)
+            ->filter(fn ($column) => $column->has('validations'))
+            ->mapWithKeys(fn ($column) => [
+                $column->get('name') => $column->get('validations'),
+            ])->toArray();
+    }
+
     public function paramRules(): array
     {
         return $this->paramRules ??= $this->params()
@@ -54,6 +87,32 @@ abstract class Template
             ->mapWithKeys(fn ($param) => [
                 $param->get('name') => $param->get('validations'),
             ])->toArray();
+    }
+
+    public function chunkSize(string $sheet): int
+    {
+        return $this->chunkSizes[$sheet]
+            ??= $this->sheet($sheet)->has('chunkSize')
+            ? $this->sheet($sheet)->get('chunkSize')
+            : (int) Config::get('enso.imports.chunkSize');
+    }
+
+    public function importer(string $sheet): Importable
+    {
+        $class = $this->sheet($sheet)->get('importerClass');
+
+        return new $class();
+    }
+
+    public function customValidator(string $sheet): ?CustomValidator
+    {
+        if ($this->sheet($sheet)->has('validatorClass')) {
+            $class = $this->sheet($sheet)->get('validatorClass');
+
+            return new $class();
+        }
+
+        return null;
     }
 
     public function params(bool $validations = true): Obj
@@ -64,13 +123,57 @@ abstract class Template
             ->each(fn ($param) => $this->optionallySetOptions($param));
     }
 
-    protected function validate(): void
+    public function sheets(): Obj
+    {
+        return $this->isXLSX()
+            ? $this->template->get('sheets')
+            : new Obj([[$this->template->get('name') => [
+                $this->template->get('columns'),
+            ]]]);
+    }
+
+    public function nextSheet(string $name): ?Obj
+    {
+        $index = $this->sheets()->search(fn ($sheet) => $sheet->get('name') === $name);
+
+        return $this->sheets()->get($index + 1);
+    }
+
+    public function delimiter(): ?string
+    {
+        return $this->template->get('fieldDelimiter');
+    }
+
+    public function enclosure(): ?string
+    {
+        return $this->template->get('fieldEnclosure');
+    }
+
+    public function isXLSX(): bool
+    {
+        return $this->template->has('sheets');
+    }
+
+    private function columns(string $sheet): Obj
+    {
+        return $this->sheet($sheet)->get('columns');
+    }
+
+    private function sheet(string $name): Obj
+    {
+        return $this->isXLSX()
+            ? $this->sheets()->first(fn ($sheet) => $sheet
+                ->get('name') === $name)
+            : $this->sheets();
+    }
+
+    private function validate(): void
     {
         (new Validator($this->template))->run();
         (new Params($this->template))->run();
     }
 
-    protected function shouldValidate(): bool
+    private function shouldValidate(): bool
     {
         return in_array(
             Config::get('enso.imports.validations'),
@@ -78,7 +181,7 @@ abstract class Template
         );
     }
 
-    protected function template(string $type): Obj
+    private function template(string $type): Obj
     {
         $template = Config::get("enso.imports.configs.{$type}.template");
 
@@ -89,7 +192,7 @@ abstract class Template
         return (new JsonReader(base_path($template)))->obj();
     }
 
-    protected function optionallySetOptions($param)
+    private function optionallySetOptions($param)
     {
         $options = $param->get('options');
 

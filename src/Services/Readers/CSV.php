@@ -3,20 +3,23 @@
 namespace LaravelEnso\DataImport\Services\Readers;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\CSV\Reader  as CSVReader;
 use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
 
 class CSV extends Reader
 {
-    protected bool $open;
-    protected CSVReader $reader;
+    private const DefaultDelimiter = ';';
+    private const DefaultEnclosure = '@';
 
-    public function __construct(protected string $file)
-    {
-        $this->open = false;
+    public function __construct(
+        protected string $file,
+        protected ?string $delimiter = self::DefaultDelimiter,
+        protected ?string $enclosure = self::DefaultEnclosure
+    ) {
+        parent::__construct($file);
         $this->reader = ReaderEntityFactory::createCSVReader();
         $this->reader->setFieldDelimiter(';');
+        // $this->reader->setFieldEnclosure($enclosure);
     }
 
     public function rowIterator(): RowIterator

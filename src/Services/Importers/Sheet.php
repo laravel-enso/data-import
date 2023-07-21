@@ -11,6 +11,7 @@ use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Sheet
 {

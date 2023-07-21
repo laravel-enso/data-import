@@ -8,6 +8,6 @@ class Template extends Attributes
 
     protected array $optional = [
         'notifies', 'params', 'queue', 'sheets', 'fieldDelimiter',
-        'fieldEnclosure',
+        'fieldEnclosure', 'importerClass', 'name', 'chunkSize', 'columns',
     ];
 }

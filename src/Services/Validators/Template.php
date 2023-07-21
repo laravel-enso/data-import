@@ -33,6 +33,8 @@ class Template
     {
         if (! $this->template->has('sheets')) {
             $this->validateSheet($this->template);
+
+            return $this;
         }
 
         $this->template->get('sheets')
@@ -89,9 +91,11 @@ class Template
         if ($this->template->has('sheets')) {
             $columns = $this->template->get('sheets')->pluck('columns');
         } else {
-            $columns = $this->template->pluck('columns');
+            $columns = $this->template->get('columns');
         }
+        \Log::info($this->template->toArray());
+        \Log::info($columns->toArray());
 
-        $columns->each(fn ($columns) => $columns->each($validateColumn));
+        $columns->each($validateColumn);
     }
 }

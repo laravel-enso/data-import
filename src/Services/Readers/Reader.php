@@ -3,11 +3,20 @@
 namespace LaravelEnso\DataImport\Services\Readers;
 
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\ReaderAbstract;
 use Exception;
 use LaravelEnso\DataImport\Exceptions\Import;
 
 abstract class Reader
 {
+    protected bool $open;
+    protected ReaderAbstract $reader;
+
+    public function __construct(protected string $file)
+    {
+        $this->open = false;
+    }
+
     public function __destruct()
     {
         if ($this->open) {

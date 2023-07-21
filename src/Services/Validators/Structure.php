@@ -8,7 +8,6 @@ use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\DataImport\Services\Summary;
 use LaravelEnso\DataImport\Services\Template;
-use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Structure
 {
@@ -16,29 +15,30 @@ class Structure
     private Summary $summary;
     private string $path;
     private string $filename;
-    private string $extension;
+    private CSV|XLSX $reader;
 
-    public function __construct(Template $template, string $path, string $filename, string $extension)
+    public function __construct(Template $template, string $path, string $filename)
     {
         $this->template = $template;
         $this->path = $path;
         $this->filename = $filename;
-        $this->extension = $extension;
         $this->summary = new Summary();
+        $this->reader = $this->reader();
     }
 
     public function validates(): bool
     {
-        if (! $this->isCSV()) {
+        if ($this->template->isXLSX()) {
             $this->handleSheets();
         }
 
         if ($this->summary->errors()->isEmpty()) {
-            $this->isCSV()
-                ? $this->handleColumns($this->template->sheets()
-                    ->pluck('name')->first())
-                : $this->reader()->sheets()
-                ->each(fn ($sheet) => $this->handleColumns($sheet));
+            if ($this->template->isXLSX()) {
+                $this->template->sheets()->each(fn ($sheet) => $this
+                    ->handleColumns($sheet));
+            } else {
+                $this->handleColumns($this->template->sheets());
+            }
         }
 
         return $this->summary->errors()->isEmpty();
@@ -54,17 +54,19 @@ class Structure
 
     private function reader(): CSV|XLSX
     {
-        return match ($this->extension) {
-            'csv' => new CSV($this->path),
-            'xlsx' => new XLSX($this->path),
-            default => throw new EnsoException('Unsupported import type'),
-        };
+        return $this->template->isXLSX()
+            ? new XLSX($this->path)
+            : new CSV(
+                $this->path,
+                $this->template->delimiter(),
+                $this->template->enclosure()
+            );
     }
 
     private function handleSheets(): void
     {
         $template = $this->template->sheets()->pluck('name');
-        $xlsx = $this->reader()->sheets();
+        $xlsx = $this->reader->sheets();
 
         $this->missingSheets($template, $xlsx)
             ->extraSheets($template, $xlsx);
@@ -86,7 +88,12 @@ class Structure
 
     private function handleColumns(string $sheet): void
     {
-        $iterator = $this->reader()->rowIterator($sheet);
+        if ($this->reader instanceof XLSX) {
+            $iterator = $this->reader->rowIterator($sheet);
+        } else {
+            $iterator = $this->reader->rowIterator();
+        }
+
         $header = Sanitize::header($iterator->current());
         $template = $this->template->header($sheet);
 
@@ -96,6 +103,8 @@ class Structure
 
     private function missingColumns(string $sheet, Collection $header, Collection $template): self
     {
+        \Log::info($template);
+        \Log::info($header);
         $template->diff($header)->each(fn ($column) => $this->summary
             ->addError(__('Missing Columns'), __('Sheet ":sheet", column ":column"', [
                 'sheet' => $sheet, 'column' => $column,
@@ -110,10 +119,5 @@ class Structure
             ->addError(__('Extra Columns'), __('Sheet ":sheet", column ":column"', [
                 'sheet' => $sheet, 'column' => $column,
             ])));
-    }
-
-    private function isCSV(): bool
-    {
-        return $this->extension === 'csv';
     }
 }
