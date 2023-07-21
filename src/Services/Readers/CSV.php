@@ -16,6 +16,7 @@ class CSV extends Reader
     {
         $this->open = false;
         $this->reader = ReaderEntityFactory::createCSVReader();
+        $this->reader->setFieldDelimiter(';');
     }
 
     public function rowIterator(): RowIterator

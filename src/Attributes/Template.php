@@ -4,7 +4,10 @@ namespace LaravelEnso\DataImport\Attributes;
 
 class Template extends Attributes
 {
-    protected array $mandatory = ['sheets', 'timeout'];
+    protected array $mandatory = ['timeout'];
 
-    protected array $optional = ['notifies', 'params', 'queue'];
+    protected array $optional = [
+        'notifies', 'params', 'queue', 'sheets', 'fieldDelimiter',
+        'fieldEnclosure',
+    ];
 }

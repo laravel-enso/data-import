@@ -36,7 +36,7 @@ class Structure
         if ($this->summary->errors()->isEmpty()) {
             $this->isCSV()
                 ? $this->handleColumns($this->template->sheets()
-                ->pluck('name')->first())
+                    ->pluck('name')->first())
                 : $this->reader()->sheets()
                 ->each(fn ($sheet) => $this->handleColumns($sheet));
         }

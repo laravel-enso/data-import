@@ -215,7 +215,12 @@ class Import extends Model implements
         $path = $file->getPathname();
         $filename = $file->getClientOriginalName();
 
-        $structure = new Structure($this->template(), $path, $filename, $file->extension());
+        $structure = new Structure(
+            $this->template(),
+            $path,
+            $filename,
+            $file->getClientOriginalExtension()
+        );
 
         if ($structure->validates()) {
             $this->save();

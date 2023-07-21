@@ -18,9 +18,7 @@ class Template
 
     public function run(): void
     {
-        $this->root()
-            ->sheets()
-            ->columns();
+        $this->root()->sheets()->columns();
     }
 
     private function root(): self
@@ -33,17 +31,25 @@ class Template
 
     private function sheets(): self
     {
+        if (! $this->template->has('sheets')) {
+            $this->validateSheet($this->template);
+        }
+
         $this->template->get('sheets')
-            ->each(fn ($sheet) => (new Sheet())
-                ->validateMandatory($sheet->keys())
-                ->rejectUnknown($sheet->keys()))
-            ->each(fn ($sheet) => $this->importer($sheet)
-                ->validator($sheet));
+            ->each(fn ($sheet) => $this->validateSheet($sheet));
 
         return $this;
     }
 
-    private function importer($sheet): self
+    private function validateSheet(Obj $sheet): void
+    {
+        (new Sheet())->validateMandatory($sheet->keys())
+            ->rejectUnknown($sheet->keys());
+
+        $this->importer($sheet)->validator($sheet);
+    }
+
+    private function importer(Obj $sheet): self
     {
         if (! class_exists($sheet->get('importerClass'))) {
             throw Exception::missingImporterClass($sheet);
@@ -59,7 +65,7 @@ class Template
         return $this;
     }
 
-    private function validator($sheet): void
+    private function validator(Obj $sheet): void
     {
         if (! $sheet->has('validatorClass')) {
             return;
@@ -76,10 +82,16 @@ class Template
 
     private function columns(): void
     {
-        $this->template->get('sheets')
-            ->pluck('columns')->each(fn ($columns) => $columns
-                ->each(fn ($column) => (new Column())
-                    ->validateMandatory($column->keys())
-                    ->rejectUnknown($column->keys())));
+        $validateColumn = fn ($column) => (new Column())
+            ->validateMandatory($column->keys())
+            ->rejectUnknown($column->keys());
+
+        if ($this->template->has('sheets')) {
+            $columns = $this->template->get('sheets')->pluck('columns');
+        } else {
+            $columns = $this->template->pluck('columns');
+        }
+
+        $columns->each(fn ($columns) => $columns->each($validateColumn));
     }
 }
