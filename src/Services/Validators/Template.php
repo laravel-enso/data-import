@@ -24,7 +24,7 @@ class Template
 
     private function root(): self
     {
-        if ($this->isCSV()) {
+        if (! $this->isXLSX()) {
             $this->validateCSV($this->template);
 
             return $this;
@@ -38,7 +38,7 @@ class Template
 
     private function sheets(): self
     {
-        if ($this->isCSV()) {
+        if (! $this->isXLSX()) {
             return $this;
         }
 
@@ -101,18 +101,17 @@ class Template
             ->validateMandatory($column->keys())
             ->rejectUnknown($column->keys());
 
-        if ($this->isCSV()) {
-            $columns = $this->template->get('columns');
+        if ($this->isXLSX()) {
+            $columns = $this->template->get('sheets')->pluck('columns')
+                ->each(fn ($columns) => $columns
+                    ->each(fn ($column) => $validateColumn($column)));
         } else {
-            $columns = $this->template->get('sheets')->pluck('columns');
+            $columns = $this->template->get('columns')->each($validateColumn);
         }
-
-        $columns->each($validateColumn);
     }
 
-    private function isCSV(): bool
+    private function isXLSX(): bool
     {
-        return $this->template->has('fieldDelimiter')
-            || ! $this->template->has('sheets');
+        return $this->template->has('sheets');
     }
 }

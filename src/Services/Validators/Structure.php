@@ -11,22 +11,47 @@ use LaravelEnso\DataImport\Services\Template;
 
 class Structure
 {
-    private Template $template;
     private Summary $summary;
-    private string $path;
-    private string $filename;
     private CSV|XLSX $reader;
 
-    public function __construct(Template $template, string $path, string $filename)
-    {
-        $this->template = $template;
+    public function __construct(
+        private Template $template,
+        private string $path,
+        private string $filename,
+        private string $extension,
+    ) {
         $this->summary = new Summary();
-        $this->path = $path;
-        $this->filename = $filename;
         $this->reader = $this->reader();
     }
 
     public function validates(): bool
+    {
+        return $this->validatesExtension()
+            ? $this->validatesStructure()
+            : false;
+    }
+
+    private function validatesExtension(): bool
+    {
+        $valid = ($this->template->isCSV() && $this->extension === 'csv')
+            || (! $this->template->isCSV() && $this->extension === 'xlsx');
+
+        if (! $valid) {
+            [$provided, $required] = $this->template->isCSV()
+                ? ['.csv', '.xlsx']
+                : ['.csv', '.xlsx'];
+
+            $message = 'Required ":required", Provided ":provided"';
+
+            $this->summary->addError(__('File Extension'), __($message, [
+                'required' => $required, 'provided' => $provided,
+            ]));
+        }
+
+        return $valid;
+    }
+
+    private function validatesStructure(): bool
     {
         if (! $this->template->isCSV()) {
             $this->handleSheets();
