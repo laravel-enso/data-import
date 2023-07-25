@@ -3,6 +3,8 @@
     "importerClass": "LaravelEnso\\DataImport\\Tests\\UserGroupImporter",
     "chunkSize": 250,
     "name": "groups",
+    "fieldDelimiter": ";",
+    "fieldEnclosure": "@",
     "columns": [
         {
             "name": "name",

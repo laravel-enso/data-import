@@ -52,23 +52,17 @@ class Template
 
     public function header(string $sheet): Collection
     {
-        return $this->isXLSX()
-            ? $this->columns($sheet)->pluck('name')
-            : $this->template->get('columns')->pluck('name');
+        return $this->columns($sheet)->pluck('name');
     }
 
     public function descriptions(string $sheet): Collection
     {
-        return $this->isXLSX()
-            ? $this->columns($sheet)->pluck('description')
-            : $this->template->get('columns')->pluck('descriptions');
+        return $this->columns($sheet)->pluck('description');
     }
 
     public function validations(string $sheet): Collection
     {
-        return $this->isXLSX()
-            ? $this->columns($sheet)->pluck('validations')
-            : $this->template->get('columns')->pluck('validations');
+        return $this->columns($sheet)->pluck('validations');
     }
 
     public function columnRules(string $sheet): array
@@ -125,11 +119,14 @@ class Template
 
     public function sheets(): Obj
     {
-        return $this->isXLSX()
-            ? $this->template->get('sheets')
-            : new Obj([[$this->template->get('name') => [
-                $this->template->get('columns'),
-            ]]]);
+        return $this->isCSV()
+            ? new Obj([[
+                'name' => $this->template->get('name'),
+                'columns' => $this->template->get('columns'),
+                'importerClass' => $this->template->get('importerClass'),
+                'chunkSize' => $this->template->get('chunkSize'),
+            ]])
+            : $this->template->get('sheets');
     }
 
     public function nextSheet(string $name): ?Obj
@@ -139,19 +136,19 @@ class Template
         return $this->sheets()->get($index + 1);
     }
 
-    public function delimiter(): ?string
+    public function delimiter(): string
     {
         return $this->template->get('fieldDelimiter');
     }
 
-    public function enclosure(): ?string
+    public function enclosure(): string
     {
         return $this->template->get('fieldEnclosure');
     }
 
-    public function isXLSX(): bool
+    public function isCSV(): bool
     {
-        return $this->template->has('sheets');
+        return $this->template->has('fieldDelimiter');
     }
 
     private function columns(string $sheet): Obj
@@ -161,10 +158,8 @@ class Template
 
     private function sheet(string $name): Obj
     {
-        return $this->isXLSX()
-            ? $this->sheets()->first(fn ($sheet) => $sheet
-                ->get('name') === $name)
-            : $this->sheets();
+        return $this->sheets()->first(fn ($sheet) => $sheet
+            ->get('name') === $name);
     }
 
     private function validate(): void

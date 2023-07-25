@@ -215,10 +215,6 @@ class Import extends Model implements
         $path = $file->getPathname();
         $filename = $file->getClientOriginalName();
 
-        \Log::info($path);
-
-        \Log::info($path);
-
         $structure = new Structure(
             $this->template(),
             $path,
@@ -294,7 +290,7 @@ class Import extends Model implements
     public function import(?string $sheet = null)
     {
         if ($sheet === null) {
-            $sheet = 'test';
+            $sheet = $this->template()->sheets()->first()->get('name');
         }
 
         Job::dispatch($this, $sheet);

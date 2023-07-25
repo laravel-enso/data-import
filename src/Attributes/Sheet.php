@@ -6,5 +6,5 @@ class Sheet extends Attributes
 {
     protected array $mandatory = ['name', 'columns', 'importerClass'];
 
-    protected array $optional = ['validatorClass', 'chunkSize', 'params', 'timeout'];
+    protected array $optional = ['validatorClass', 'chunkSize', 'params'];
 }

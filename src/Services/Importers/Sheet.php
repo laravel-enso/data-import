@@ -54,7 +54,11 @@ class Sheet
         $file = Storage::path($import->file->path());
 
         return match ($import->file->extension()) {
-            'csv' => new CSV($file),
+            'csv' => new CSV(
+                $file,
+                $import->template()->delimiter(),
+                $import->template()->enclosure()
+            ),
             'xlsx' => new XLSX($file),
             default => throw new EnsoException('Unsupported import type'),
         };

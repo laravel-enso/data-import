@@ -8,18 +8,15 @@ use Box\Spout\Reader\CSV\Sheet;
 
 class CSV extends Reader
 {
-    private const DefaultDelimiter = ';';
-    private const DefaultEnclosure = '@';
-
     public function __construct(
         protected string $file,
-        protected ?string $delimiter = self::DefaultDelimiter,
-        protected ?string $enclosure = self::DefaultEnclosure
+        protected string $delimiter,
+        protected string $enclosure,
     ) {
         parent::__construct($file);
         $this->reader = ReaderEntityFactory::createCSVReader();
-        $this->reader->setFieldDelimiter(';');
-        // $this->reader->setFieldEnclosure($enclosure);
+        $this->reader->setFieldDelimiter($delimiter);
+        $this->reader->setFieldEnclosure($enclosure);
     }
 
     public function rowIterator(): RowIterator

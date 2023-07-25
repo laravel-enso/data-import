@@ -20,25 +20,21 @@ class Structure
     public function __construct(Template $template, string $path, string $filename)
     {
         $this->template = $template;
+        $this->summary = new Summary();
         $this->path = $path;
         $this->filename = $filename;
-        $this->summary = new Summary();
         $this->reader = $this->reader();
     }
 
     public function validates(): bool
     {
-        if ($this->template->isXLSX()) {
+        if (! $this->template->isCSV()) {
             $this->handleSheets();
         }
 
         if ($this->summary->errors()->isEmpty()) {
-            if ($this->template->isXLSX()) {
-                $this->template->sheets()->each(fn ($sheet) => $this
-                    ->handleColumns($sheet));
-            } else {
-                $this->handleColumns($this->template->sheets());
-            }
+            $this->template->sheets()->pluck('name')->each(fn ($sheet) => $this
+                ->handleColumns($sheet));
         }
 
         return $this->summary->errors()->isEmpty();
@@ -54,13 +50,13 @@ class Structure
 
     private function reader(): CSV|XLSX
     {
-        return $this->template->isXLSX()
-            ? new XLSX($this->path)
-            : new CSV(
+        return $this->template->isCSV()
+            ? new CSV(
                 $this->path,
                 $this->template->delimiter(),
                 $this->template->enclosure()
-            );
+            )
+            : new XLSX($this->path);
     }
 
     private function handleSheets(): void
@@ -103,8 +99,6 @@ class Structure
 
     private function missingColumns(string $sheet, Collection $header, Collection $template): self
     {
-        \Log::info($template);
-        \Log::info($header);
         $template->diff($header)->each(fn ($column) => $this->summary
             ->addError(__('Missing Columns'), __('Sheet ":sheet", column ":column"', [
                 'sheet' => $sheet, 'column' => $column,

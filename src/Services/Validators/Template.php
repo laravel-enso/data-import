@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Attributes\Column;
+use LaravelEnso\DataImport\Attributes\CSV;
 use LaravelEnso\DataImport\Attributes\Sheet;
 use LaravelEnso\DataImport\Attributes\Template as Attributes;
 use LaravelEnso\DataImport\Contracts\Importable;
@@ -23,6 +24,12 @@ class Template
 
     private function root(): self
     {
+        if ($this->isCSV()) {
+            $this->validateCSV($this->template);
+
+            return $this;
+        }
+
         (new Attributes())->validateMandatory($this->template->keys())
             ->rejectUnknown($this->template->keys());
 
@@ -31,9 +38,7 @@ class Template
 
     private function sheets(): self
     {
-        if (! $this->template->has('sheets')) {
-            $this->validateSheet($this->template);
-
+        if ($this->isCSV()) {
             return $this;
         }
 
@@ -49,6 +54,14 @@ class Template
             ->rejectUnknown($sheet->keys());
 
         $this->importer($sheet)->validator($sheet);
+    }
+
+    private function validateCSV(Obj $template): void
+    {
+        (new CSV())->validateMandatory($template->keys())
+            ->rejectUnknown($template->keys());
+
+        $this->importer($template)->validator($template);
     }
 
     private function importer(Obj $sheet): self
@@ -88,14 +101,18 @@ class Template
             ->validateMandatory($column->keys())
             ->rejectUnknown($column->keys());
 
-        if ($this->template->has('sheets')) {
-            $columns = $this->template->get('sheets')->pluck('columns');
-        } else {
+        if ($this->isCSV()) {
             $columns = $this->template->get('columns');
+        } else {
+            $columns = $this->template->get('sheets')->pluck('columns');
         }
-        \Log::info($this->template->toArray());
-        \Log::info($columns->toArray());
 
         $columns->each($validateColumn);
+    }
+
+    private function isCSV(): bool
+    {
+        return $this->template->has('fieldDelimiter')
+            || ! $this->template->has('sheets');
     }
 }
