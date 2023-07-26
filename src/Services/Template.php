@@ -119,7 +119,14 @@ class Template
 
     public function sheets(): Obj
     {
-        return $this->template->get('sheets');
+        return $this->isCSV()
+            ? new Obj([[
+                'name' => $this->template->get('name'),
+                'columns' => $this->template->get('columns'),
+                'importerClass' => $this->template->get('importerClass'),
+                'chunkSize' => $this->template->get('chunkSize'),
+            ]])
+            : $this->template->get('sheets');
     }
 
     public function nextSheet(string $name): ?Obj
@@ -129,6 +136,21 @@ class Template
         return $this->sheets()->get($index + 1);
     }
 
+    public function delimiter(): string
+    {
+        return $this->template->get('fieldDelimiter');
+    }
+
+    public function enclosure(): string
+    {
+        return $this->template->get('fieldEnclosure');
+    }
+
+    public function isCSV(): bool
+    {
+        return $this->template->has('fieldDelimiter');
+    }
+
     private function columns(string $sheet): Obj
     {
         return $this->sheet($sheet)->get('columns');
@@ -136,8 +158,8 @@ class Template
 
     private function sheet(string $name): Obj
     {
-        return $this->sheets()
-            ->first(fn ($sheet) => $sheet->get('name') === $name);
+        return $this->sheets()->first(fn ($sheet) => $sheet
+            ->get('name') === $name);
     }
 
     private function validate(): void

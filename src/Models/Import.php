@@ -102,7 +102,7 @@ class Import extends Model implements
 
     public function extensions(): array
     {
-        return ['xlsx'];
+        return ['xlsx', 'csv'];
     }
 
     public function batch(): ?Batch
@@ -198,7 +198,10 @@ class Import extends Model implements
     public function attach(string $savedName, string $filename): array
     {
         $path = Type::for($this::class)->path($savedName);
-        $structure = new Structure($this->template(), Storage::path($path), $filename);
+        $extension = Str::afterLast($filename, '.');
+        $args = [$this->template(), Storage::path($path), $filename, $extension];
+
+        $structure = new Structure(...$args);
 
         if ($structure->validates()) {
             $file = File::attach($this, $savedName, $filename);
@@ -214,7 +217,11 @@ class Import extends Model implements
     {
         $path = $file->getPathname();
         $filename = $file->getClientOriginalName();
-        $structure = new Structure($this->template(), $path, $filename);
+        $extension = $file->getClientOriginalExtension();
+
+        $args = [$this->template(), $path, $filename, $extension];
+
+        $structure = new Structure(...$args);
 
         if ($structure->validates()) {
             $this->save();

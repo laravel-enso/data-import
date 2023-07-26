@@ -8,14 +8,16 @@ use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Jobs\Chunk as Job;
 use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Sheet
 {
     private int $chunkSize;
-    private XLSX $xlsx;
     private Collection $header;
+    private XLSX|CSV $reader;
     private int $rowLength;
     private Chunk $chunk;
 
@@ -25,7 +27,6 @@ class Sheet
         private string $sheet
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
-        $this->xlsx = new XLSX(Storage::path($import->file->path()));
     }
 
     public function handle()
@@ -40,10 +41,26 @@ class Sheet
 
     private function init(): void
     {
-        $this->iterator = $this->xlsx->rowIterator($this->sheet);
+        $this->reader = $this->reader();
+        $this->iterator = $this->reader->rowIterator($this->sheet);
         $this->header = Sanitize::header($this->iterator->current());
         $this->rowLength = $this->header->count();
         $this->iterator->next();
+    }
+
+    private function reader()
+    {
+        $file = Storage::path($this->import->file->path());
+
+        return match ($this->import->file->extension()) {
+            'csv' => new CSV(
+                $file,
+                $this->import->template()->delimiter(),
+                $this->import->template()->enclosure()
+            ),
+            'xlsx' => new XLSX($file),
+            default => throw new EnsoException('Unsupported import type'),
+        };
     }
 
     private function prepare(): self

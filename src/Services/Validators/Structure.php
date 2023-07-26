@@ -3,6 +3,7 @@
 namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
+use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\DataImport\Services\Summary;
@@ -10,26 +11,55 @@ use LaravelEnso\DataImport\Services\Template;
 
 class Structure
 {
-    private Template $template;
-    private XLSX $xlsx;
     private Summary $summary;
-    private string $filename;
+    private CSV|XLSX $reader;
 
-    public function __construct(Template $template, string $path, string $filename)
-    {
-        $this->template = $template;
-        $this->xlsx = new XLSX($path);
-        $this->filename = $filename;
+    public function __construct(
+        private Template $template,
+        private string $path,
+        private string $filename,
+        private string $extension,
+    ) {
         $this->summary = new Summary();
+        $this->reader = $this->reader();
     }
 
     public function validates(): bool
     {
-        $this->handleSheets();
+        return $this->validatesExtension()
+            ? $this->validatesStructure()
+            : false;
+    }
+
+    private function validatesExtension(): bool
+    {
+        $valid = ($this->template->isCSV() && $this->extension === 'csv')
+            || (! $this->template->isCSV() && $this->extension === 'xlsx');
+
+        if (! $valid) {
+            [$provided, $required] = $this->template->isCSV()
+                ? ['.csv', '.xlsx']
+                : ['.csv', '.xlsx'];
+
+            $message = 'Required ":required", Provided ":provided"';
+
+            $this->summary->addError(__('File Extension'), __($message, [
+                'required' => $required, 'provided' => $provided,
+            ]));
+        }
+
+        return $valid;
+    }
+
+    private function validatesStructure(): bool
+    {
+        if (! $this->template->isCSV()) {
+            $this->handleSheets();
+        }
 
         if ($this->summary->errors()->isEmpty()) {
-            $this->xlsx->sheets()
-                ->each(fn ($sheet) => $this->handleColumns($sheet));
+            $this->template->sheets()->pluck('name')->each(fn ($sheet) => $this
+                ->handleColumns($sheet));
         }
 
         return $this->summary->errors()->isEmpty();
@@ -43,10 +73,21 @@ class Structure
         ];
     }
 
+    private function reader(): CSV|XLSX
+    {
+        return $this->template->isCSV()
+            ? new CSV(
+                $this->path,
+                $this->template->delimiter(),
+                $this->template->enclosure()
+            )
+            : new XLSX($this->path);
+    }
+
     private function handleSheets(): void
     {
         $template = $this->template->sheets()->pluck('name');
-        $xlsx = $this->xlsx->sheets();
+        $xlsx = $this->reader->sheets();
 
         $this->missingSheets($template, $xlsx)
             ->extraSheets($template, $xlsx);
@@ -68,17 +109,18 @@ class Structure
 
     private function handleColumns(string $sheet): void
     {
-        $iterator = $this->xlsx->rowIterator($sheet);
-        $xlsx = Sanitize::header($iterator->current());
+        $iterator = $this->reader->rowIterator($sheet);
+
+        $header = Sanitize::header($iterator->current());
         $template = $this->template->header($sheet);
 
-        $this->missingColumns($sheet, $xlsx, $template)
-            ->extraColumns($sheet, $xlsx, $template);
+        $this->missingColumns($sheet, $header, $template)
+            ->extraColumns($sheet, $header, $template);
     }
 
-    private function missingColumns(string $sheet, Collection $xlsx, Collection $template): self
+    private function missingColumns(string $sheet, Collection $header, Collection $template): self
     {
-        $template->diff($xlsx)->each(fn ($column) => $this->summary
+        $template->diff($header)->each(fn ($column) => $this->summary
             ->addError(__('Missing Columns'), __('Sheet ":sheet", column ":column"', [
                 'sheet' => $sheet, 'column' => $column,
             ])));
@@ -86,9 +128,9 @@ class Structure
         return $this;
     }
 
-    private function extraColumns(string $sheet, Collection $xlsx, Collection $template): void
+    private function extraColumns(string $sheet, Collection $header, Collection $template): void
     {
-        $xlsx->diff($template)->each(fn ($column) => $this->summary
+        $header->diff($template)->each(fn ($column) => $this->summary
             ->addError(__('Extra Columns'), __('Sheet ":sheet", column ":column"', [
                 'sheet' => $sheet, 'column' => $column,
             ])));

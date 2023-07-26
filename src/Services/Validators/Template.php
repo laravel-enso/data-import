@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services\Validators;
 
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Attributes\Column;
+use LaravelEnso\DataImport\Attributes\CSV;
 use LaravelEnso\DataImport\Attributes\Sheet;
 use LaravelEnso\DataImport\Attributes\Template as Attributes;
 use LaravelEnso\DataImport\Contracts\Importable;
@@ -18,13 +19,17 @@ class Template
 
     public function run(): void
     {
-        $this->root()
-            ->sheets()
-            ->columns();
+        $this->root()->sheets()->columns();
     }
 
     private function root(): self
     {
+        if (! $this->isXLSX()) {
+            $this->validateCSV($this->template);
+
+            return $this;
+        }
+
         (new Attributes())->validateMandatory($this->template->keys())
             ->rejectUnknown($this->template->keys());
 
@@ -33,17 +38,33 @@ class Template
 
     private function sheets(): self
     {
+        if (! $this->isXLSX()) {
+            return $this;
+        }
+
         $this->template->get('sheets')
-            ->each(fn ($sheet) => (new Sheet())
-                ->validateMandatory($sheet->keys())
-                ->rejectUnknown($sheet->keys()))
-            ->each(fn ($sheet) => $this->importer($sheet)
-                ->validator($sheet));
+            ->each(fn ($sheet) => $this->validateSheet($sheet));
 
         return $this;
     }
 
-    private function importer($sheet): self
+    private function validateSheet(Obj $sheet): void
+    {
+        (new Sheet())->validateMandatory($sheet->keys())
+            ->rejectUnknown($sheet->keys());
+
+        $this->importer($sheet)->validator($sheet);
+    }
+
+    private function validateCSV(Obj $template): void
+    {
+        (new CSV())->validateMandatory($template->keys())
+            ->rejectUnknown($template->keys());
+
+        $this->importer($template)->validator($template);
+    }
+
+    private function importer(Obj $sheet): self
     {
         if (! class_exists($sheet->get('importerClass'))) {
             throw Exception::missingImporterClass($sheet);
@@ -59,7 +80,7 @@ class Template
         return $this;
     }
 
-    private function validator($sheet): void
+    private function validator(Obj $sheet): void
     {
         if (! $sheet->has('validatorClass')) {
             return;
@@ -76,10 +97,19 @@ class Template
 
     private function columns(): void
     {
-        $this->template->get('sheets')
-            ->pluck('columns')->each(fn ($columns) => $columns
-                ->each(fn ($column) => (new Column())
-                    ->validateMandatory($column->keys())
-                    ->rejectUnknown($column->keys())));
+        $validate = fn ($column) => (new Column())
+            ->validateMandatory($column->keys())
+            ->rejectUnknown($column->keys());
+
+        $columns = $this->isXLSX()
+            ? $this->template->get('sheets')->pluck('columns')->flatten(1)
+            : $this->template->get('columns');
+
+        $columns->each($validate);
+    }
+
+    private function isXLSX(): bool
+    {
+        return $this->template->has('sheets');
     }
 }
