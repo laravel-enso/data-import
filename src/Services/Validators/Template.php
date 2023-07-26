@@ -97,17 +97,15 @@ class Template
 
     private function columns(): void
     {
-        $validateColumn = fn ($column) => (new Column())
+        $validate = fn ($column) => (new Column())
             ->validateMandatory($column->keys())
             ->rejectUnknown($column->keys());
 
-        if ($this->isXLSX()) {
-            $columns = $this->template->get('sheets')->pluck('columns')
-                ->each(fn ($columns) => $columns
-                    ->each(fn ($column) => $validateColumn($column)));
-        } else {
-            $columns = $this->template->get('columns')->each($validateColumn);
-        }
+        $columns = $this->isXLSX()
+            ? $this->template->get('sheets')->pluck('columns')->flatten(1)
+            : $this->template->get('columns');
+
+        $columns->each($validate);
     }
 
     private function isXLSX(): bool

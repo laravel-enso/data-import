@@ -18,7 +18,6 @@ class Sheet
     private int $chunkSize;
     private Collection $header;
     private XLSX|CSV $reader;
-
     private int $rowLength;
     private Chunk $chunk;
 
@@ -28,7 +27,6 @@ class Sheet
         private string $sheet
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
-        $this->reader = $this->reader($this->import);
     }
 
     public function handle()
@@ -43,21 +41,22 @@ class Sheet
 
     private function init(): void
     {
+        $this->reader = $this->reader();
         $this->iterator = $this->reader->rowIterator($this->sheet);
         $this->header = Sanitize::header($this->iterator->current());
         $this->rowLength = $this->header->count();
         $this->iterator->next();
     }
 
-    private function reader($import)
+    private function reader()
     {
-        $file = Storage::path($import->file->path());
+        $file = Storage::path($this->import->file->path());
 
-        return match ($import->file->extension()) {
+        return match ($this->import->file->extension()) {
             'csv' => new CSV(
                 $file,
-                $import->template()->delimiter(),
-                $import->template()->enclosure()
+                $this->import->template()->delimiter(),
+                $this->import->template()->enclosure()
             ),
             'xlsx' => new XLSX($file),
             default => throw new EnsoException('Unsupported import type'),

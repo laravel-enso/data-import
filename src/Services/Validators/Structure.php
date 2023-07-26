@@ -109,11 +109,7 @@ class Structure
 
     private function handleColumns(string $sheet): void
     {
-        if ($this->reader instanceof XLSX) {
-            $iterator = $this->reader->rowIterator($sheet);
-        } else {
-            $iterator = $this->reader->rowIterator();
-        }
+        $iterator = $this->reader->rowIterator($sheet);
 
         $header = Sanitize::header($iterator->current());
         $template = $this->template->header($sheet);
