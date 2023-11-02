@@ -12,9 +12,7 @@ class Policy
 
     public function before(User $user)
     {
-        if ($user->isAdmin() || $user->isSupervisor()) {
-            return true;
-        }
+        return $user->isSuperior();
     }
 
     public function view(User $user, Import $import)
