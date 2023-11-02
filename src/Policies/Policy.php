@@ -12,7 +12,9 @@ class Policy
 
     public function before(User $user)
     {
-        return $user->isSuperior();
+        if ($user->isSuperior()) {
+            return true;
+        }
     }
 
     public function view(User $user, Import $import)
