@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Jobs\Import as Job;
@@ -26,7 +27,6 @@ use LaravelEnso\Files\Models\File;
 use LaravelEnso\Files\Models\Type;
 use LaravelEnso\Helpers\Casts\Obj;
 use LaravelEnso\Helpers\Traits\AvoidsDeletionConflicts;
-use LaravelEnso\Helpers\Traits\When;
 use LaravelEnso\IO\Contracts\IOOperation;
 use LaravelEnso\IO\Enums\IOTypes;
 use LaravelEnso\Tables\Traits\TableCache;
@@ -38,7 +38,7 @@ class Import extends Model implements
     IOOperation,
     CascadesFileDeletion
 {
-    use AvoidsDeletionConflicts, CreatedBy, HasFactory, TableCache, When;
+    use AvoidsDeletionConflicts, CreatedBy, HasFactory, TableCache, Conditionable;
 
     protected $table = 'data_imports';
 
