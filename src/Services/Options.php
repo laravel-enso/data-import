@@ -2,20 +2,21 @@
 
 namespace LaravelEnso\DataImport\Services;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\DataImport\Exceptions\Import;
 use Throwable;
 
 class Options
 {
-    public function __invoke(): Collection
+    public function __invoke(): array
     {
+        $map = fn ($type) => [
+            'id' => $type,
+            'name' => self::label($type),
+        ];
+
         try {
-            return Collection::wrap(self::types())
-                ->map(fn ($type) => [
-                    'id' => $type, 'name' => self::label($type),
-                ]);
+            return array_map($map, self::types());
         } catch (Throwable) {
             throw Import::configNotReadable();
         }
