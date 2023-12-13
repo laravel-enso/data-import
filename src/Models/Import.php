@@ -297,7 +297,7 @@ class Import extends Model implements
         Job::dispatch($this, $sheet);
     }
 
-    public function restart(): self
+    public function restart(): void
     {
         $this->rejected?->delete();
 
@@ -307,6 +307,6 @@ class Import extends Model implements
             'status' => Statuses::Waiting,
         ]);
 
-        return $this;
+        $this->import();
     }
 }
