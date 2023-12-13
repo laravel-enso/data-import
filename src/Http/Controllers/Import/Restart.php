@@ -9,7 +9,7 @@ class Restart extends Controller
 {
     public function __invoke(Import $import)
     {
-        $import->restart()->import();
+        $import->restart();
 
         return ['message' => __('The import was restarted')];
     }
