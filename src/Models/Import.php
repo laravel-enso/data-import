@@ -102,7 +102,7 @@ class Import extends Model implements
 
     public function extensions(): array
     {
-        return ['xlsx', 'csv'];
+        return ['xlsx', 'csv', 'txt'];
     }
 
     public function batch(): ?Batch
