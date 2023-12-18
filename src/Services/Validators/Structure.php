@@ -33,18 +33,20 @@ class Structure
 
     private function validatesExtension(): bool
     {
-        $valid = ($this->template->isCSV() && $this->extension === 'csv')
-            || (! $this->template->isCSV() && $this->extension === 'xlsx');
+        $valid = $this->template->isCSV()
+            && in_array($this->extension, ['csv', 'txt'])
+            || ! $this->template->isCSV()
+            && $this->extension === 'xlsx';
 
         if (! $valid) {
-            [$provided, $required] = $this->template->isCSV()
-                ? ['.csv', '.xlsx']
-                : ['.csv', '.xlsx'];
+            $required = $this->template->isCSV()
+                ? '.csv / .txt'
+                : '.xlsx';
 
             $message = 'Required ":required", Provided ":provided"';
 
             $this->summary->addError(__('File Extension'), __($message, [
-                'required' => $required, 'provided' => $provided,
+                'required' => $required, 'provided' => $this->extension,
             ]));
         }
 

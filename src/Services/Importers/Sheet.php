@@ -53,7 +53,7 @@ class Sheet
         $file = Storage::path($this->import->file->path());
 
         return match ($this->import->file->extension()) {
-            'csv' => new CSV(
+            'txt', 'csv' => new CSV(
                 $file,
                 $this->import->template()->delimiter(),
                 $this->import->template()->enclosure()
