@@ -2,7 +2,8 @@
 
 namespace LaravelEnso\DataImport\Services\Importers;
 
-use Box\Spout\Reader\XLSX\RowIterator;
+use Box\Spout\Reader\CSV\RowIterator as CSVRowIterator;
+use Box\Spout\Reader\XLSX\RowIterator as XLSXRowIterator;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,7 @@ class Sheet
 {
     private int $chunkSize;
     private XLSX|CSV $reader;
-    private RowIterator $iterator;
+    private XLSXRowIterator | CSVRowIterator $iterator;
     private Collection $header;
     private int $rowLength;
     private Chunk $chunk;
