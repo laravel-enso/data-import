@@ -43,7 +43,14 @@ class Sanitize
         }
 
         if (is_string($cell)) {
-            $cell = trim($cell);
+            $from = mb_detect_encoding($cell, ['auto']);
+            $to = 'UTF-8';
+
+            if ($from !== $to) {
+                $cell = mb_convert_encoding($cell, $to, $from);
+            }
+
+            $cell = Str::of($cell)->trim();
         }
 
         return $cell === '' ? null : $cell;

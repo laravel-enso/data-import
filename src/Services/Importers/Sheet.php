@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\DataImport\Services\Importers;
 
+use Box\Spout\Reader\XLSX\RowIterator;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -16,8 +17,9 @@ use LaravelEnso\Helpers\Exceptions\EnsoException;
 class Sheet
 {
     private int $chunkSize;
-    private Collection $header;
     private XLSX|CSV $reader;
+    private RowIterator $iterator;
+    private Collection $header;
     private int $rowLength;
     private Chunk $chunk;
 
