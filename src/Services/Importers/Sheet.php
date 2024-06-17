@@ -19,7 +19,7 @@ class Sheet
 {
     private int $chunkSize;
     private XLSX|CSV $reader;
-    private XLSXRowIterator | CSVRowIterator $iterator;
+    private XLSXRowIterator|CSVRowIterator $iterator;
     private Collection $header;
     private int $rowLength;
     private Chunk $chunk;
