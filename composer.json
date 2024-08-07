@@ -27,7 +27,7 @@
     ],
     "require": {
         "box/spout": "^3.0",
-        "laravel-enso/core": "^9.0",
+        "laravel-enso/core": "^10.0",
         "laravel-enso/dynamic-methods": "^3.0",
         "laravel-enso/enums": "^2.0",
         "laravel-enso/excel": "^3.0",
@@ -51,7 +51,7 @@
                 "LaravelEnso\\DataImport\\AppServiceProvider",
                 "LaravelEnso\\DataImport\\EnumServiceProvider"
             ],
-            "aliases": {}
+            "aliases": []
         }
     }
 }

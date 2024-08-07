@@ -15,8 +15,6 @@ class Chunk extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['header' => 'array', 'rows' => 'array'];
-
     public function import()
     {
         return $this->belongsTo(Import::class);
@@ -42,5 +40,12 @@ class Chunk extends Model
     public function count(): int
     {
         return count($this->rows);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'header' => 'array', 'rows' => 'array',
+        ];
     }
 }

@@ -44,8 +44,6 @@ class Import extends Model implements
 
     protected $guarded = [];
 
-    protected $casts = ['status' => 'integer', 'params' => Obj::class];
-
     protected $template;
 
     public function file(): Relation
@@ -308,5 +306,12 @@ class Import extends Model implements
         ]);
 
         $this->import();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => 'integer', 'params' => Obj::class,
+        ];
     }
 }

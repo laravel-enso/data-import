@@ -13,8 +13,6 @@ class RejectedChunk extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['header' => 'array', 'rows' => 'array'];
-
     public function import()
     {
         return $this->belongsTo(Import::class);
@@ -35,5 +33,12 @@ class RejectedChunk extends Model
     public function empty(): bool
     {
         return count($this->rows) === 0;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'header' => 'array', 'rows' => 'array',
+        ];
     }
 }
