@@ -4,6 +4,7 @@
     "appends": [
         "entries"
     ],
+    "defaultSortDirection": "desc",
     "strip": [
         "created_by"
     ],
@@ -108,7 +109,6 @@
             "meta": [
                 "filterable",
                 "sortable",
-                "sort:DESC",
                 "date"
             ]
         },
