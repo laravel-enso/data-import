@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('data_imports', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->unsignedBigInteger('file_id')->nullable()->unique();
+            $table->bigInteger('file_id')->unsigned()->nullable()->unique();
             $table->foreign('file_id')->references('id')->on('files')
                 ->onUpdate('restrict')->onDelete('restrict');
 
