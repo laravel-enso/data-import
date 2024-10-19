@@ -2,8 +2,6 @@
 
 namespace LaravelEnso\DataImport\Services\Importers;
 
-use Box\Spout\Reader\CSV\RowIterator as CSVRowIterator;
-use Box\Spout\Reader\XLSX\RowIterator as XLSXRowIterator;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +12,8 @@ use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\Helpers\Exceptions\EnsoException;
+use OpenSpout\Reader\CSV\RowIterator as CSVRowIterator;
+use OpenSpout\Reader\XLSX\RowIterator as XLSXRowIterator;
 
 class Sheet
 {

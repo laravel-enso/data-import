@@ -2,18 +2,18 @@
 
 namespace LaravelEnso\DataImport\Services\Readers;
 
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Reader\XLSX\RowIterator;
-use Box\Spout\Reader\XLSX\Sheet;
 use Illuminate\Support\Collection;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
+use OpenSpout\Reader\XLSX\Reader as XLSXReader;
+use OpenSpout\Reader\XLSX\RowIterator;
+use OpenSpout\Reader\XLSX\Sheet;
 
 class XLSX extends Reader
 {
     public function __construct(protected string $file)
     {
         parent::__construct($file);
-        $this->reader = ReaderEntityFactory::createXLSXReader();
+        $this->reader = new XLSXReader();
     }
 
     public function sheets(): Collection

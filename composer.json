@@ -26,7 +26,6 @@
         }
     ],
     "require": {
-        "box/spout": "^3.0",
         "laravel-enso/core": "^10.0",
         "laravel-enso/dynamic-methods": "^3.0",
         "laravel-enso/enums": "^2.0",
@@ -37,7 +36,8 @@
         "laravel-enso/migrator": "^2.0",
         "laravel-enso/track-who": "^2.0",
         "laravel-enso/tables": "^4.0",
-        "laravel-enso/select": "^4.0"
+        "laravel-enso/select": "^4.0",
+        "openspout/openspout": "^4.0"
     },
     "autoload": {
         "psr-4": {

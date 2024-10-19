@@ -2,10 +2,6 @@
 
 namespace LaravelEnso\DataImport\Services\Exporters;
 
-use Box\Spout\Common\Entity\Row;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\XLSX\Writer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +12,8 @@ use LaravelEnso\DataImport\Models\RejectedChunk;
 use LaravelEnso\DataImport\Models\RejectedImport;
 use LaravelEnso\Files\Models\File;
 use LaravelEnso\Files\Models\Type;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\XLSX\Writer;
 
 class Rejected
 {
@@ -47,16 +45,11 @@ class Rejected
 
     private function initWriter(): void
     {
-        $defaultStyle = (new StyleBuilder())
-            ->setShouldWrapText(false)
-            ->build();
-
-        $this->xlsx = WriterEntityFactory::createXLSXWriter();
+        $this->xlsx = new Writer();
 
         $path = Type::for($this->rejected::class)->path($this->savedName);
 
-        $this->xlsx->setDefaultRowStyle($defaultStyle)
-            ->openToFile(Storage::path($path));
+        $this->xlsx->openToFile(Storage::path($path));
     }
 
     private function export(RejectedChunk $chunk): void
@@ -134,7 +127,7 @@ class Rejected
 
     private function row(array $row): Row
     {
-        return WriterEntityFactory::createRowFromArray($row);
+        return Row::fromValues($row);
     }
 
     private function needsNewSheet(string $sheet): bool

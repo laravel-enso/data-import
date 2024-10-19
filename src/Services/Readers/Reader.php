@@ -2,15 +2,15 @@
 
 namespace LaravelEnso\DataImport\Services\Readers;
 
-use Box\Spout\Reader\IteratorInterface;
-use Box\Spout\Reader\ReaderAbstract;
 use Exception;
 use LaravelEnso\DataImport\Exceptions\Import;
+use OpenSpout\Reader\AbstractReader;
+use OpenSpout\Reader\SheetIteratorInterface;
 
 abstract class Reader
 {
     protected bool $open;
-    protected ReaderAbstract $reader;
+    protected AbstractReader $reader;
 
     public function __construct(protected string $file)
     {
@@ -25,7 +25,7 @@ abstract class Reader
         }
     }
 
-    public function sheetIterator(): IteratorInterface
+    public function sheetIterator(): SheetIteratorInterface
     {
         $this->ensureIsOpen();
 

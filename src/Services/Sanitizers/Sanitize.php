@@ -2,12 +2,12 @@
 
 namespace LaravelEnso\DataImport\Services\Sanitizers;
 
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Common\Entity\Row;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Row;
 
 class Sanitize
 {
