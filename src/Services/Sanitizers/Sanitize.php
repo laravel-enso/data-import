@@ -7,6 +7,7 @@ use DateTime;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
 use OpenSpout\Common\Entity\Row;
 
 class Sanitize
@@ -25,7 +26,7 @@ class Sanitize
     public static function cells(array $cells, int $length): array
     {
         return Collection::wrap($cells)
-            ->map(fn ($cell) => self::cell($cell->getValue()))
+            ->map(fn ($cell) => self::cell($cell))
             ->slice(0, $length)
             ->pad($length, null)
             ->toArray();
@@ -36,24 +37,28 @@ class Sanitize
         return Str::of($name)->lower()->snake();
     }
 
-    private static function cell($cell)
+    private static function cell(Cell $cell)
     {
-        if ($cell instanceof DateTime) {
-            return Carbon::instance($cell)->toDateTimeString();
+        $value = $cell instanceof FormulaCell
+            ? $cell->getComputedValue()
+            : $cell->getValue();
+
+        if ($value instanceof DateTime) {
+            return Carbon::instance($value)->toDateTimeString();
         }
 
-        if (is_string($cell)) {
-            $cell = Str::of($cell)->trim();
+        if (is_string($value)) {
+            $value = Str::of($value)->trim();
             $to = 'UTF-8';
-            $from = mb_detect_encoding($cell, ['auto']);
+            $from = mb_detect_encoding($value, ['auto']);
 
             if (! $from) {
-                $cell = '';
+                $value = '';
             } elseif ($from !== $to) {
-                $cell = mb_convert_encoding($cell, $to, $from);
+                $value = mb_convert_encoding($value, $to, $from);
             }
         }
 
-        return $cell === '' ? null : $cell;
+        return $value === '' ? null : $value;
     }
 }

@@ -80,6 +80,7 @@ class Sheet
     private function addRow(): void
     {
         $cells = $this->iterator->current()->getCells();
+
         $row = Sanitize::cells($cells, $this->rowLength);
         $this->chunk->add($row);
 
