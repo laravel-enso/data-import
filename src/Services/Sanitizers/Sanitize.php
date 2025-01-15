@@ -4,6 +4,7 @@ namespace LaravelEnso\DataImport\Services\Sanitizers;
 
 use Carbon\Carbon;
 use DateTime;
+use DateTimeImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use OpenSpout\Common\Entity\Cell;
@@ -43,7 +44,7 @@ class Sanitize
             ? $cell->getComputedValue()
             : $cell->getValue();
 
-        if ($value instanceof DateTime) {
+        if ($value instanceof DateTime || $value instanceof DateTimeImmutable) {
             return Carbon::instance($value)->toDateTimeString();
         }
 
