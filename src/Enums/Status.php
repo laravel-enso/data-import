@@ -7,7 +7,7 @@ use LaravelEnso\Enums\Contracts\Mappable;
 use LaravelEnso\Enums\Contracts\Select;
 use LaravelEnso\Enums\Traits\Select as Options;
 
-enum Status :int implements Mappable, Select, Frontend
+enum Status: int implements Mappable, Select, Frontend
 {
     use Options;
 

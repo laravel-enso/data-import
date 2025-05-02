@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\Enums;
 
 use LaravelEnso\Enums\Contracts\Frontend;
 
-enum CssClass:string implements Frontend
+enum CssClass: string implements Frontend
 {
     case Waiting = 'is-info';
     case Processing = 'is-warning';
