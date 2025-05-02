@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
@@ -109,12 +109,12 @@ class DataImportTest extends TestCase
     public function cant_destroy_while_running()
     {
         $this->attach(self::ImportFile);
-        $this->model->update(['status' => Statuses::Processing]);
+        $this->model->update(['status' => Status::Processing->value]);
 
         $response = $this->delete(route('import.destroy', [$this->model->id], false));
         $response->assertStatus(488);
 
-        $this->model->update(['status' => Statuses::Finalized]);
+        $this->model->update(['status' => Status::Finalized->value]);
     }
 
     /** @test */
