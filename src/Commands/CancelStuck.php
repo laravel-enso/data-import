@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Commands;
 
 use Illuminate\Console\Command;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import;
 
 class CancelStuck extends Command
@@ -15,7 +15,7 @@ class CancelStuck extends Command
     public function handle()
     {
         Import::stuck()->update([
-            'status' => Statuses::Cancelled,
+            'status' => Status::Cancelled->value,
             'batch' => null,
         ]);
     }

@@ -72,7 +72,7 @@
             "label": "Status",
             "name": "status",
             "data": "data_imports.status",
-            "enum": "LaravelEnso\\DataImport\\Enums\\Statuses",
+            "enum": "LaravelEnso\\DataImport\\Enums\\Status",
             "meta": [
                 "sortable",
                 "slot"

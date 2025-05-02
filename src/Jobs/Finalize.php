@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Notifications\ImportDone;
 use LaravelEnso\DataImport\Services\Notifiables;
@@ -24,7 +24,7 @@ class Finalize implements ShouldQueue
 
     public function handle()
     {
-        $this->import->update(['status' => Statuses::Finalized]);
+        $this->import->update(['status' => Status::Finalized->value]);
 
         $this->notify();
     }
