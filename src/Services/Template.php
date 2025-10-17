@@ -30,6 +30,18 @@ class Template
         }
     }
 
+    public function strict(): bool
+    {
+        return ! $this->flexible();
+    }
+
+    public function flexible(): bool
+    {
+        return $this->template->has('flexible')
+            ? $this->template->get('flexible')
+            : (bool) Config::get('enso.imports.flexible');
+    }
+
     public function timeout(): int
     {
         return $this->template->has('timeout')

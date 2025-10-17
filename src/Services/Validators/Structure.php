@@ -91,8 +91,11 @@ class Structure
         $template = $this->template->sheets()->pluck('name');
         $xlsx = $this->reader->sheets();
 
-        $this->missingSheets($template, $xlsx)
-            ->extraSheets($template, $xlsx);
+        $this->missingSheets($template, $xlsx);
+
+        if ($this->template->strict()) {
+            $this->extraSheets($template, $xlsx);
+        }
     }
 
     private function missingSheets(Collection $template, Collection $xlsx): self
@@ -116,8 +119,11 @@ class Structure
         $header = Sanitize::header($iterator->current());
         $template = $this->template->header($sheet);
 
-        $this->missingColumns($sheet, $header, $template)
-            ->extraColumns($sheet, $header, $template);
+        $this->missingColumns($sheet, $header, $template);
+
+        if ($this->template->strict()) {
+            $this->extraColumns($sheet, $header, $template);
+        }
     }
 
     private function missingColumns(string $sheet, Collection $header, Collection $template): self

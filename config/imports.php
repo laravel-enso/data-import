@@ -42,6 +42,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Flexible
+    |--------------------------------------------------------------------------
+    | Sets if the structure should be strict or may have additional sheets
+    | or columns which will be ignored.
+    |
+    */
+
+    'flexible' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Timeout
     |--------------------------------------------------------------------------
     | Sets the default timeout used for chunk splitting jobs & rejected

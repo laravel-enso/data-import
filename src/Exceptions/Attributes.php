@@ -18,7 +18,7 @@ class Attributes extends EnsoException
     public static function unknown(Collection $attrs, string $class)
     {
         return new static(__(
-            'The following optional attrs are allowed for :class : ":attrs"',
+            'The following optional attrs are not allowed for :class : ":attrs"',
             ['attrs' => $attrs->implode('", "'), 'class' => $class]
         ));
     }
