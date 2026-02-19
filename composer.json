@@ -26,7 +26,7 @@
         }
     ],
     "require": {
-        "laravel-enso/core": "^10.0",
+        "laravel-enso/core": "^11.0",
         "laravel-enso/dynamic-methods": "^3.0",
         "laravel-enso/enums": "^2.0",
         "laravel-enso/excel": "^3.0",
