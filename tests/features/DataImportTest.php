@@ -12,6 +12,7 @@ use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
 use LaravelEnso\Users\Models\User;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class DataImportTest extends TestCase
 {
@@ -46,7 +47,7 @@ class DataImportTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function can_import()
     {
         $this->post(route('import.store', [], false), [
@@ -67,7 +68,7 @@ class DataImportTest extends TestCase
         Storage::assertExists($this->model->file->path());
     }
 
-    /** @test */
+    #[Test]
     public function generates_rejected()
     {
         $this->attach(self::ContentErrorsFile);
@@ -78,7 +79,7 @@ class DataImportTest extends TestCase
         Storage::assertExists($this->model->rejected->file->path());
     }
 
-    /** @test */
+    #[Test]
     public function can_download_rejected()
     {
         $this->attach(self::ContentErrorsFile);
@@ -91,7 +92,7 @@ class DataImportTest extends TestCase
         $resp->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function download()
     {
         $this->attach(self::ImportFile);
@@ -105,7 +106,7 @@ class DataImportTest extends TestCase
             );
     }
 
-    /** @test */
+    #[Test]
     public function cant_destroy_while_running()
     {
         $this->attach(self::ImportFile);
@@ -117,7 +118,7 @@ class DataImportTest extends TestCase
         $this->model->update(['status' => Statuses::Finalized]);
     }
 
-    /** @test */
+    #[Test]
     public function destroy()
     {
         $this->attach(self::ImportFile);

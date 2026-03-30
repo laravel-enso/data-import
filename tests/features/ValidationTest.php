@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Users\Models\User;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ValidationTest extends TestCase
 {
@@ -34,7 +35,7 @@ class ValidationTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function stops_on_invalid_sheets()
     {
         config(['enso.imports.configs.userGroups' => [
@@ -57,7 +58,7 @@ class ValidationTest extends TestCase
         $this->assertNull(Import::whereName(self::TestFile)->first());
     }
 
-    /** @test */
+    #[Test]
     public function stops_on_invalid_columns()
     {
         config(['enso.imports.configs.userGroups' => [
@@ -80,7 +81,7 @@ class ValidationTest extends TestCase
         $this->assertNull(Import::whereName(self::TestFile)->first());
     }
 
-    /** @test */
+    #[Test]
     public function cannot_import_invalid_params()
     {
         Config::set(['enso.imports.configs.userGroups' => [
