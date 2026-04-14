@@ -34,7 +34,7 @@
         "laravel-enso/helpers": "^4.0",
         "laravel-enso/io": "^2.0",
         "laravel-enso/migrator": "^2.0",
-        "laravel-enso/track-who": "^2.0",
+        "laravel-enso/track-who": "^3.0",
         "laravel-enso/tables": "^5.1",
         "laravel-enso/select": "^5.0",
         "openspout/openspout": "^4.0"
