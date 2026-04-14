@@ -27,7 +27,7 @@
     ],
     "require": {
         "laravel-enso/core": "^12.0",
-        "laravel-enso/dynamic-methods": "^3.0",
+        "laravel-enso/dynamic-methods": "^4.0",
         "laravel-enso/enums": "^2.0",
         "laravel-enso/excel": "^3.0",
         "laravel-enso/files": "^5.0",
