@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\DataImport;
 
 class DataImportFactory extends Factory
@@ -18,7 +18,7 @@ class DataImportFactory extends Factory
             'params' => [],
             'successful' => 0,
             'failed' => 0,
-            'status' => Statuses::Waiting,
+            'status' => Status::Waiting->value,
         ];
     }
 }

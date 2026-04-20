@@ -4,7 +4,7 @@ namespace LaravelEnso\DataImport\Tables\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\Tables\Contracts\ConditionalActions;
 use LaravelEnso\Tables\Contracts\Table;
@@ -31,8 +31,8 @@ class Import implements Table, ConditionalActions
         return match ($action) {
             'download-rejected' => $row['rejected'] !== null,
             'download' => $hasFile,
-            'cancel' => in_array($row['status'], Statuses::running()),
-            'restart' => $hasFile && $row['status'] === Statuses::Cancelled,
+            'cancel' => Status::isRunning($row['status']),
+            'restart' => $hasFile && $row['status'] === Status::Cancelled->value,
             default => true,
         };
     }

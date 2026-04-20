@@ -3,7 +3,7 @@
 namespace LaravelEnso\DataImport\Commands;
 
 use Illuminate\Console\Command;
-use LaravelEnso\DataImport\Enums\Statuses;
+use LaravelEnso\DataImport\Enums\Status;
 use LaravelEnso\DataImport\Models\Import;
 
 class Purge extends Command
@@ -16,7 +16,7 @@ class Purge extends Command
     {
         Import::expired()->notDeletable()
             ->update([
-                'status' => Statuses::Cancelled,
+                'status' => Status::Cancelled->value,
                 'batch' => null,
             ]);
 
