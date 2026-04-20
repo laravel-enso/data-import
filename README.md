@@ -137,6 +137,10 @@ Required external package:
 
 - [`openspout/openspout`](https://github.com/openspout/openspout) [↗](https://github.com/openspout/openspout)
 
+Companion frontend package:
+
+- [`@enso-ui/data-import`](https://docs.laravel-enso.com/frontend/data-import.html) [↗](https://github.com/enso-ui/data-import)
+
 ## Contributions
 
 are welcome. Pull requests are great, but issues are good too.
