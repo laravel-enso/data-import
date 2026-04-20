@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\Files\Models\File as FileModel;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
 use LaravelEnso\Users\Models\User;
@@ -164,6 +165,7 @@ class DataImportTest extends TestCase
         $this->model?->delete();
 
         File::delete(self::Path.self::ImportTestFile);
-        Storage::deleteDirectory(Config::get('enso.files.testingFolder'));
+        FileModel::query()->get()
+            ->each(fn (FileModel $file) => Storage::delete($file->path()));
     }
 }

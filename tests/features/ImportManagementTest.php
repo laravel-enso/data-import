@@ -38,7 +38,8 @@ class ImportManagementTest extends TestCase
 
     protected function tearDown(): void
     {
-        Storage::deleteDirectory(Config::get('enso.files.testingFolder'));
+        File::query()->get()
+            ->each(fn (File $file) => Storage::delete($file->path()));
 
         parent::tearDown();
     }
