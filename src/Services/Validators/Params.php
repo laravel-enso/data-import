@@ -55,7 +55,7 @@ class Params
     {
         $route = $param->get('route');
 
-        if ($route !== null && ! Routes::has($route)) {
+        if ($route !== null && !Routes::has($route)) {
             throw Route::notFound($route);
         }
 
@@ -67,7 +67,7 @@ class Params
         $allowed = $this->attributes->values('type');
         $valid = $allowed->contains($param->get('type'));
 
-        if (! $valid) {
+        if (!$valid) {
             throw Exception::invalidParam($allowed, $this->attributes->class());
         }
     }

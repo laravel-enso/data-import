@@ -15,7 +15,10 @@ use LaravelEnso\DataImport\Services\Notifiables;
 
 class Finalize implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(private Import $import)
     {

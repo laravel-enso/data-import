@@ -24,7 +24,7 @@ class Template
 
     private function root(): self
     {
-        if (! $this->isXLSX()) {
+        if (!$this->isXLSX()) {
             $this->validateCSV($this->template);
 
             return $this;
@@ -38,7 +38,7 @@ class Template
 
     private function sheets(): self
     {
-        if (! $this->isXLSX()) {
+        if (!$this->isXLSX()) {
             return $this;
         }
 
@@ -66,14 +66,14 @@ class Template
 
     private function importer(Obj $sheet): self
     {
-        if (! class_exists($sheet->get('importerClass'))) {
+        if (!class_exists($sheet->get('importerClass'))) {
             throw Exception::missingImporterClass($sheet);
         }
 
         $implements = class_implements($sheet->get('importerClass'));
         $underContract = Collection::wrap($implements)->contains(Importable::class);
 
-        if (! $underContract) {
+        if (!$underContract) {
             throw Exception::importerMissingContract($sheet);
         }
 
@@ -82,15 +82,15 @@ class Template
 
     private function validator(Obj $sheet): void
     {
-        if (! $sheet->has('validatorClass')) {
+        if (!$sheet->has('validatorClass')) {
             return;
         }
 
-        if (! class_exists($sheet->get('validatorClass'))) {
+        if (!class_exists($sheet->get('validatorClass'))) {
             throw Exception::missingValidatorClass($sheet);
         }
 
-        if (! is_subclass_of($sheet->get('validatorClass'), Validator::class)) {
+        if (!is_subclass_of($sheet->get('validatorClass'), Validator::class)) {
             throw Exception::incorectValidator($sheet);
         }
     }

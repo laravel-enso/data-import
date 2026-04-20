@@ -13,7 +13,10 @@ use LaravelEnso\DataImport\Services\Importers\Import as Service;
 
 class Import implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $timeout;
 
@@ -27,7 +30,7 @@ class Import implements ShouldQueue
 
     public function handle()
     {
-        if (! $this->import->cancelled()) {
+        if (!$this->import->cancelled()) {
             (new Service($this->import, $this->sheet))->handle();
         }
     }

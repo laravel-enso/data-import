@@ -10,6 +10,6 @@ class EnumServiceProvider extends ServiceProvider
 {
     public $register = [
         'importCssClasses' => CssClasses::class,
-        'importStatuses' => Statuses::class,
+        'importStatuses'   => Statuses::class,
     ];
 }

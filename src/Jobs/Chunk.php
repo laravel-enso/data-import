@@ -13,7 +13,11 @@ use LaravelEnso\DataImport\Services\Importers\Chunk as Service;
 
 class Chunk implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private Model $chunk;
 
@@ -24,7 +28,7 @@ class Chunk implements ShouldQueue
 
     public function handle()
     {
-        if (! $this->batch()->cancelled()) {
+        if (!$this->batch()->cancelled()) {
             (new Service($this->chunk))->handle();
         }
     }

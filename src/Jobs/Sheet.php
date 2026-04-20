@@ -13,7 +13,11 @@ use LaravelEnso\DataImport\Services\Importers\Sheet as Service;
 
 class Sheet implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         private Import $import,
@@ -23,7 +27,7 @@ class Sheet implements ShouldQueue
 
     public function handle()
     {
-        if (! $this->batch()->cancelled()) {
+        if (!$this->batch()->cancelled()) {
             (new Service($this->batch(), $this->import, $this->sheet))->handle();
         }
     }

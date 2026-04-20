@@ -61,7 +61,7 @@ class Chunk
     private function authorize(): void
     {
         $unauthorized = $this->importer instanceof Authorizes
-            && ! $this->importer->authorizes($this->import);
+            && !$this->importer->authorizes($this->import);
 
         if ($unauthorized) {
             throw Exception::unauthorized();
@@ -109,7 +109,7 @@ class Chunk
 
     private function dumpRejected(): self
     {
-        if (! $this->rejectedChunk->empty()) {
+        if (!$this->rejectedChunk->empty()) {
             $this->rejectedChunk->save();
         }
 
@@ -130,8 +130,8 @@ class Chunk
     {
         return RejectedChunk::factory()->make([
             'import_id' => $this->import->id,
-            'sheet' => $this->chunk->sheet,
-            'header' => $this->chunk->header,
+            'sheet'     => $this->chunk->sheet,
+            'header'    => $this->chunk->header,
         ]);
     }
 }

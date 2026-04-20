@@ -28,8 +28,8 @@ class ImportDone extends Notification implements ShouldQueue
         return (new BroadcastMessage([
             'level' => 'success',
             'title' => $this->title(),
-            'body' => $this->filename(),
-            'icon' => 'file-excel',
+            'body'  => $this->filename(),
+            'icon'  => 'file-excel',
         ]))->onQueue($this->queue);
     }
 

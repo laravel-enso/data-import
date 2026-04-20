@@ -16,7 +16,7 @@ class CancelStuck extends Command
     {
         Import::stuck()->update([
             'status' => Statuses::Cancelled,
-            'batch' => null,
+            'batch'  => null,
         ]);
     }
 }

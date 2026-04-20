@@ -32,7 +32,7 @@ class Template
 
     public function strict(): bool
     {
-        return ! $this->flexible();
+        return !$this->flexible();
     }
 
     public function flexible(): bool
@@ -124,7 +124,7 @@ class Template
     public function params(bool $validations = true): Obj
     {
         return (new Obj($this->template->get('params', [])))
-            ->when(! $validations, fn ($params) => $params
+            ->when(!$validations, fn ($params) => $params
                 ->map->except('validations'))
             ->each(fn ($param) => $this->optionallySetOptions($param));
     }
@@ -133,10 +133,10 @@ class Template
     {
         return $this->isCSV()
             ? new Obj([[
-                'name' => $this->template->get('name'),
-                'columns' => $this->template->get('columns'),
+                'name'          => $this->template->get('name'),
+                'columns'       => $this->template->get('columns'),
                 'importerClass' => $this->template->get('importerClass'),
-                'chunkSize' => $this->template->get('chunkSize'),
+                'chunkSize'     => $this->template->get('chunkSize'),
             ]])
             : $this->template->get('sheets');
     }
@@ -192,7 +192,7 @@ class Template
     {
         $template = Config::get("enso.imports.configs.{$type}.template");
 
-        if (! $template) {
+        if (!$template) {
             throw Exception::disabled();
         }
 

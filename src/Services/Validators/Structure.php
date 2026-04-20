@@ -35,10 +35,10 @@ class Structure
     {
         $valid = $this->template->isCSV()
             && in_array($this->extension, ['csv', 'txt'])
-            || ! $this->template->isCSV()
+            || !$this->template->isCSV()
             && $this->extension === 'xlsx';
 
-        if (! $valid) {
+        if (!$valid) {
             $required = $this->template->isCSV()
                 ? '.csv / .txt'
                 : '.xlsx';
@@ -55,7 +55,7 @@ class Structure
 
     private function validatesStructure(): bool
     {
-        if (! $this->template->isCSV()) {
+        if (!$this->template->isCSV()) {
             $this->handleSheets();
         }
 
@@ -71,7 +71,7 @@ class Structure
     {
         return [
             'filename' => $this->filename,
-            'errors' => $this->summary->toArray(),
+            'errors'   => $this->summary->toArray(),
         ];
     }
 

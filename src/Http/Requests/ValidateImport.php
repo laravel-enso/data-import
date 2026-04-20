@@ -16,7 +16,7 @@ class ValidateImport extends FormRequest
     {
         return [
             'import' => 'required|file',
-            'type' => 'string|in:'.implode(',', Options::types()),
+            'type'   => 'string|in:'.implode(',', Options::types()),
         ];
     }
 }

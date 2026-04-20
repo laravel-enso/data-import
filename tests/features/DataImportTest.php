@@ -12,12 +12,13 @@ use LaravelEnso\Files\Models\File as FileModel;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
 use LaravelEnso\Users\Models\User;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class DataImportTest extends TestCase
 {
-    use Datatable, RefreshDatabase;
+    use Datatable;
+    use RefreshDatabase;
 
     private const ImportType = 'userGroups';
     private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
@@ -37,7 +38,7 @@ class DataImportTest extends TestCase
             ->actingAs(User::first());
 
         Config::set(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groupss',
+            'label'    => 'User Groupss',
             'template' => Str::of(self::Template)->replace(base_path(), ''),
         ]]);
     }
@@ -53,10 +54,10 @@ class DataImportTest extends TestCase
     {
         $this->post(route('import.store', [], false), [
             'import' => $this->uploadedFile(self::ImportFile),
-            'type' => self::ImportType,
+            'type'   => self::ImportType,
         ])->assertStatus(200)
             ->assertJsonFragment([
-                'errors' => [],
+                'errors'   => [],
                 'filename' => self::ImportTestFile,
             ]);
 

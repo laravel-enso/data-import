@@ -61,7 +61,7 @@ class Sheet
                 $this->import->template()->delimiter(),
                 $this->import->template()->enclosure()
             ),
-            'xlsx' => new XLSX($file),
+            'xlsx'  => new XLSX($file),
             default => throw new EnsoException('Unsupported import type'),
         };
     }
@@ -88,7 +88,7 @@ class Sheet
 
     private function dispatch(): void
     {
-        if (! $this->cancelled()) {
+        if (!$this->cancelled()) {
             $this->chunk->save();
             $this->batch->add(new Job($this->chunk));
         }
@@ -96,14 +96,14 @@ class Sheet
 
     private function shouldBatchJobs(): bool
     {
-        return ! $this->reachedSheetEnd()
-            && ! $this->cancelled();
+        return !$this->reachedSheetEnd()
+            && !$this->cancelled();
     }
 
     private function shouldFillChunk(): bool
     {
         return $this->chunk->count() < $this->chunkSize
-            && ! $this->reachedSheetEnd();
+            && !$this->reachedSheetEnd();
     }
 
     private function cancelled(): bool
@@ -113,15 +113,15 @@ class Sheet
 
     private function reachedSheetEnd(): bool
     {
-        return ! $this->iterator->valid();
+        return !$this->iterator->valid();
     }
 
     private function chunk(): Chunk
     {
         return Chunk::factory()->make([
             'import_id' => $this->import->id,
-            'sheet' => $this->sheet,
-            'header' => $this->header,
+            'sheet'     => $this->sheet,
+            'header'    => $this->header,
         ]);
     }
 }

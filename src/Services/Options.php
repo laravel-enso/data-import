@@ -11,7 +11,7 @@ class Options
     public function __invoke(): array
     {
         $map = fn ($type) => [
-            'id' => $type,
+            'id'   => $type,
             'name' => self::label($type),
         ];
 

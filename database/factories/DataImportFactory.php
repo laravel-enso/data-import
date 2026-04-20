@@ -13,12 +13,12 @@ class DataImportFactory extends Factory
     public function definition()
     {
         return [
-            'type' => null,
-            'batch' => null,
-            'params' => [],
+            'type'       => null,
+            'batch'      => null,
+            'params'     => [],
             'successful' => 0,
-            'failed' => 0,
-            'status' => Statuses::Waiting,
+            'failed'     => 0,
+            'status'     => Statuses::Waiting,
         ];
     }
 }

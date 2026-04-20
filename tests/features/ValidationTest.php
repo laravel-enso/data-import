@@ -8,8 +8,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Users\Models\User;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class ValidationTest extends TestCase
 {
@@ -39,17 +39,17 @@ class ValidationTest extends TestCase
     public function stops_on_invalid_sheets()
     {
         config(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groups',
+            'label'    => 'User Groups',
             'template' => $this->template('userGroups'),
         ]]);
 
         $this->post(route('import.store', [], false), [
             'import' => $this->file(self::InvalidSheetsFile),
-            'type' => self::ImportType,
+            'type'   => self::ImportType,
         ])->assertStatus(200)
             ->assertJsonFragment([
                 'errors' => [
-                    'Extra Sheets' => ['invalid_sheet'],
+                    'Extra Sheets'   => ['invalid_sheet'],
                     'Missing Sheets' => ['groups'],
                 ],
                 'filename' => self::TestFile,
@@ -62,17 +62,17 @@ class ValidationTest extends TestCase
     public function stops_on_invalid_columns()
     {
         config(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groups',
+            'label'    => 'User Groups',
             'template' => $this->template('userGroups'),
         ]]);
 
         $this->post(route('import.store', [], false), [
             'import' => $this->file(self::InvalidColumnsFile),
-            'type' => self::ImportType,
+            'type'   => self::ImportType,
         ])->assertStatus(200)
             ->assertJsonFragment([
                 'errors' => [
-                    'Extra Columns' => ['Sheet "groups", column "invalid_column"'],
+                    'Extra Columns'   => ['Sheet "groups", column "invalid_column"'],
                     'Missing Columns' => ['Sheet "groups", column "description"'],
                 ],
                 'filename' => self::TestFile,
@@ -85,13 +85,13 @@ class ValidationTest extends TestCase
     public function cannot_import_invalid_params()
     {
         Config::set(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groups',
+            'label'    => 'User Groups',
             'template' => $this->template('paramsValidation'),
         ]]);
 
         $exception = $this->post(route('import.store', [], false), [
             'import' => $this->file('invalid_sheets.xlsx'),
-            'type' => self::ImportType,
+            'type'   => self::ImportType,
         ])->exception;
 
         $this->assertInstanceOf(ValidationException::class, $exception);

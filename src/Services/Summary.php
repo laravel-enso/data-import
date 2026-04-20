@@ -31,7 +31,7 @@ class Summary
 
     private function type(Obj $layer, string $type): Collection
     {
-        if (! $layer->has($type)) {
+        if (!$layer->has($type)) {
             $layer->set($type, new Collection());
         }
 

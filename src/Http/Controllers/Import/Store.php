@@ -15,7 +15,7 @@ class Store extends Controller
         $params = $request->except(['import', 'type']);
 
         $import = Import::factory()->make([
-            'type' => $request->get('type'),
+            'type'   => $request->get('type'),
             'params' => new Obj($params),
         ]);
 

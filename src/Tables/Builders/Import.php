@@ -30,10 +30,10 @@ class Import implements Table, ConditionalActions
 
         return match ($action) {
             'download-rejected' => $row['rejected'] !== null,
-            'download' => $hasFile,
-            'cancel' => in_array($row['status'], Statuses::running()),
-            'restart' => $hasFile && $row['status'] === Statuses::Cancelled,
-            default => true,
+            'download'          => $hasFile,
+            'cancel'            => in_array($row['status'], Statuses::running()),
+            'restart'           => $hasFile && $row['status'] === Statuses::Cancelled,
+            default             => true,
         };
     }
 
@@ -60,9 +60,9 @@ class Import implements Table, ConditionalActions
     {
         return match (DB::getDriverName()) {
             'sqlite' => $this->sqliteDuration(),
-            'mysql' => $this->mysqlDuration(),
-            'pgsql' => $this->postgresDuration(),
-            default => 'N/A',
+            'mysql'  => $this->mysqlDuration(),
+            'pgsql'  => $this->postgresDuration(),
+            default  => 'N/A',
         };
     }
 

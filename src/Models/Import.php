@@ -38,7 +38,11 @@ class Import extends Model implements
     IOOperation,
     CascadesFileDeletion
 {
-    use AvoidsDeletionConflicts, CreatedBy, HasFactory, TableCache, Conditionable;
+    use AvoidsDeletionConflicts;
+    use CreatedBy;
+    use HasFactory;
+    use TableCache;
+    use Conditionable;
 
     protected $table = 'data_imports';
 
@@ -138,11 +142,11 @@ class Import extends Model implements
         $label = Config::get('enso.imports')['configs'][$this->type]['label'];
 
         return [
-            'type' => Str::lower($label),
-            'filename' => $this->file?->original_name,
-            'sheet' => $this->batch()?->name,
+            'type'       => Str::lower($label),
+            'filename'   => $this->file?->original_name,
+            'sheet'      => $this->batch()?->name,
             'successful' => $this->successful,
-            'failed' => $this->failed,
+            'failed'     => $this->failed,
         ];
     }
 
@@ -235,7 +239,7 @@ class Import extends Model implements
 
     public function forceDelete()
     {
-        if (! Statuses::isDeletable($this->status)) {
+        if (!Statuses::isDeletable($this->status)) {
             $this->update(['status' => Statuses::Cancelled]);
         }
 
@@ -252,7 +256,7 @@ class Import extends Model implements
 
     public function delete()
     {
-        if (! Statuses::isDeletable($this->status)) {
+        if (!Statuses::isDeletable($this->status)) {
             throw Exception::deleteRunningImport();
         }
 
@@ -267,7 +271,7 @@ class Import extends Model implements
 
     public function cancel()
     {
-        if (! $this->running()) {
+        if (!$this->running()) {
             throw Exception::cannotBeCancelled();
         }
 
@@ -275,7 +279,7 @@ class Import extends Model implements
 
         $this->update([
             'status' => Statuses::Cancelled,
-            'batch' => null,
+            'batch'  => null,
         ]);
     }
 
@@ -301,8 +305,8 @@ class Import extends Model implements
 
         $this->update([
             'successful' => 0,
-            'failed' => 0,
-            'status' => Statuses::Waiting,
+            'failed'     => 0,
+            'status'     => Statuses::Waiting,
         ]);
 
         $this->import();

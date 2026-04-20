@@ -13,9 +13,9 @@ class RejectedChunkFactory extends Factory
     {
         return [
             'import_id' => null,
-            'sheet' => null,
-            'header' => [],
-            'rows' => [],
+            'sheet'     => null,
+            'header'    => [],
+            'rows'      => [],
         ];
     }
 }

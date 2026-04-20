@@ -34,9 +34,9 @@ return [
     */
 
     'queues' => [
-        'splitting' => 'heavy',
-        'processing' => 'light',
-        'rejected' => 'heavy',
+        'splitting'     => 'heavy',
+        'processing'    => 'light',
+        'rejected'      => 'heavy',
         'notifications' => 'notifications',
     ],
 
@@ -151,7 +151,7 @@ return [
 
     'configs' => [
         'userGroups' => [
-            'label' => 'User Groups',
+            'label'    => 'User Groups',
             'template' => 'vendor/laravel-enso/data-import/src/Tests/userGroups.json',
         ],
     ],

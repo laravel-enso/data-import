@@ -14,7 +14,10 @@ use LaravelEnso\DataImport\Services\Template;
 
 class RejectedExport implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $timeout;
 

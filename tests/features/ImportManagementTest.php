@@ -31,7 +31,7 @@ class ImportManagementTest extends TestCase
             ->actingAs(User::first());
 
         Config::set(['enso.imports.configs.userGroups' => [
-            'label' => 'User Groups',
+            'label'    => 'User Groups',
             'template' => Str::of(self::Template)->replace(base_path(), ''),
         ]]);
     }
@@ -92,8 +92,8 @@ class ImportManagementTest extends TestCase
 
         $import = $this->import([
             'successful' => 5,
-            'failed' => 2,
-            'status' => Statuses::Cancelled,
+            'failed'     => 2,
+            'status'     => Statuses::Cancelled,
         ]);
 
         $rejected = RejectedImport::create([
@@ -116,8 +116,8 @@ class ImportManagementTest extends TestCase
 
         $import = $this->import([
             'successful' => 3,
-            'failed' => 1,
-            'status' => Statuses::Cancelled,
+            'failed'     => 1,
+            'status'     => Statuses::Cancelled,
         ]);
 
         $this->patch(route('import.restart', $import, false))
@@ -148,13 +148,13 @@ class ImportManagementTest extends TestCase
         Config::set('enso.imports.retainFor', 1);
 
         $expiredRunning = $this->import([
-            'status' => Statuses::Processing,
+            'status'     => Statuses::Processing,
             'created_at' => now()->subDays(3),
             'updated_at' => now()->subDays(3),
         ]);
 
         $expiredFinalized = $this->import([
-            'status' => Statuses::Finalized,
+            'status'     => Statuses::Finalized,
             'created_at' => now()->subDays(3),
             'updated_at' => now()->subDays(3),
         ]);
@@ -163,7 +163,7 @@ class ImportManagementTest extends TestCase
         $expiredFinalized->file()->associate($file)->save();
 
         $freshImport = $this->import([
-            'status' => Statuses::Finalized,
+            'status'     => Statuses::Finalized,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -182,13 +182,13 @@ class ImportManagementTest extends TestCase
         Config::set('enso.imports.cancelStuckAfter', 1);
 
         $stuckImport = $this->import([
-            'status' => Statuses::Processing,
+            'status'     => Statuses::Processing,
             'created_at' => now()->subHours(3),
             'updated_at' => now()->subHours(3),
         ]);
 
         $freshImport = $this->import([
-            'status' => Statuses::Processing,
+            'status'     => Statuses::Processing,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

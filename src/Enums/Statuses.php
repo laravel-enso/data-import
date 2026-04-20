@@ -14,12 +14,12 @@ class Statuses extends Enum
     public const Cancelled = 40;
 
     protected static array $data = [
-        self::Waiting => 'waiting',
-        self::Processing => 'processing',
-        self::Processed => 'processed',
+        self::Waiting           => 'waiting',
+        self::Processing        => 'processing',
+        self::Processed         => 'processed',
         self::ExportingRejected => 'exporting rejected',
-        self::Finalized => 'finalized',
-        self::Cancelled => 'cancelled',
+        self::Finalized         => 'finalized',
+        self::Cancelled         => 'cancelled',
     ];
 
     public static function running(): array

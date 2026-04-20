@@ -53,7 +53,7 @@ class Sanitize
             $to = 'UTF-8';
             $from = mb_detect_encoding($value, ['auto']);
 
-            if (! $from) {
+            if (!$from) {
                 $value = '';
             } elseif ($from !== $to) {
                 $value = mb_convert_encoding($value, $to, $from);
