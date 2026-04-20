@@ -81,7 +81,7 @@ class Import extends Model implements
 
     public function scopeStuck(Builder $query): Builder
     {
-        $cancelStuckAfter = Carbon::today()
+        $cancelStuckAfter = Carbon::now()
             ->subHours(Config::get('enso.imports.cancelStuckAfter'));
 
         return $query->where('created_at', '<', $cancelStuckAfter)
