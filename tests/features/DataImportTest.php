@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\Files\Models\File as FileModel;
+use LaravelEnso\Helpers\Traits\EnsuresTestingFolder;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
 use LaravelEnso\UserGroups\Models\UserGroup;
 use LaravelEnso\Users\Models\User;
@@ -17,8 +18,7 @@ use Tests\TestCase;
 
 class DataImportTest extends TestCase
 {
-    use Datatable;
-    use RefreshDatabase;
+    use Datatable, EnsuresTestingFolder, RefreshDatabase;
 
     private const ImportType = 'userGroups';
     private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
@@ -33,6 +33,8 @@ class DataImportTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->ensureTestingFolder();
 
         $this->seed()
             ->actingAs(User::first());
