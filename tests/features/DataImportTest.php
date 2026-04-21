@@ -18,7 +18,9 @@ use Tests\TestCase;
 
 class DataImportTest extends TestCase
 {
-    use Datatable, EnsuresTestingFolder, RefreshDatabase;
+    use Datatable;
+    use EnsuresTestingFolder;
+    use RefreshDatabase;
 
     private const ImportType = 'userGroups';
     private const Template = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'userGroups.json';
