@@ -19,11 +19,11 @@ abstract class ExcelSeeder extends Seeder
         $this->savedName = $this->hashname();
     }
 
-    public function run()
+    public function run(): array
     {
         File::copy($this->source(), Storage::path($this->path()));
 
-        Import::factory()
+        return Import::factory()
             ->make(['type' => $this->type(), 'params' => $this->params()])
             ->attach($this->savedName, $this->filename());
     }
