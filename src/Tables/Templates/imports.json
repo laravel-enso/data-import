@@ -35,7 +35,7 @@
             "type": "row",
             "icon": "cloud-download-alt",
             "event": "download-rejected",
-            "class": "is-row-button has-text-danger"
+            "class": "is-row-button is-danger"
         },
         "download",
         "destroy"
