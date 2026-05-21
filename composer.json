@@ -33,6 +33,7 @@
         "laravel-enso/files": "^5.7",
         "laravel-enso/helpers": "^4.0",
         "laravel-enso/io": "^2.0",
+        "laravel-enso/mails": "^1.0",
         "laravel-enso/migrator": "^2.0",
         "laravel-enso/track-who": "^3.0",
         "laravel-enso/tables": "^5.1",
@@ -49,7 +50,8 @@
         "laravel": {
             "providers": [
                 "LaravelEnso\\DataImport\\AppServiceProvider",
-                "LaravelEnso\\DataImport\\EnumServiceProvider"
+                "LaravelEnso\\DataImport\\EnumServiceProvider",
+                "LaravelEnso\\DataImport\\MailServiceProvider"
             ],
             "aliases": []
         }

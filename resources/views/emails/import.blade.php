@@ -1,8 +1,16 @@
 @component('mail::message')
+@component('mail::title')
+{{ __(':type import done', ['type' => $import->type()]) }}
+@endcomponent
+
 {{ __('Hi :name', ['name' => $name]) }},
 
 {{ __('The :name import is done', ['name' => $import->type()]) }}:
 {{ $import->file->original_name }}.
+
+@component('mail::file')
+{{ $import->file->original_name }}
+@endcomponent
 
 @component('mail::table')
 |        Entries          |            Count          |
@@ -18,6 +26,6 @@
 @endcomponent
 @endif
 
-{{ __('Thank you') }},<br>
-{{ __(config('app.name')) }}
+@component('mail::signature')
+@endcomponent
 @endcomponent
