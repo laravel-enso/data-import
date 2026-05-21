@@ -71,6 +71,7 @@ The package schedules these maintenance commands daily:
 - Support for `xlsx`, `csv`, and `txt` uploads.
 - Strict or flexible structure validation.
 - Rejected-row report generation with an extra errors column.
+- Shared mail layout and preview registration through `laravel-enso/mails`.
 - Downloadable import templates generated from the JSON definition.
 
 ## Usage
@@ -140,6 +141,7 @@ Required Enso packages:
 - [`laravel-enso/files`](https://docs.laravel-enso.com/backend/files.html) [↗](https://github.com/laravel-enso/files)
 - [`laravel-enso/helpers`](https://docs.laravel-enso.com/backend/helpers.html) [↗](https://github.com/laravel-enso/helpers)
 - [`laravel-enso/io`](https://docs.laravel-enso.com/backend/io.html) [↗](https://git.xtelecom.ro/laravel-enso/io)
+- [`laravel-enso/mails`](https://github.com/laravel-enso/mails) [↗](https://github.com/laravel-enso/mails)
 - [`laravel-enso/migrator`](https://docs.laravel-enso.com/backend/migrator.html) [↗](https://github.com/laravel-enso/migrator)
 - [`laravel-enso/select`](https://docs.laravel-enso.com/backend/select.html) [↗](https://github.com/laravel-enso/select)
 - [`laravel-enso/tables`](https://docs.laravel-enso.com/backend/tables.html) [↗](https://github.com/laravel-enso/tables)
