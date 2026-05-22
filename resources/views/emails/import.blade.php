@@ -8,7 +8,7 @@
 {{ __('The :name import is done', ['name' => $import->type()]) }}:
 {{ $import->file->original_name }}.
 
-@component('mail::file')
+@component('mail::file', ['url' => $import->file->temporaryLink()])
 {{ $import->file->original_name }}
 @endcomponent
 

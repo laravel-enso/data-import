@@ -29,9 +29,14 @@ class MailServiceProvider extends ServiceProvider
 
                     public function __construct()
                     {
-                        $this->file = (object) [
-                            'original_name' => 'users-import.xlsx',
-                        ];
+                        $this->file = new class {
+                            public string $original_name = 'users-import.xlsx';
+
+                            public function temporaryLink(): string
+                            {
+                                return 'https://example.com/files/users-import.xlsx';
+                            }
+                        };
                     }
 
                     public function type(): string

@@ -71,7 +71,7 @@ The package schedules these maintenance commands daily:
 - Support for `xlsx`, `csv`, and `txt` uploads.
 - Strict or flexible structure validation.
 - Rejected-row report generation with an extra errors column.
-- Shared mail layout and preview registration through `laravel-enso/mails`.
+- Shared mail layout and preview registration through `laravel-enso/mails`, including a download link for uploaded import files.
 - Downloadable import templates generated from the JSON definition.
 
 ## Usage
