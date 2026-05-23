@@ -43,9 +43,7 @@ class Structure
                 ? '.csv / .txt'
                 : '.xlsx';
 
-            $message = 'Required ":required", Provided ":provided"';
-
-            $this->summary->addError(__('File Extension'), __($message, [
+            $this->summary->addError(__('File Extension'), __('Required ":required", Provided ":provided"', [
                 'required' => $required, 'provided' => $this->extension,
             ]));
         }
