@@ -122,6 +122,22 @@ class DataImportTest extends TestCase
     }
 
     #[Test]
+    public function can_cancel_without_a_loaded_batch_attribute()
+    {
+        $this->model = new Import([
+            'type' => self::ImportType,
+            'successful' => 0,
+            'failed' => 0,
+            'status' => Statuses::Waiting,
+        ]);
+        $this->model->save();
+
+        $this->model->cancel();
+
+        $this->assertTrue($this->model->cancelled());
+    }
+
+    #[Test]
     public function generates_rejected()
     {
         $this->attach(self::ContentErrorsFile);

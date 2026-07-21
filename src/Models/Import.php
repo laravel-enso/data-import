@@ -110,7 +110,9 @@ class Import extends Model implements
 
     public function batch(): ?Batch
     {
-        return $this->batch ? Bus::findBatch($this->batch) : null;
+        $batch = $this->getAttributes()['batch'] ?? null;
+
+        return $batch ? Bus::findBatch($batch) : null;
     }
 
     public function getEntriesAttribute()
