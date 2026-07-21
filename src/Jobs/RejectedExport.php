@@ -21,10 +21,14 @@ class RejectedExport implements ShouldQueue
 
     public $timeout;
 
-    public function __construct(private Import $import)
-    {
+    public function __construct(
+        private Import $import,
+        private bool $resolveTemplate = true,
+    ) {
         $this->queue = Config::get('enso.imports.queues.rejected');
-        $this->timeout = (new Template($import->type))->timeout();
+        $this->timeout = $this->resolveTemplate
+            ? (new Template($import->type))->timeout()
+            : Config::get('enso.imports.timeout');
     }
 
     public function handle()

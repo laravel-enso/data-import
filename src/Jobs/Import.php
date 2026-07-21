@@ -22,7 +22,8 @@ class Import implements ShouldQueue
 
     public function __construct(
         private Model $import,
-        private string $sheet
+        private string $sheet,
+        private ?string $sourcePath = null,
     ) {
         $this->queue = Config::get('enso.imports.queues.splitting');
         $this->timeout = $this->import->template()->timeout();
@@ -31,7 +32,7 @@ class Import implements ShouldQueue
     public function handle()
     {
         if (!$this->import->cancelled()) {
-            (new Service($this->import, $this->sheet))->handle();
+            (new Service($this->import, $this->sheet, $this->sourcePath))->handle();
         }
     }
 }

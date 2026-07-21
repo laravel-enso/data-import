@@ -20,8 +20,11 @@ class Finalize implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private Import $import)
-    {
+    public function __construct(
+        private Import $import,
+        private bool $notifyConfigured = true,
+        private ?string $label = null,
+    ) {
         $this->queue = Config::get('enso.imports.queues.processing');
     }
 
@@ -35,11 +38,12 @@ class Finalize implements ShouldQueue
     private function notify(): void
     {
         $queue = Config::get('enso.imports.queues.notifications');
-        $notification = (new ImportDone($this->import))->onQueue($queue);
+        $notification = (new ImportDone($this->import, $this->label))
+            ->onQueue($queue);
 
         $this->import->file->createdBy->notify($notification);
 
-        if ($this->import->template()->notifies()) {
+        if ($this->notifyConfigured && $this->import->template()->notifies()) {
             Notifiables::get($this->import)->each->notify($notification);
         }
     }

@@ -2,6 +2,7 @@
 
 namespace LaravelEnso\DataImport\Models;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Illuminate\Bus\Batch;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,17 +58,17 @@ class Import extends Model implements
 
     public function rejected(): Relation
     {
-        return $this->hasOne(RejectedImport::class);
+        return $this->hasOne($this->rejectedImportModel());
     }
 
     public function chunks(): Relation
     {
-        return $this->hasMany(Chunk::class, 'import_id');
+        return $this->hasMany($this->chunkModel(), 'import_id');
     }
 
     public function rejectedChunks(): Relation
     {
-        return $this->hasMany(RejectedChunk::class, 'import_id');
+        return $this->hasMany($this->rejectedChunkModel(), 'import_id');
     }
 
     public function scopeExpired(Builder $query): Builder
@@ -158,33 +159,40 @@ class Import extends Model implements
     public function status(): int
     {
         return $this->running()
-            ? $this->status
+            ? $this->statusValue()
             : Statuses::Finalized;
+    }
+
+    public function statusValue(): int
+    {
+        return $this->status instanceof BackedEnum
+            ? $this->status->value
+            : $this->status;
     }
 
     public function waiting(): bool
     {
-        return $this->status === Statuses::Waiting;
+        return $this->statusValue() === Statuses::Waiting;
     }
 
     public function cancelled(): bool
     {
-        return $this->status === Statuses::Cancelled;
+        return $this->statusValue() === Statuses::Cancelled;
     }
 
     public function processing(): bool
     {
-        return $this->status === Statuses::Processing;
+        return $this->statusValue() === Statuses::Processing;
     }
 
     public function finalized(): bool
     {
-        return $this->status === Statuses::Finalized;
+        return $this->statusValue() === Statuses::Finalized;
     }
 
     public function running(): bool
     {
-        return in_array($this->status, Statuses::running());
+        return in_array($this->statusValue(), Statuses::running());
     }
 
     public function template(): Template
@@ -239,7 +247,7 @@ class Import extends Model implements
 
     public function forceDelete()
     {
-        if (!Statuses::isDeletable($this->status)) {
+        if (!Statuses::isDeletable($this->statusValue())) {
             $this->update(['status' => Statuses::Cancelled]);
         }
 
@@ -256,7 +264,7 @@ class Import extends Model implements
 
     public function delete()
     {
-        if (!Statuses::isDeletable($this->status)) {
+        if (!Statuses::isDeletable($this->statusValue())) {
             throw Exception::deleteRunningImport();
         }
 
@@ -290,13 +298,41 @@ class Import extends Model implements
         $this->save();
     }
 
-    public function import(?string $sheet = null)
+    public function import(?string $sheet = null, ?string $sourcePath = null)
     {
         if ($sheet === null) {
             $sheet = $this->template()->sheets()->first()->get('name');
         }
 
-        Job::dispatch($this, $sheet);
+        Job::dispatch($this, $sheet, $sourcePath);
+    }
+
+    public function sourcePath(): string
+    {
+        return Storage::path($this->file->path());
+    }
+
+    public function finalizesLocally(): bool
+    {
+        return true;
+    }
+
+    public function makeChunk(array $attributes): Chunk
+    {
+        return $this->chunks()->make([
+            'header' => [],
+            'rows' => [],
+            ...$attributes,
+        ]);
+    }
+
+    public function makeRejectedChunk(array $attributes): RejectedChunk
+    {
+        return $this->rejectedChunks()->make([
+            'header' => [],
+            'rows' => [],
+            ...$attributes,
+        ]);
     }
 
     public function restart(): void
@@ -317,5 +353,20 @@ class Import extends Model implements
         return [
             'status' => 'integer', 'params' => Obj::class,
         ];
+    }
+
+    protected function chunkModel(): string
+    {
+        return Chunk::class;
+    }
+
+    protected function rejectedChunkModel(): string
+    {
+        return RejectedChunk::class;
+    }
+
+    protected function rejectedImportModel(): string
+    {
+        return RejectedImport::class;
     }
 }

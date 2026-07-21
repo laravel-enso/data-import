@@ -121,14 +121,17 @@ class Chunk
         $total = $this->chunk->count();
         $failed = $this->rejectedChunk->count();
 
-        DB::transaction(fn () => Import::lockForUpdate()
-            ->whereId($this->import->id)->first()
-            ->updateProgress($total - $failed, $failed));
+        DB::connection($this->import->getConnectionName())
+            ->transaction(fn () => $this->import->newQuery()
+                ->lockForUpdate()
+                ->whereKey($this->import->id)
+                ->firstOrFail()
+                ->updateProgress($total - $failed, $failed));
     }
 
     private function rejectedChunk(): RejectedChunk
     {
-        return RejectedChunk::factory()->make([
+        return $this->import->makeRejectedChunk([
             'import_id' => $this->import->id,
             'sheet'     => $this->chunk->sheet,
             'header'    => $this->chunk->header,

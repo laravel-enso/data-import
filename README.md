@@ -130,6 +130,26 @@ When the import runs through the seeder-oriented flow, the package resolves the 
 - `Authenticates`
 - `Authorizes`
 
+### Externally processed imports
+
+Services that process an import against another database can extend the package
+`Import`, `Chunk`, `RejectedChunk`, and `RejectedImport` models. Override the
+model class methods on `Import`, set the connection on the derived models, and
+pass the local workbook copy explicitly:
+
+```php
+$import->import(sourcePath: $path);
+```
+
+The package updates progress inside the import model's connection. Override
+`finalizesLocally()` to return `false` when rejected-file creation and user
+notifications belong to the host application. The host can then finalize the
+shared import without resolving its template or importer:
+
+```php
+(new ExternalImport($import))->finalize();
+```
+
 ## Depends On
 
 Required Enso packages:

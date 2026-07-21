@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport\Services\Importers;
 
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 use LaravelEnso\DataImport\Jobs\Chunk as Job;
 use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\DataImport\Models\Import;
@@ -27,7 +26,8 @@ class Sheet
     public function __construct(
         private Batch $batch,
         private Import $import,
-        private string $sheet
+        private string $sheet,
+        private ?string $sourcePath = null,
     ) {
         $this->chunkSize = $import->template()->chunkSize($this->sheet);
     }
@@ -53,7 +53,7 @@ class Sheet
 
     private function reader()
     {
-        $file = Storage::path($this->import->file->path());
+        $file = $this->sourcePath ?? $this->import->sourcePath();
 
         return match ($this->import->file->extension()) {
             'txt', 'csv' => new CSV(
@@ -118,7 +118,7 @@ class Sheet
 
     private function chunk(): Chunk
     {
-        return Chunk::factory()->make([
+        return $this->import->makeChunk([
             'import_id' => $this->import->id,
             'sheet'     => $this->sheet,
             'header'    => $this->header,
