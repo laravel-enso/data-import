@@ -223,7 +223,7 @@ class Import extends Model implements
         return $structure->summary();
     }
 
-    public function upload(UploadedFile $file): array
+    public function upload(UploadedFile $file, bool $startNow = true): array
     {
         $path = $file->getPathname();
         $filename = $file->getClientOriginalName();
@@ -239,7 +239,9 @@ class Import extends Model implements
             $file = File::upload($this, $file);
             $this->file()->associate($file)->save();
 
-            $this->import();
+            if ($startNow) {
+                $this->import();
+            }
         }
 
         return $structure->summary();

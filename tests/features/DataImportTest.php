@@ -75,6 +75,27 @@ class DataImportTest extends TestCase
     }
 
     #[Test]
+    public function can_defer_import()
+    {
+        $this->model = Import::factory()->make([
+            'type' => self::ImportType,
+        ]);
+
+        $summary = $this->model->upload(
+            $this->uploadedFile(self::ImportFile),
+            startNow: false,
+        );
+
+        $this->assertSame([], $summary['errors']);
+        $this->assertTrue($this->model->exists);
+        $this->assertNull(UserGroup::whereName('ImportTestName')->first());
+        Storage::assertExists($this->model->file->path());
+
+        $this->assertTrue($this->model->waiting());
+        $this->model->cancel();
+    }
+
+    #[Test]
     public function generates_rejected()
     {
         $this->attach(self::ContentErrorsFile);
