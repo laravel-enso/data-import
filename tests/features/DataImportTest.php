@@ -96,6 +96,32 @@ class DataImportTest extends TestCase
     }
 
     #[Test]
+    public function can_defer_attached_import()
+    {
+        $this->model = Import::factory()->create([
+            'type' => self::ImportType,
+        ]);
+
+        $folder = Config::get('enso.files.testingFolder');
+        $path = "{$folder}/".self::ImportFile;
+
+        File::copy(self::Path.self::ImportFile, Storage::path($path));
+
+        $summary = $this->model->attach(
+            self::ImportFile,
+            self::ImportTestFile,
+            startNow: false,
+        );
+
+        $this->assertSame([], $summary['errors']);
+        $this->assertNull(UserGroup::whereName('ImportTestName')->first());
+        Storage::assertExists($this->model->file->path());
+
+        $this->assertTrue($this->model->waiting());
+        $this->model->cancel();
+    }
+
+    #[Test]
     public function generates_rejected()
     {
         $this->attach(self::ContentErrorsFile);

@@ -205,7 +205,11 @@ class Import extends Model implements
         self::whereFileId($file->id)->first()->delete();
     }
 
-    public function attach(string $savedName, string $filename): array
+    public function attach(
+        string $savedName,
+        string $filename,
+        bool $startNow = true
+    ): array
     {
         $path = Type::for($this::class)->path($savedName);
         $extension = Str::afterLast($filename, '.');
@@ -217,7 +221,9 @@ class Import extends Model implements
             $file = File::attach($this, $savedName, $filename);
             $this->file()->associate($file)->save();
 
-            $this->import();
+            if ($startNow) {
+                $this->import();
+            }
         }
 
         return $structure->summary();
