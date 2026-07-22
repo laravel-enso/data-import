@@ -21,20 +21,14 @@ class Sheet implements ShouldQueue
 
     public function __construct(
         private Import $import,
-        private string $sheet,
-        private ?string $sourcePath = null,
+        private string $sheet
     ) {
     }
 
     public function handle()
     {
         if (!$this->batch()->cancelled()) {
-            (new Service(
-                $this->batch(),
-                $this->import,
-                $this->sheet,
-                $this->sourcePath,
-            ))->handle();
+            (new Service($this->batch(), $this->import, $this->sheet))->handle();
         }
     }
 }

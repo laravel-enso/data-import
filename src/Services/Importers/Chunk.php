@@ -131,10 +131,10 @@ class Chunk
 
     private function rejectedChunk(): RejectedChunk
     {
-        return $this->import->makeRejectedChunk([
-            'import_id' => $this->import->id,
-            'sheet'     => $this->chunk->sheet,
-            'header'    => $this->chunk->header,
+        return $this->import->rejectedChunks()->make([
+            'sheet' => $this->chunk->sheet,
+            'header' => $this->chunk->header,
+            'rows' => [],
         ]);
     }
 }

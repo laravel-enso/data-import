@@ -14,10 +14,7 @@ class ImportDone extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(
-        public Import $import,
-        private ?string $label = null,
-    )
+    public function __construct(public Import $import)
     {
     }
 
@@ -58,9 +55,7 @@ class ImportDone extends Notification implements ShouldQueue
 
     private function title()
     {
-        return __(':type import done', [
-            'type' => $this->label ?? $this->import->type(),
-        ]);
+        return __(':type import done', ['type' => $this->import->type()]);
     }
 
     private function filename()

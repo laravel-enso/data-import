@@ -21,8 +21,7 @@ class Import
 
     public function __construct(
         private Model $import,
-        private string $sheet,
-        private ?string $sourcePath = null,
+        private string $sheet
     ) {
         $this->template = $import->template();
     }
@@ -64,11 +63,7 @@ class Import
         $afterHook = $this->afterHook();
         $nextStep = $this->nextStep();
 
-        $batch = Bus::batch([new Sheet(
-            $this->import,
-            $this->sheet,
-            $this->sourcePath,
-        )])
+        $batch = Bus::batch([new Sheet($this->import, $this->sheet)])
             ->onQueue($this->template->queue())
             ->then(fn () => $import->update(['batch' => null]))
             ->then(fn ($batch) => $batch->cancelled() ? null : $afterHook())
@@ -97,13 +92,10 @@ class Import
         $nextSheet = $this->template->nextSheet($sheet);
 
         if ($nextSheet) {
-            return fn () => $import->import(
-                $nextSheet->get('name'),
-                $this->sourcePath,
-            );
+            return fn () => $import->import($nextSheet->get('name'));
         }
 
-        if (! $import->finalizesLocally()) {
+        if ($import->finalizesExternally()) {
             return fn () => null;
         }
 

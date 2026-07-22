@@ -4,7 +4,6 @@ namespace LaravelEnso\DataImport\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LaravelEnso\DataImport\Contracts\Importable;
 use LaravelEnso\DataImport\Services\Template;
 
@@ -16,9 +15,9 @@ class Chunk extends Model
 
     protected $guarded = ['id'];
 
-    public function import(): BelongsTo
+    public function import()
     {
-        return $this->belongsTo($this->importModel());
+        return $this->belongsTo(Import::class);
     }
 
     public function template(): Template
@@ -48,10 +47,5 @@ class Chunk extends Model
         return [
             'header' => 'array', 'rows' => 'array',
         ];
-    }
-
-    protected function importModel(): string
-    {
-        return Import::class;
     }
 }

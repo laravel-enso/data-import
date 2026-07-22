@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\Import;
+use LaravelEnso\DataImport\Services\Importers\Import as Importer;
 use LaravelEnso\Files\Models\File as FileModel;
 use LaravelEnso\Helpers\Traits\EnsuresTestingFolder;
 use LaravelEnso\Tables\Traits\Tests\Datatable;
@@ -135,6 +136,41 @@ class DataImportTest extends TestCase
         $this->model->cancel();
 
         $this->assertTrue($this->model->cancelled());
+    }
+
+    #[Test]
+    public function can_finalize_externally()
+    {
+        $import = new class extends Import
+        {
+            public function finalizesExternally(): bool
+            {
+                return true;
+            }
+        };
+        $import->type = self::ImportType;
+
+        $this->assertNull((new Importer($import, 'groups'))->nextStep()());
+    }
+
+    #[Test]
+    public function related_models_inherit_the_import_connection()
+    {
+        Config::set(
+            'database.connections.external',
+            Config::get('database.connections.sqlite'),
+        );
+
+        $import = (new Import())->setConnection('external');
+
+        $this->assertSame(
+            'external',
+            $import->chunks()->make(['rows' => []])->getConnectionName(),
+        );
+        $this->assertSame(
+            'external',
+            $import->rejectedChunks()->make(['rows' => []])->getConnectionName(),
+        );
     }
 
     #[Test]
