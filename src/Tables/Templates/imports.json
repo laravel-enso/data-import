@@ -18,7 +18,8 @@
             "class": "is-row-button has-text-danger",
             "fullRoute": "import.cancel",
             "action": "ajax",
-            "confirmation": true
+            "confirmation": true,
+            "message": "Are you sure you want to cancel this import?"
         },
         {
             "name": "restart",
@@ -28,7 +29,8 @@
             "class": "is-row-button",
             "fullRoute": "import.restart",
             "action": "ajax",
-            "confirmation": true
+            "confirmation": true,
+            "message": "Are you sure you want to restart this import?"
         },
         {
             "name": "download-rejected",
