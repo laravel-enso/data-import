@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Exporters\Rejected;
 use LaravelEnso\DataImport\Services\Template;
+use Throwable;
 
 class RejectedExport implements ShouldQueue
 {
@@ -32,5 +33,10 @@ class RejectedExport implements ShouldQueue
         if ($this->import->failed > 0) {
             (new Rejected($this->import))->handle();
         }
+    }
+
+    public function failed(Throwable $throwable): void
+    {
+        $this->import->fail();
     }
 }

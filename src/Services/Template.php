@@ -62,6 +62,11 @@ class Template
             : Config::get('enso.imports.queues.processing');
     }
 
+    public function sync(string $sheet): bool
+    {
+        return $this->sheet($sheet)->get('sync', false);
+    }
+
     public function header(string $sheet): Collection
     {
         return $this->columns($sheet)->pluck('name');

@@ -32,7 +32,8 @@ class Import implements Table, ConditionalActions
             'download-rejected' => $row['rejected'] !== null,
             'download'          => $hasFile,
             'cancel'            => in_array($row['status'], Statuses::running()),
-            'restart'           => $hasFile && $row['status'] === Statuses::Cancelled,
+            'restart'           => $hasFile
+                && in_array($row['status'], [Statuses::Cancelled, Statuses::Failed]),
             default             => true,
         };
     }

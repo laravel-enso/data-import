@@ -12,6 +12,7 @@ class Statuses extends Enum
     public const ExportingRejected = 26;
     public const Finalized = 30;
     public const Cancelled = 40;
+    public const Failed = 50;
 
     protected static array $data = [
         self::Waiting           => 'waiting',
@@ -20,6 +21,7 @@ class Statuses extends Enum
         self::ExportingRejected => 'exporting rejected',
         self::Finalized         => 'finalized',
         self::Cancelled         => 'cancelled',
+        self::Failed            => 'failed',
     ];
 
     public static function running(): array
@@ -29,7 +31,7 @@ class Statuses extends Enum
 
     public static function deletable(): array
     {
-        return [self::Finalized, self::Cancelled];
+        return [self::Finalized, self::Cancelled, self::Failed];
     }
 
     public static function isDeletable(int $status): bool
