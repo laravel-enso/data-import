@@ -12,15 +12,18 @@ use LaravelEnso\DataImport\Models\Chunk;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Services\Exporters\Rejected;
 use LaravelEnso\DataImport\Services\Importers\Chunk as ChunkImporter;
+use LaravelEnso\DataImport\Services\Readers\CSV;
 use LaravelEnso\DataImport\Services\Readers\XLSX;
 use LaravelEnso\DataImport\Services\Sanitizers\Sanitize;
 use LaravelEnso\DataImport\Services\Template;
-use OpenSpout\Reader\XLSX\RowIterator;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
+use OpenSpout\Reader\CSV\RowIterator as CSVRowIterator;
+use OpenSpout\Reader\XLSX\RowIterator as XLSXRowIterator;
 use Throwable;
 
 class SyncImport
 {
-    private XLSX $reader;
+    private XLSX|CSV $reader;
 
     private Template $template;
 
@@ -69,7 +72,7 @@ class SyncImport
     }
 
     private function chunk(
-        RowIterator $iterator,
+        XLSXRowIterator|CSVRowIterator $iterator,
         string $sheet,
         array $header,
         int $rowLength,
@@ -122,11 +125,27 @@ class SyncImport
         ])->setRelation('import', $this->import);
     }
 
-    private function iterator(string $sheet): RowIterator
+    private function iterator(string $sheet): XLSXRowIterator|CSVRowIterator
+    {
+        $this->reader = $this->reader();
+
+        return $this->reader instanceof XLSX
+            ? $this->reader->rowIterator($sheet)
+            : $this->reader->rowIterator();
+    }
+
+    private function reader(): XLSX|CSV
     {
         $file = Storage::path($this->import->file->path());
-        $this->reader = new XLSX($file);
 
-        return $this->reader->rowIterator($sheet);
+        return match ($this->import->file->extension()) {
+            'txt', 'csv' => new CSV(
+                $file,
+                $this->template->delimiter(),
+                $this->template->enclosure()
+            ),
+            'xlsx' => new XLSX($file),
+            default => throw new EnsoException('Unsupported import type'),
+        };
     }
 }

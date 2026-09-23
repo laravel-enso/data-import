@@ -316,7 +316,7 @@ class Import extends Model implements
     {
         $sheet ??= $this->template()->sheets()->first()->get('name');
 
-        if ($this->template()->sync($sheet)) {
+        if ($this->template()->sync()) {
             (new SyncImport($this))->handle();
 
             return;
