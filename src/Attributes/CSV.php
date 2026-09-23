@@ -10,6 +10,6 @@ class CSV extends Attributes
     ];
 
     protected array $optional = [
-        'validatorClass', 'chunkSize', 'params',
+        'validatorClass', 'chunkSize', 'params', 'sync',
     ];
 }

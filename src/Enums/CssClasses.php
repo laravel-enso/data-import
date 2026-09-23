@@ -11,5 +11,6 @@ class CssClasses extends Statuses
         self::ExportingRejected => 'is-danger',
         self::Finalized         => 'is-success',
         self::Cancelled         => 'is-danger',
+        self::Failed            => 'is-danger',
     ];
 }

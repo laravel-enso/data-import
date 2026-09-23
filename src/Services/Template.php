@@ -62,6 +62,11 @@ class Template
             : Config::get('enso.imports.queues.processing');
     }
 
+    public function sync(): bool
+    {
+        return $this->template->get('sync', false);
+    }
+
     public function header(string $sheet): Collection
     {
         return $this->columns($sheet)->pluck('name');
@@ -98,9 +103,8 @@ class Template
     public function chunkSize(string $sheet): int
     {
         return $this->chunkSizes[$sheet]
-            ??= $this->sheet($sheet)->has('chunkSize')
-            ? $this->sheet($sheet)->get('chunkSize')
-            : (int) Config::get('enso.imports.chunkSize');
+            ??= $this->sheet($sheet)->get('chunkSize')
+                ?? (int) Config::get('enso.imports.chunkSize');
     }
 
     public function importer(string $sheet): Importable

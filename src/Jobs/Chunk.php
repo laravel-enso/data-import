@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelEnso\DataImport\Models\Chunk as Model;
 use LaravelEnso\DataImport\Services\Importers\Chunk as Service;
+use Throwable;
 
 class Chunk implements ShouldQueue
 {
@@ -31,5 +32,10 @@ class Chunk implements ShouldQueue
         if (!$this->batch()->cancelled()) {
             (new Service($this->chunk))->handle();
         }
+    }
+
+    public function failed(Throwable $throwable): void
+    {
+        $this->chunk->import->fail();
     }
 }

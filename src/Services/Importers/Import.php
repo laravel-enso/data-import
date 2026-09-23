@@ -14,6 +14,7 @@ use LaravelEnso\DataImport\Jobs\RejectedExport;
 use LaravelEnso\DataImport\Jobs\Sheet;
 use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Services\Template;
+use Throwable;
 
 class Import
 {
@@ -68,6 +69,7 @@ class Import
             ->then(fn () => $import->update(['batch' => null]))
             ->then(fn ($batch) => $batch->cancelled() ? null : $afterHook())
             ->then(fn ($batch) => $batch->cancelled() ? null : $nextStep())
+            ->catch(fn () => $import->fail())
             ->name($this->sheet)
             ->dispatch();
 
@@ -80,9 +82,9 @@ class Import
     {
         $importer = $this->template->importer($this->sheet);
 
-        return fn () => $importer instanceof AfterHook
+        return $this->guard(fn () => $importer instanceof AfterHook
             ? $importer->after($this->import)
-            : null;
+            : null);
     }
 
     public function nextStep(): Closure
@@ -92,14 +94,31 @@ class Import
         $nextSheet = $this->template->nextSheet($sheet);
 
         if ($nextSheet) {
-            return fn () => $import->import($nextSheet->get('name'));
+            return $this->guard(
+                fn () => $import->import($nextSheet->get('name'))
+            );
         }
 
         if ($import->finalizesExternally()) {
             return fn () => null;
         }
 
-        return fn () => RejectedExport::withChain([new Finalize($import)])
-            ->dispatch($import);
+        return $this->guard(
+            fn () => RejectedExport::withChain([new Finalize($import)])
+                ->dispatch($import)
+        );
+    }
+
+    private function guard(Closure $callback): Closure
+    {
+        return function () use ($callback) {
+            try {
+                return $callback();
+            } catch (Throwable $throwable) {
+                $this->import->fail();
+
+                throw $throwable;
+            }
+        };
     }
 }

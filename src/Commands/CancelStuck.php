@@ -10,12 +10,12 @@ class CancelStuck extends Command
 {
     protected $signature = 'enso:data-import:cancel-stuck';
 
-    protected $description = 'Cancels stuck imports';
+    protected $description = 'Marks stuck imports as failed';
 
     public function handle()
     {
         Import::stuck()->update([
-            'status' => Statuses::Cancelled,
+            'status' => Statuses::Failed,
             'batch'  => null,
         ]);
     }

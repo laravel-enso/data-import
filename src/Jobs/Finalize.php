@@ -12,6 +12,7 @@ use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Models\Import;
 use LaravelEnso\DataImport\Notifications\ImportDone;
 use LaravelEnso\DataImport\Services\Notifiables;
+use Throwable;
 
 class Finalize implements ShouldQueue
 {
@@ -30,6 +31,11 @@ class Finalize implements ShouldQueue
         $this->import->update(['status' => Statuses::Finalized]);
 
         $this->notify();
+    }
+
+    public function failed(Throwable $throwable): void
+    {
+        $this->import->fail();
     }
 
     private function notify(): void

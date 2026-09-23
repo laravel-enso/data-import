@@ -17,6 +17,7 @@ use Illuminate\Support\Traits\Conditionable;
 use LaravelEnso\DataImport\Enums\Statuses;
 use LaravelEnso\DataImport\Exceptions\Import as Exception;
 use LaravelEnso\DataImport\Jobs\Import as Job;
+use LaravelEnso\DataImport\Services\Importers\SyncImport;
 use LaravelEnso\DataImport\Services\Options;
 use LaravelEnso\DataImport\Services\Template;
 use LaravelEnso\DataImport\Services\Validators\Structure;
@@ -89,7 +90,7 @@ class Import extends Model implements
             ->subHours(Config::get('enso.imports.cancelStuckAfter'));
 
         return $query->where('created_at', '<', $cancelStuckAfter)
-            ->whereNotIn('status', [Statuses::Finalized, Statuses::Cancelled]);
+            ->whereNotIn('status', Statuses::deletable());
     }
 
     public function scopeDeletable(Builder $query): Builder
@@ -172,6 +173,11 @@ class Import extends Model implements
     public function cancelled(): bool
     {
         return $this->status === Statuses::Cancelled;
+    }
+
+    public function failed(): bool
+    {
+        return $this->status === Statuses::Failed;
     }
 
     public function processing(): bool
@@ -289,6 +295,16 @@ class Import extends Model implements
         ]);
     }
 
+    public function fail(): void
+    {
+        if (!$this->cancelled() && !$this->finalized()) {
+            $this->update([
+                'status' => Statuses::Failed,
+                'batch' => null,
+            ]);
+        }
+    }
+
     public function updateProgress(int $successful, int $failed)
     {
         $this->successful += $successful;
@@ -298,8 +314,12 @@ class Import extends Model implements
 
     public function import(?string $sheet = null)
     {
-        if ($sheet === null) {
-            $sheet = $this->template()->sheets()->first()->get('name');
+        $sheet ??= $this->template()->sheets()->first()->get('name');
+
+        if ($this->template()->sync()) {
+            (new SyncImport($this))->handle();
+
+            return;
         }
 
         Job::dispatch($this, $sheet);

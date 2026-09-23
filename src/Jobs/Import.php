@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\DataImport\Models\Import as Model;
 use LaravelEnso\DataImport\Services\Importers\Import as Service;
+use Throwable;
 
 class Import implements ShouldQueue
 {
@@ -33,5 +34,10 @@ class Import implements ShouldQueue
         if (!$this->import->cancelled()) {
             (new Service($this->import, $this->sheet))->handle();
         }
+    }
+
+    public function failed(Throwable $throwable): void
+    {
+        $this->import->fail();
     }
 }
