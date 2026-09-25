@@ -195,7 +195,7 @@ class ImportManagementTest extends TestCase
 
         $this->artisan('enso:data-import:cancel-stuck')->assertExitCode(0);
 
-        $this->assertSame(Statuses::Cancelled, $stuckImport->fresh()->status);
+        $this->assertSame(Statuses::Failed, $stuckImport->fresh()->status);
         $this->assertNull($stuckImport->fresh()->batch);
         $this->assertSame(Statuses::Processing, $freshImport->fresh()->status);
     }
