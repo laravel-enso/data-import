@@ -89,7 +89,7 @@ class Chunk
     private function import(Obj $row): void
     {
         try {
-            $this->importer->run($row, $this->import);
+            DB::transaction(fn () => $this->importer->run($row, $this->import));
         } catch (Throwable $throwable) {
             $row = $row->values()->toArray();
             $row[] = Config::get('enso.imports.unknownError');
